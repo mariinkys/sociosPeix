@@ -8,21 +8,24 @@ public class User {
     private UUID id;
     private String name;
     private String email;
+    private String password;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     // Constructor for creating a NEW user
-    public User(String name, String email) {
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
+        this.password = password;
     }
 
     // Constructor for reconstructing from DB
-    public User(UUID id, String name, String email,
+    public User(UUID id, String name, String email, String password,
                 LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -31,11 +34,12 @@ public class User {
     public UUID getId() { return id; }
     public String getName() { return name; }
     public String getEmail() { return email; }
+    public String getPassword() { return password; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
     // Update method — domain logic lives here, not in the service
     public User withUpdatedDetails(String name, String email) {
-        return new User(this.id, name, email, this.createdAt, LocalDateTime.now());
+        return new User(this.id, name, email, this.password, this.createdAt, LocalDateTime.now());
     }
 }

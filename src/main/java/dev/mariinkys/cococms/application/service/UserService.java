@@ -21,11 +21,11 @@ public class UserService implements UserUseCase {
     }
 
     @Override
-    public User createUser(String name, String email) {
+    public User createUser(String name, String email, String password) {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyInUseException(email);
         }
-        User newUser = new User(name, email);
+        User newUser = new User(name, email, password);
         return userRepository.save(newUser);
     }
 

@@ -18,6 +18,9 @@ public class UserJpaEntity {
     @Column(nullable = false, unique = true, length = 255)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -38,11 +41,12 @@ public class UserJpaEntity {
     // JPA needs a no-arg constructor
     protected UserJpaEntity() {}
 
-    public UserJpaEntity(UUID id, String name, String email,
+    public UserJpaEntity(UUID id, String name, String email, String password,
                          LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -50,6 +54,7 @@ public class UserJpaEntity {
     public UUID getId() { return id; }
     public String getName() { return name; }
     public String getEmail() { return email; }
+    public String getPassword() { return password; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 }
