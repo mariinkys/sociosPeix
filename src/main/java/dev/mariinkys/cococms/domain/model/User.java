@@ -13,10 +13,10 @@ public class User {
     private LocalDateTime updatedAt;
 
     // Constructor for creating a NEW user
-    public User(String name, String email, String password) {
+    public User(String name, String email, String hashedPassword) {
         this.name = name;
         this.email = email;
-        this.password = password;
+        this.password = hashedPassword;
     }
 
     // Constructor for reconstructing from DB

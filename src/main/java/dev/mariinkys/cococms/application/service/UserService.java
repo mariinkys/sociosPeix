@@ -2,6 +2,7 @@ package dev.mariinkys.cococms.application.service;
 
 import dev.mariinkys.cococms.application.exception.EmailAlreadyInUseException;
 import dev.mariinkys.cococms.application.exception.UserNotFoundException;
+import dev.mariinkys.cococms.application.port.PasswordHasher;
 import dev.mariinkys.cococms.domain.model.User;
 import dev.mariinkys.cococms.domain.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -15,18 +16,20 @@ import dev.mariinkys.cococms.application.port.UserUseCase;
 public class UserService implements UserUseCase {
 
     private final UserRepository userRepository;
+    private final PasswordHasher passwordHasher;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordHasher passwordHasher) {
         this.userRepository = userRepository;
+        this.passwordHasher = passwordHasher;
     }
 
     @Override
-    public User createUser(String name, String email, String password) {
+    public User createUser(String name, String email, String rawPassword) {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyInUseException(email);
         }
-        User newUser = new User(name, email, password);
-        return userRepository.save(newUser);
+        String hashed = passwordHasher.hash(rawPassword);
+        return userRepository.save(new User(name, email, hashed));
     }
 
     @Override

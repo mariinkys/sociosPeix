@@ -1,13 +1,12 @@
 package dev.mariinkys.cococms.interfaces.rest;
 
 import dev.mariinkys.cococms.application.port.UserUseCase;
-import dev.mariinkys.cococms.interfaces.dto.CreateUserRequest;
+import dev.mariinkys.cococms.interfaces.dto.RegisterRequest;
 import dev.mariinkys.cococms.interfaces.dto.PageResponse;
 import dev.mariinkys.cococms.interfaces.dto.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +20,6 @@ public class UserController {
 
     public UserController(UserUseCase userUseCase) {
         this.userUseCase = userUseCase;
-    }
-
-    @PostMapping
-    public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
-        var user = userUseCase.createUser(request.getName(), request.getEmail(), request.getPassword());
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.from(user));
     }
 
     @GetMapping
@@ -55,8 +48,8 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> update(@PathVariable UUID id,
-                                               @Valid @RequestBody CreateUserRequest request) {
-        var user = userUseCase.updateUser(id, request.getName(), request.getEmail());
+                                               @Valid @RequestBody RegisterRequest request) {
+        var user = userUseCase.updateUser(id, request.name(), request.email());
         return ResponseEntity.ok(UserResponse.from(user));
     }
 

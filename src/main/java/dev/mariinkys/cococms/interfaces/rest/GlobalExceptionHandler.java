@@ -1,6 +1,7 @@
 package dev.mariinkys.cococms.interfaces.rest;
 
 import dev.mariinkys.cococms.application.exception.EmailAlreadyInUseException;
+import dev.mariinkys.cococms.application.exception.InvalidRefreshTokenException;
 import dev.mariinkys.cococms.application.exception.UserNotFoundException;
 import dev.mariinkys.cococms.interfaces.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -48,5 +49,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(500, "An unexpected error occurred"));
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidRefreshToken(InvalidRefreshTokenException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(401, ex.getMessage()));
     }
 }
