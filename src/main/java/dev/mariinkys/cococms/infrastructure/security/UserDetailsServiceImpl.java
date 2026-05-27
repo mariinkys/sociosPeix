@@ -23,10 +23,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         var entity = userJpaRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        // Spring Security's built-in User builder
         return User.builder()
                 .username(entity.getEmail())
-                .password(entity.getPassword())  // hashed — see below
+                .password(entity.getPassword())
                 .roles("USER")
                 .build();
     }
