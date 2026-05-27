@@ -12,7 +12,7 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Constructor for creating a NEW user
+    // Constructor for creating a new user
     public User(String name, String email, String hashedPassword) {
         this.name = name;
         this.email = email;
@@ -30,7 +30,6 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    // Getters only — immutable where possible
     public UUID getId() { return id; }
     public String getName() { return name; }
     public String getEmail() { return email; }
@@ -38,7 +37,7 @@ public class User {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    // Update method — domain logic lives here, not in the service
+    // domain logic lives here, not in the service (i have to remember clean arch :c)
     public User withUpdatedDetails(String name, String email) {
         return new User(this.id, name, email, this.password, this.createdAt, LocalDateTime.now());
     }
