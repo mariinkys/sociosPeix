@@ -4,6 +4,7 @@ import dev.mariinkys.cococms.application.exception.InvalidRefreshTokenException;
 import dev.mariinkys.cococms.domain.model.RefreshToken;
 import dev.mariinkys.cococms.domain.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -30,6 +31,7 @@ public class RefreshTokenService {
 
     // Validates the token, revokes it, and returns the owner's email.
     // The caller is responsible for issuing a new access token + refresh token.
+    @Transactional
     public String validateAndRotate(String tokenValue) {
         RefreshToken token = refreshTokenRepository.findByToken(tokenValue)
                 .orElseThrow(() -> new InvalidRefreshTokenException("Refresh token not found"));
@@ -48,6 +50,7 @@ public class RefreshTokenService {
         return token.getUserEmail();
     }
 
+    @Transactional
     public void revokeAllForUser(String email) {
         refreshTokenRepository.revokeAllByUserEmail(email);
     }

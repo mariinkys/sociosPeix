@@ -3,7 +3,7 @@ package dev.mariinkys.cococms.interfaces.rest;
 import dev.mariinkys.cococms.application.port.UserUseCase;
 import dev.mariinkys.cococms.application.service.RequesterContext;
 import dev.mariinkys.cococms.interfaces.dto.PageResponse;
-import dev.mariinkys.cococms.interfaces.dto.auth.RegisterRequest;
+import dev.mariinkys.cococms.interfaces.dto.user.UpdateRequest;
 import dev.mariinkys.cococms.interfaces.dto.user.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -54,7 +54,7 @@ public class UserController {
     // ADMIN updates anyone, USER updates only themselves (enforced in service)
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> update(@PathVariable UUID id,
-                                               @Valid @RequestBody RegisterRequest request,
+                                               @Valid @RequestBody UpdateRequest request,
                                                @AuthenticationPrincipal UserDetails userDetails) {
         var user = userUseCase.updateUser(id, request.name(), request.email(), requesterContext(userDetails));
         return ResponseEntity.ok(UserResponse.from(user));

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 import dev.mariinkys.cococms.application.port.UserUseCase;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService implements UserUseCase {
@@ -25,6 +26,7 @@ public class UserService implements UserUseCase {
     }
 
     @Override
+    @Transactional
     public void createUser(String name, String email, String rawPassword) {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyInUseException(email);
@@ -33,6 +35,7 @@ public class UserService implements UserUseCase {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserById(UUID id, RequesterContext requester) {
         User target = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
@@ -43,17 +46,20 @@ public class UserService implements UserUseCase {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
     @Override
+    @Transactional
     public User updateUser(UUID id, String name, String email, RequesterContext requester) {
         User target = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
@@ -64,6 +70,7 @@ public class UserService implements UserUseCase {
     }
 
     @Override
+    @Transactional
     public void deleteUser(UUID id, RequesterContext requester) {
         User target = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
