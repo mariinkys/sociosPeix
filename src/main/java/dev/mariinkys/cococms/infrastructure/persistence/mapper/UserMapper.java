@@ -14,6 +14,8 @@ public class UserMapper {
                 entity.getEmail(),
                 entity.getPassword(),
                 entity.getRole(),
+                entity.getFailedLoginAttempts(),
+                entity.getLockedUntil(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );
@@ -26,6 +28,8 @@ public class UserMapper {
                 user.getEmail(),
                 user.getPassword(),
                 user.getRole(),
+                user.getFailedLoginAttempts(),
+                user.getLockedUntil(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );

@@ -4,6 +4,8 @@ CREATE TABLE users (
    email       VARCHAR(255) NOT NULL UNIQUE,
    password    VARCHAR(255) NOT NULL,
    role        VARCHAR(20) NOT NULL DEFAULT 'USER',
+   failed_login_attempts INT NOT NULL DEFAULT 0,
+   locked_until TIMESTAMP NULL,
    created_at  TIMESTAMP NOT NULL DEFAULT now(),
    updated_at  TIMESTAMP NOT NULL DEFAULT now()
 );

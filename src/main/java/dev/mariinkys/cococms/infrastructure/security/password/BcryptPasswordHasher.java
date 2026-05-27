@@ -1,4 +1,4 @@
-package dev.mariinkys.cococms.infrastructure.security;
+package dev.mariinkys.cococms.infrastructure.security.password;
 
 import dev.mariinkys.cococms.application.port.PasswordHasher;
 import org.springframework.security.crypto.password.PasswordEncoder;

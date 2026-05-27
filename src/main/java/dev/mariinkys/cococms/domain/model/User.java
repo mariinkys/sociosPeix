@@ -10,6 +10,8 @@ public class User {
     private final String email;
     private final String password;
     private final Role role;
+    private final int failedLoginAttempts;
+    private final LocalDateTime lockedUntil;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -18,19 +20,44 @@ public class User {
         this.name = name;
         this.email = email;
         this.role = Role.USER;
+        this.failedLoginAttempts = 0;
+        this.lockedUntil = null;
         this.password = hashedPassword;
     }
 
     // Constructor for reconstructing from DB
     public User(UUID id, String name, String email, String password, Role role,
+                int failedLoginAttempts, LocalDateTime lockedUntil,
                 LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.failedLoginAttempts = failedLoginAttempts;
+        this.lockedUntil = lockedUntil;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public User withUpdatedDetails(String name, String email) {
+        return new User(id, name, email, password, role,
+                failedLoginAttempts, lockedUntil, createdAt, LocalDateTime.now());
+    }
+
+    public User incrementFailedAttempts() {
+        return new User(id, name, email, password, role,
+                failedLoginAttempts + 1, lockedUntil, createdAt, updatedAt);
+    }
+
+    public User resetFailedAttempts() {
+        return new User(id, name, email, password, role,
+                0, null, createdAt, updatedAt);
+    }
+
+    public User lockUntil(LocalDateTime time) {
+        return new User(id, name, email, password, role,
+                failedLoginAttempts, time, createdAt, updatedAt);
     }
 
     public UUID getId() { return id; }
@@ -38,11 +65,8 @@ public class User {
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public Role getRole() { return role; }
+    public int getFailedLoginAttempts() { return failedLoginAttempts; }
+    public LocalDateTime getLockedUntil() { return lockedUntil; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
-
-    // domain logic lives here, not in the service (i have to remember clean arch :c)
-    public User withUpdatedDetails(String name, String email) {
-        return new User(this.id, name, email, this.password, this.role, this.createdAt, LocalDateTime.now());
-    }
 }

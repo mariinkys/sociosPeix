@@ -1,3 +1,13 @@
+app:
+  cors:
+    allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:5173}
+  cookie:
+    secure: ${COOKIE_SECURE:false}   # set to true in production (requires HTTPS)
+  security:
+    max-login-attempts: 5
+    lockout-duration-minutes: 15
+    trust-proxy: ${TRUST_PROXY:false} # only set true when behind a trusted proxy
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/yourdb

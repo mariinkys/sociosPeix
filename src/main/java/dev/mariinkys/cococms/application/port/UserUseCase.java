@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface UserUseCase {
     void createUser(String name, String email, String rawPassword);
     User getUserById(UUID id, RequesterContext requester);
+    User getUserByEmail(String email);
     Page<User> getAllUsers(Pageable pageable);
     User updateUser(UUID id, String name, String email, RequesterContext requester);
     void deleteUser(UUID id, RequesterContext requester);

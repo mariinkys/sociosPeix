@@ -43,6 +43,12 @@ public class UserService implements UserUseCase {
     }
 
     @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+    }
+
+    @Override
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }

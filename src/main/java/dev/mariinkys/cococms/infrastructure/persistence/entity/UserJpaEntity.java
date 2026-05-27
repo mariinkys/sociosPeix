@@ -26,6 +26,12 @@ public class UserJpaEntity {
     @Column(nullable = false, length = 20)
     private Role role;
 
+    @Column(name = "failed_login_attempts", nullable = false)
+    private int failedLoginAttempts = 0;
+
+    @Column(name = "locked_until")
+    private LocalDateTime lockedUntil;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -47,14 +53,21 @@ public class UserJpaEntity {
     protected UserJpaEntity() {}
 
     public UserJpaEntity(UUID id, String name, String email, String password, Role role,
+                         int failedLoginAttempts, LocalDateTime lockedUntil,
                          LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.failedLoginAttempts = failedLoginAttempts;
+        this.lockedUntil = lockedUntil;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public boolean isCurrentlyLocked() {
+        return lockedUntil != null && LocalDateTime.now().isBefore(lockedUntil);
     }
 
     public UUID getId() { return id; }
@@ -62,6 +75,8 @@ public class UserJpaEntity {
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public Role getRole() { return role; }
+    public int getFailedLoginAttempts() { return failedLoginAttempts; }
+    public LocalDateTime getLockedUntil() { return lockedUntil; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

@@ -1,4 +1,4 @@
-package dev.mariinkys.cococms.infrastructure.security;
+package dev.mariinkys.cococms.infrastructure.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

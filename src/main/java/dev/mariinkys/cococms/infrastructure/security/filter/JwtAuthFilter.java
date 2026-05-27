@@ -1,5 +1,6 @@
-package dev.mariinkys.cococms.infrastructure.security;
+package dev.mariinkys.cococms.infrastructure.security.filter;
 
+import dev.mariinkys.cococms.infrastructure.security.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,19 +26,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain chain) throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
-
-        // If no Bearer token, skip; the security config will block if the route is protected
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String token = extractTokenFromCookie(request);
+        if (token == null) {
             chain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(7); // strip "Bearer "
         String email = jwtService.extractEmail(token);
 
         // Only set auth if not already authenticated in this request
@@ -53,5 +51,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         chain.doFilter(request, response);
+    }
+
+    private String extractTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() == null) return null;
+        for (var cookie : request.getCookies()) {
+            if ("access_token".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }
