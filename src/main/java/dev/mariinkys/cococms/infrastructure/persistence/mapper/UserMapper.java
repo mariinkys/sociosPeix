@@ -13,6 +13,7 @@ public class UserMapper {
                 entity.getName(),
                 entity.getEmail(),
                 entity.getPassword(),
+                entity.getRole(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );
@@ -24,6 +25,7 @@ public class UserMapper {
                 user.getName(),
                 user.getEmail(),
                 user.getPassword(),
+                user.getRole(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );

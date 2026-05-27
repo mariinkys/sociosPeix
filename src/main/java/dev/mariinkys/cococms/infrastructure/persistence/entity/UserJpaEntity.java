@@ -1,5 +1,6 @@
 package dev.mariinkys.cococms.infrastructure.persistence.entity;
 
+import dev.mariinkys.cococms.domain.model.Role;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,11 +16,15 @@ public class UserJpaEntity {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role role;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -41,12 +46,13 @@ public class UserJpaEntity {
     // JPA needs a no-arg constructor
     protected UserJpaEntity() {}
 
-    public UserJpaEntity(UUID id, String name, String email, String password,
+    public UserJpaEntity(UUID id, String name, String email, String password, Role role,
                          LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.role = role;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -55,6 +61,7 @@ public class UserJpaEntity {
     public String getName() { return name; }
     public String getEmail() { return email; }
     public String getPassword() { return password; }
+    public Role getRole() { return role; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 }
