@@ -12,6 +12,10 @@ public class UserMapper {
                 entity.getId(),
                 entity.getName(),
                 entity.getEmail(),
+                entity.getPassword(),
+                entity.getRole(),
+                entity.getFailedLoginAttempts(),
+                entity.getLockedUntil(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );
@@ -22,6 +26,10 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
+                user.getPassword(),
+                user.getRole(),
+                user.getFailedLoginAttempts(),
+                user.getLockedUntil(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
