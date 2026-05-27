@@ -1,4 +1,4 @@
-package dev.mariinkys.cococms.interfaces.dto;
+package dev.mariinkys.cococms.interfaces.dto.auth;
 
 public record AuthResponse(
         String accessToken,

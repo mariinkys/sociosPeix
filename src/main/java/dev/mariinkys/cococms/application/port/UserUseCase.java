@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface UserUseCase {
-    User createUser(String name, String email, String rawPassword);
+    void createUser(String name, String email, String rawPassword);
     User getUserById(UUID id);
     Page<User> getAllUsers(Pageable pageable);
     User updateUser(UUID id, String name, String email);

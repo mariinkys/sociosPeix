@@ -1,6 +1,7 @@
 package dev.mariinkys.cococms.infrastructure.security;
 
 import dev.mariinkys.cococms.infrastructure.persistence.repository.UserJpaRepository;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@NullMarked
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserJpaRepository userJpaRepository;

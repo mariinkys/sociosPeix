@@ -1,4 +1,4 @@
-package dev.mariinkys.cococms.interfaces.dto;
+package dev.mariinkys.cococms.interfaces.dto.user;
 
 import dev.mariinkys.cococms.domain.model.User;
 import java.time.LocalDateTime;

@@ -24,12 +24,11 @@ public class UserService implements UserUseCase {
     }
 
     @Override
-    public User createUser(String name, String email, String rawPassword) {
+    public void createUser(String name, String email, String rawPassword) {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyInUseException(email);
         }
-        String hashed = passwordHasher.hash(rawPassword);
-        return userRepository.save(new User(name, email, hashed));
+        userRepository.save(new User(name, email, passwordHasher.hash(rawPassword)));
     }
 
     @Override

@@ -5,10 +5,10 @@ import java.util.UUID;
 
 public class RefreshToken {
     private UUID id;
-    private String token;
-    private String userEmail;
-    private LocalDateTime expiresAt;
-    private boolean revoked;
+    private final String token;
+    private final String userEmail;
+    private final LocalDateTime expiresAt;
+    private final boolean revoked;
     private LocalDateTime createdAt;
 
     // For creating a new refresh token

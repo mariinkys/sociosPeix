@@ -1,9 +1,9 @@
 package dev.mariinkys.cococms.interfaces.rest;
 
 import dev.mariinkys.cococms.application.port.UserUseCase;
-import dev.mariinkys.cococms.interfaces.dto.RegisterRequest;
 import dev.mariinkys.cococms.interfaces.dto.PageResponse;
-import dev.mariinkys.cococms.interfaces.dto.UserResponse;
+import dev.mariinkys.cococms.interfaces.dto.user.UpdateRequest;
+import dev.mariinkys.cococms.interfaces.dto.user.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -48,7 +48,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> update(@PathVariable UUID id,
-                                               @Valid @RequestBody RegisterRequest request) {
+                                               @Valid @RequestBody UpdateRequest request) {
         var user = userUseCase.updateUser(id, request.name(), request.email());
         return ResponseEntity.ok(UserResponse.from(user));
     }
