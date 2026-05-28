@@ -1,0 +1,26 @@
+import axios, { AxiosError } from 'axios'
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8080',
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+api.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    const url = error.config?.url ?? ''
+    const isAuthEndpoint = url.includes('/api/auth/')
+
+    if (error.response?.status === 401 && !isAuthEndpoint) {
+      import('@/stores/auth').then(({ useAuthStore }) => useAuthStore().clearUser())
+      window.location.href = '/login'
+    }
+
+    return Promise.reject(error)
+  },
+)
+
+export default api
