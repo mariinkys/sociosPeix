@@ -25,5 +25,8 @@ public record MemberRequest(
         @Size(max = 30, message = "Phone must not exceed 30 characters")
         String phone,
 
-        String notes
+        String notes,
+
+        Integer genderId,
+        Integer countryId
 ) {}

@@ -13,6 +13,14 @@ public class MemberJpaEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gender_id")
+    private GenderJpaEntity gender;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
+    private CountryJpaEntity country;
+
     @Column(nullable = false, length = 100)
     private String name;
 
@@ -55,6 +63,7 @@ public class MemberJpaEntity {
 
     public MemberJpaEntity(UUID id, String name, String surname, String secondSurname,
                            String email, LocalDate birthdate, String phone, String notes,
+                           GenderJpaEntity gender, CountryJpaEntity country,
                            LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
@@ -64,6 +73,8 @@ public class MemberJpaEntity {
         this.birthdate = birthdate;
         this.phone = phone;
         this.notes = notes;
+        this.gender = gender;
+        this.country = country;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -76,6 +87,8 @@ public class MemberJpaEntity {
     public LocalDate getBirthdate() { return birthdate; }
     public String getPhone() { return phone; }
     public String getNotes() { return notes; }
+    public GenderJpaEntity getGender() { return gender; }
+    public CountryJpaEntity getCountry() { return country; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

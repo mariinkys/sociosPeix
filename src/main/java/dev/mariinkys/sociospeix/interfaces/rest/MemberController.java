@@ -55,7 +55,8 @@ public class MemberController {
     public ResponseEntity<MemberResponse> create(@Valid @RequestBody MemberRequest request) {
         var member = memberUseCase.createMember(
                 request.name(), request.surname(), request.secondSurname(),
-                request.email(), request.birthdate(), request.phone(), request.notes()
+                request.email(), request.birthdate(), request.phone(), request.notes(),
+                request.genderId(), request.countryId()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(MemberResponse.from(member));
     }
@@ -65,7 +66,8 @@ public class MemberController {
                                                  @Valid @RequestBody MemberRequest request) {
         var member = memberUseCase.updateMember(
                 id, request.name(), request.surname(), request.secondSurname(),
-                request.email(), request.birthdate(), request.phone(), request.notes()
+                request.email(), request.birthdate(), request.phone(), request.notes(),
+                request.genderId(), request.countryId()
         );
         return ResponseEntity.ok(MemberResponse.from(member));
     }
