@@ -14,12 +14,18 @@ const routes = [
     component: () => import('@/views/auth/LoginView.vue'),
     meta: { guestOnly: true },
   },
-  // {
-  //   path: '/admin',
-  //   name: 'Admin',
-  //   component: () => import('@/views/AdminView.vue'),
-  //   meta: { requiresAuth: true, requiresAdmin: true },
-  // },
+  {
+    path: '/users',
+    name: 'Users',
+    component: () => import('@/views/users/ListView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/members',
+    name: 'Members',
+    component: () => import('@/views/members/ListView.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

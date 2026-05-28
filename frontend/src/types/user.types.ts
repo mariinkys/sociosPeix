@@ -1,7 +1,7 @@
 export type UserRole = 'ADMIN' | 'USER'
 
 export interface UserResponse {
-  id: number
+  id: string
   name: string
   email: string
   role: UserRole

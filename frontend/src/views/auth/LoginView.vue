@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { Form, FormField } from '@primevue/forms'
+import type { FormResolverOptions, FormSubmitEvent } from '@primevue/forms'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
+import Message from 'primevue/message'
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import type { LoginPayload } from '@/stores/auth'
+import type { LoginPayload } from '@/types/auth.types'
 import type { AxiosError } from 'axios'
 import { useToast } from 'primevue/usetoast'
 
@@ -14,17 +17,34 @@ const auth = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
-
-const model = ref<LoginPayload>({
-  email: '',
-  password: '',
-})
-
 const loading = ref(false)
 
-const login = async () => {
-  loading.value = true
+const model = ref<LoginPayload>({ email: '', password: '' })
 
+const initialValues = { email: '', password: '' }
+
+const resolver = ({ values }: FormResolverOptions) => {
+  const errors: Record<string, { message: string }[]> = {}
+  const email = values.email as string
+  const password = values.password as string
+
+  if (!email) {
+    errors.email = [{ message: 'Email is required' }]
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.email = [{ message: 'Must be a valid email' }]
+  }
+
+  if (!password) {
+    errors.password = [{ message: 'Password is required' }]
+  }
+
+  return { errors }
+}
+
+async function onSubmit({ valid }: FormSubmitEvent) {
+  if (!valid) return
+
+  loading.value = true
   try {
     await auth.login(model.value)
     const redirect = (route.query.redirect as string) ?? '/'
@@ -57,32 +77,49 @@ const login = async () => {
             </p>
           </div>
 
-          <form class="space-y-5" @submit.prevent="login">
-            <div class="flex flex-col gap-1.5">
+          <Form
+            v-slot="$form"
+            :initialValues
+            :resolver
+            :validateOnBlur="true"
+            :validateOnValueUpdate="true"
+            class="space-y-5"
+            @submit="onSubmit"
+          >
+            <FormField v-slot="$field" name="email" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                 Email
               </label>
+              <!-- ✅ v-model on your own ref, NOT $field.value -->
               <InputText
                 v-model="model.email"
                 type="email"
-                placeholder="Enter email"
+                placeholder="Enter your email"
                 autocomplete="email"
+                :invalid="$field?.invalid"
                 fluid
               />
-            </div>
+              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                {{ $field.error?.message }}
+              </Message>
+            </FormField>
 
-            <div class="flex flex-col gap-1.5">
+            <FormField v-slot="$field" name="password" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                 Password
               </label>
               <Password
                 v-model="model.password"
-                placeholder="Enter password"
+                placeholder="Enter your password"
                 :feedback="false"
+                :invalid="$field?.invalid"
                 toggleMask
                 fluid
               />
-            </div>
+              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                {{ $field.error?.message }}
+              </Message>
+            </FormField>
 
             <Button
               type="submit"
@@ -91,9 +128,9 @@ const login = async () => {
               iconPos="right"
               class="w-full"
               :loading="loading"
-              :disabled="!model.email || !model.password"
+              :disabled="!!$form.invalid"
             />
-          </form>
+          </Form>
         </div>
       </template>
     </Card>

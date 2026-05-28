@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
+    "@primevue/forms": "^4.5.5",
     "@tailwindcss/vite": "^4.3.0",
     "axios": "^1.16.1",
     "pinia": "^3.0.4",

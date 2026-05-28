@@ -1,7 +1,7 @@
 import type { UserRole } from './user.types'
 
 export interface AuthResponse {
-  id: number
+  id: string
   email: string
   role: UserRole
 }
