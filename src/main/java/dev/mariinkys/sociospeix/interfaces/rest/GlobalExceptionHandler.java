@@ -2,6 +2,7 @@ package dev.mariinkys.sociospeix.interfaces.rest;
 
 import dev.mariinkys.sociospeix.application.exception.EmailAlreadyInUseException;
 import dev.mariinkys.sociospeix.application.exception.InvalidRefreshTokenException;
+import dev.mariinkys.sociospeix.application.exception.MemberNotFoundException;
 import dev.mariinkys.sociospeix.application.exception.UserNotFoundException;
 import dev.mariinkys.sociospeix.interfaces.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -89,5 +90,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(new ErrorResponse(403, "Account locked due to too many failed attempts. Try again in 15 minutes."));
+    }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMemberNotFound(MemberNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(404, ex.getMessage()));
     }
 }
