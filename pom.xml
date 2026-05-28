@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>dev.mariinkys</groupId>
-    <artifactId>cocoCms</artifactId>
+    <artifactId>sociosPeix</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>cocoCms</name>
-    <description>cocoCms</description>
+    <name>sociosPeix</name>
+    <description>Aplicación de gestión para hotel</description>
     <url/>
     <licenses>
         <license/>
