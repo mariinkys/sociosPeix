@@ -14,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -69,11 +68,9 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public Object me(@AuthenticationPrincipal UserDetails userDetails) {
-        return Map.of(
-                "username", userDetails.getUsername(),
-                "authorities", userDetails.getAuthorities()
-        );
+    public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal UserDetails userDetails) {
+        var user = userUseCase.getUserByEmail(userDetails.getUsername());
+        return ResponseEntity.ok(UserResponse.from(user));
     }
 
     private RequesterContext requesterContext(UserDetails userDetails) {

@@ -8,6 +8,7 @@ public record UserResponse(
         UUID id,
         String name,
         String email,
+        String role,
         LocalDateTime createdAt
 ) {
     public static UserResponse from(User user) {
@@ -15,6 +16,7 @@ public record UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
+                user.getRole().name(),
                 user.getCreatedAt()
         );
     }
