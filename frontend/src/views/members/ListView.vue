@@ -4,6 +4,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import ConfirmDialog from 'primevue/confirmdialog'
+import MultiSelect from 'primevue/multiselect'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 import InputText from 'primevue/inputtext'
@@ -13,7 +14,9 @@ import type {
   DataTableRowClickEvent,
 } from 'primevue/datatable'
 import { membersService } from '@/services/members.service'
-import type { MemberResponse } from '@/types/member.types'
+import { interestsService } from '@/services/interests.service'
+import type { MemberParams, MemberResponse } from '@/types/member.types'
+import type { InterestResponse } from '@/types/interest.types'
 import { useRouter } from 'vue-router'
 
 const toast = useToast()
@@ -25,6 +28,8 @@ const loading = ref(false)
 const totalElements = ref(0)
 
 const search = ref('')
+const selectedInterests = ref<InterestResponse[]>([])
+const allInterests = ref<InterestResponse[]>([])
 let debounceTimer: ReturnType<typeof setTimeout>
 
 const page = ref(0)
@@ -35,13 +40,17 @@ const sortDir = ref<'asc' | 'desc'>('desc')
 async function fetchMembers() {
   loading.value = true
   try {
-    const data = await membersService.getAll({
+    const params: MemberParams = {
       page: page.value,
       size: size.value,
       sortBy: sortBy.value,
       sortDir: sortDir.value,
       search: search.value || undefined,
-    })
+      interestIds: selectedInterests.value.length
+        ? selectedInterests.value.map((i) => i.id)
+        : undefined,
+    }
+    const data = await membersService.getAll(params)
     members.value = data.content
     totalElements.value = data.totalElements
   } catch {
@@ -77,22 +86,13 @@ function onRowClick(event: DataTableRowClickEvent) {
 }
 
 function confirmDelete(event: Event, member: MemberResponse) {
-  // Stop the click from bubbling up to onRowClick
   event.stopPropagation()
-
   confirm.require({
     message: `Are you sure you want to delete ${member.fullName}? This action cannot be undone.`,
     header: 'Delete Member',
     icon: 'pi pi-exclamation-triangle',
-    rejectProps: {
-      label: 'Cancel',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Delete',
-      severity: 'danger',
-    },
+    rejectProps: { label: 'Cancel', severity: 'secondary', outlined: true },
+    acceptProps: { label: 'Delete', severity: 'danger' },
     accept: async () => {
       try {
         await membersService.delete(member.id)
@@ -123,7 +123,15 @@ function onSearch() {
   }, 500)
 }
 
-onMounted(fetchMembers)
+function onInterestFilter() {
+  page.value = 0
+  fetchMembers()
+}
+
+onMounted(async () => {
+  allInterests.value = await interestsService.getAll()
+  fetchMembers()
+})
 </script>
 
 <template>
@@ -138,15 +146,28 @@ onMounted(fetchMembers)
         </p>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
             placeholder="Search members..."
-            class="pl-9 w-full sm:w-56"
+            class="pl-9 w-full sm:w-48"
             @input="onSearch"
           />
         </div>
+
+        <MultiSelect
+          v-model="selectedInterests"
+          :options="allInterests"
+          optionLabel="name"
+          placeholder="Filter by interest..."
+          display="chip"
+          filter
+          filterPlaceholder="Search..."
+          class="w-full sm:w-56"
+          @update:modelValue="onInterestFilter"
+        />
+
         <Button
           label="New Member"
           icon="pi pi-plus"

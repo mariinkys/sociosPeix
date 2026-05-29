@@ -1,10 +1,26 @@
 import api from '@/api/axios'
-import type { PageResponse, PaginatedParams } from '@/types/common.types'
-import type { MemberCreatePayload, MemberResponse, MemberUpdatePayload } from '@/types/member.types'
+import type { PageResponse } from '@/types/common.types'
+import type {
+  MemberCreatePayload,
+  MemberParams,
+  MemberResponse,
+  MemberUpdatePayload,
+} from '@/types/member.types'
 
 class MembersService {
-  async getAll(params?: PaginatedParams): Promise<PageResponse<MemberResponse>> {
-    const { data } = await api.get<PageResponse<MemberResponse>>('/api/members', { params })
+  async getAll(params?: MemberParams): Promise<PageResponse<MemberResponse>> {
+    const { interestIds, ...rest } = params ?? {}
+    const { data } = await api.get<PageResponse<MemberResponse>>('/api/members', {
+      params: rest,
+      paramsSerializer: (p) => {
+        const search = new URLSearchParams()
+        Object.entries(p).forEach(([key, val]) => {
+          if (val !== undefined && val !== null) search.append(key, String(val))
+        })
+        interestIds?.forEach((id) => search.append('interestIds', String(id)))
+        return search.toString()
+      },
+    })
     return data
   }
 

@@ -60,8 +60,8 @@ public class MemberService implements MemberUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Member> getAllMembers(String search, Pageable pageable) {
-        return memberRepository.findAll(search, pageable);
+    public Page<Member> getAllMembers(String search, List<Integer> interestIds, Pageable pageable) {
+        return memberRepository.findAll(search, interestIds, pageable);
     }
 
     @Override

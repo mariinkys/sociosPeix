@@ -65,13 +65,13 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Page<Member> findAll(String search, Pageable pageable) {
-        return jpaRepository.findAll(search, pageable).map(entity -> {
+    public Page<Member> findAll(String search, List<Integer> interestIds, Pageable pageable) {
+        List<Integer> ids = interestIds == null ? List.of() : interestIds;
+        return jpaRepository.findAll(search, ids, ids.size(), pageable).map(entity -> {
             var interests = interestJpaRepository.findByMemberId(entity.getId())
                     .stream()
                     .map(e -> new Interest(e.getId(), e.getName(), e.getDescription()))
                     .toList();
-
             return mapper.toDomain(entity).withInterests(interests);
         });
     }

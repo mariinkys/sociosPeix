@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface MemberRepository {
     Member save(Member member);
     Optional<Member> findById(UUID id);
-    Page<Member> findAll(String search, Pageable pageable);
+    Page<Member> findAll(String search, List<Integer> interestIds, Pageable pageable);
     List<Member> findByBirthday(int day, int month);
     void deleteById(UUID id);
 

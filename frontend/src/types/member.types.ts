@@ -1,4 +1,9 @@
+import type { PaginatedParams } from './common.types'
 import type { InterestResponse } from './interest.types'
+
+export interface MemberParams extends PaginatedParams {
+  interestIds?: number[]
+}
 
 export interface MemberResponse {
   id: string
