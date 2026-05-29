@@ -29,11 +29,12 @@ public class MemberController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "surname") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(defaultValue = "") String search) {
 
         var direction = sortDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         var pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        var result = memberUseCase.getAllMembers(pageable).map(MemberResponse::from);
+        var result = memberUseCase.getAllMembers(search, pageable).map(MemberResponse::from);
         return ResponseEntity.ok(PageResponse.from(result));
     }
 

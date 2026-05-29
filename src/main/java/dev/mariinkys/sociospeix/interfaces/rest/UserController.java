@@ -34,11 +34,12 @@ public class UserController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(defaultValue = "") String search) {
 
         var direction = sortDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         var pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        var result = userUseCase.getAllUsers(pageable).map(UserResponse::from);
+        var result = userUseCase.getAllUsers(search, pageable).map(UserResponse::from);
         return ResponseEntity.ok(PageResponse.from(result));
     }
 

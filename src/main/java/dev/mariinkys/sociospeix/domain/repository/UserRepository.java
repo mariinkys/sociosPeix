@@ -10,7 +10,7 @@ public interface UserRepository {
     User save(User user);
     Optional<User> findById(UUID id);
     Optional<User> findByEmail(String email);
-    Page<User> findAll(Pageable pageable);
+    Page<User> findAll(String search, Pageable pageable);
     void deleteById(UUID id);
     boolean existsByEmail(String email);
 }

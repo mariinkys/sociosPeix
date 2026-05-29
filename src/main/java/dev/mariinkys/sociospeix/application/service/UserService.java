@@ -54,8 +54,8 @@ public class UserService implements UserUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<User> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<User> getAllUsers(String search, Pageable pageable) {
+        return userRepository.findAll(search, pageable);
     }
 
     @Override

@@ -38,8 +38,8 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByEmail(String email) { return jpaRepository.findByEmail(email).map(mapper::toDomain); }
 
     @Override
-    public Page<User> findAll(Pageable pageable) {
-        return jpaRepository.findAll(pageable).map(mapper::toDomain);
+    public Page<User> findAll(String search, Pageable pageable) {
+        return jpaRepository.findAll(search, pageable).map(mapper::toDomain);
     }
 
     @Override

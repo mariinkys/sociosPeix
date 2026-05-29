@@ -52,8 +52,8 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Page<Member> findAll(Pageable pageable) {
-        return jpaRepository.findAll(pageable).map(mapper::toDomain);
+    public Page<Member> findAll(String search, Pageable pageable) {
+        return jpaRepository.findAll(search, pageable).map(mapper::toDomain);
     }
 
     @Override
