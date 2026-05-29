@@ -16,8 +16,8 @@ public record MemberResponse(
         LocalDate birthdate,
         String phone,
         String notes,
-        String gender,
-        String country,
+        Integer genderId,
+        Integer countryId,
         LocalDateTime createdAt
 ) {
     public static MemberResponse from(Member member) {
@@ -31,8 +31,8 @@ public record MemberResponse(
                 member.getBirthdate(),
                 member.getPhone(),
                 member.getNotes(),
-                member.getGender()  != null ? member.getGender().getName()  : null,
-                member.getCountry() != null ? member.getCountry().getName() : null,
+                member.getGender()  != null ? member.getGender().getId()  : null,
+                member.getCountry() != null ? member.getCountry().getId() : null,
                 member.getCreatedAt()
         );
     }
