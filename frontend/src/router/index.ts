@@ -47,11 +47,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
-
-  // On first navigation, restore session from cookie
-  if (!auth.isAuthenticated && !auth.loading) {
-    await auth.fetchCurrentUser()
-  }
+  await auth.init()
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
     return { name: 'Login', query: { redirect: to.fullPath } }

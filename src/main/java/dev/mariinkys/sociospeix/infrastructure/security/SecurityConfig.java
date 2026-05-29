@@ -1,6 +1,7 @@
 package dev.mariinkys.sociospeix.infrastructure.security;
 
 import dev.mariinkys.sociospeix.infrastructure.security.filter.JwtAuthFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +44,24 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex
+                        // Unauthenticated → 401 (no valid token)
+                        .authenticationEntryPoint((_, response, _) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"status\":401,\"message\":\"Authentication required\"}"
+                            );
+                        })
+                        // Authenticated but wrong role → 403
+                        .accessDeniedHandler((_, response, _) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"status\":403,\"message\":\"Access denied\"}"
+                            );
+                        })
+                )
                 .headers(headers -> headers
                         .contentTypeOptions(Customizer.withDefaults())
                         .frameOptions(Customizer.withDefaults())
