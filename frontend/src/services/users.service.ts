@@ -1,4 +1,3 @@
-// services/users.service.ts
 import api from '@/api/axios'
 import type { PageResponse, PaginatedParams } from '@/types/common.types'
 import type { UserResponse } from '@/types/user.types'

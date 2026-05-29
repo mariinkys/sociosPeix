@@ -3,6 +3,8 @@ package dev.mariinkys.sociospeix.infrastructure.persistence.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -48,6 +50,14 @@ public class MemberJpaEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "member_interests",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns = @JoinColumn(name = "interest_id")
+    )
+    private List<InterestJpaEntity> interests = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -91,4 +101,7 @@ public class MemberJpaEntity {
     public CountryJpaEntity getCountry() { return country; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public List<InterestJpaEntity> getInterests() { return interests; }
+    public void setInterests(List<InterestJpaEntity> interests) { this.interests = interests; }
 }

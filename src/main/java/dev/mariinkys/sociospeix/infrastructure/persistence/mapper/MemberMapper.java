@@ -2,11 +2,14 @@ package dev.mariinkys.sociospeix.infrastructure.persistence.mapper;
 
 import dev.mariinkys.sociospeix.domain.model.Country;
 import dev.mariinkys.sociospeix.domain.model.Gender;
+import dev.mariinkys.sociospeix.domain.model.Interest;
 import dev.mariinkys.sociospeix.domain.model.Member;
 import dev.mariinkys.sociospeix.infrastructure.persistence.entity.CountryJpaEntity;
 import dev.mariinkys.sociospeix.infrastructure.persistence.entity.GenderJpaEntity;
 import dev.mariinkys.sociospeix.infrastructure.persistence.entity.MemberJpaEntity;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class MemberMapper {
@@ -19,11 +22,29 @@ public class MemberMapper {
                 ? new Country(entity.getCountry().getId(), entity.getCountry().getName())
                 : null;
 
+        List<Interest> interests = entity.getInterests()
+                .stream()
+                .map(i -> new Interest(
+                        i.getId(),
+                        i.getName(),
+                        i.getDescription()
+                ))
+                .toList();
+
         return new Member(
-                entity.getId(), entity.getName(), entity.getSurname(),
-                entity.getSecondSurname(), entity.getEmail(), entity.getBirthdate(),
-                entity.getPhone(), entity.getNotes(), gender, country,
-                entity.getCreatedAt(), entity.getUpdatedAt()
+                entity.getId(),
+                entity.getName(),
+                entity.getSurname(),
+                entity.getSecondSurname(),
+                entity.getEmail(),
+                entity.getBirthdate(),
+                entity.getPhone(),
+                entity.getNotes(),
+                gender,
+                country,
+                interests,
+                entity.getCreatedAt(),
+                entity.getUpdatedAt()
         );
     }
 

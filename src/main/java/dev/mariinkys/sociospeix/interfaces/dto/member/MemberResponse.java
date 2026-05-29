@@ -1,9 +1,11 @@
 package dev.mariinkys.sociospeix.interfaces.dto.member;
 
 import dev.mariinkys.sociospeix.domain.model.Member;
+import dev.mariinkys.sociospeix.interfaces.dto.interest.InterestResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record MemberResponse(
@@ -18,7 +20,8 @@ public record MemberResponse(
         String notes,
         Integer genderId,
         Integer countryId,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        List<InterestResponse> interests
 ) {
     public static MemberResponse from(Member member) {
         return new MemberResponse(
@@ -33,7 +36,8 @@ public record MemberResponse(
                 member.getNotes(),
                 member.getGender()  != null ? member.getGender().getId()  : null,
                 member.getCountry() != null ? member.getCountry().getId() : null,
-                member.getCreatedAt()
+                member.getCreatedAt(),
+                member.getInterests().stream().map(InterestResponse::from).toList()
         );
     }
 }

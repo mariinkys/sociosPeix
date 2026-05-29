@@ -2,6 +2,7 @@ package dev.mariinkys.sociospeix.domain.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public class Member {
@@ -19,6 +20,8 @@ public class Member {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private final List<Interest> interests;
+
     // For creating a new member
     public Member(String name, String surname, String secondSurname,
                   String email, LocalDate birthdate, String phone, String notes, Gender gender, Country country) {
@@ -31,12 +34,14 @@ public class Member {
         this.birthdate = birthdate;
         this.phone = phone;
         this.notes = notes;
+
+        this.interests = List.of();
     }
 
     // For reconstructing from DB
     public Member(UUID id, String name, String surname, String secondSurname,
                   String email, LocalDate birthdate, String phone, String notes,
-                  Gender gender, Country country,
+                  Gender gender, Country country, List<Interest> interests,
                   LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
@@ -50,6 +55,8 @@ public class Member {
         this.country = country;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+
+        this.interests = interests != null ? interests : List.of();
     }
 
     public String getFullName() {
@@ -60,7 +67,14 @@ public class Member {
                                      String email, LocalDate birthdate, String phone,
                                      String notes, Gender gender, Country country) {
         return new Member(this.id, name, surname, secondSurname, email, birthdate,
-                phone, notes, gender, country, this.createdAt, LocalDateTime.now());
+                phone, notes, gender, country, this.interests, this.createdAt, LocalDateTime.now());
+    }
+
+    public Member withInterests(List<Interest> interests) {
+        return new Member(this.id, this.name, this.surname, this.secondSurname,
+                this.email, this.birthdate, this.phone, this.notes,
+                this.gender, this.country, interests,
+                this.createdAt, this.updatedAt);
     }
 
     public UUID getId() { return id; }
@@ -75,4 +89,6 @@ public class Member {
     public String getNotes() { return notes; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public List<Interest> getInterests() { return interests; }
 }

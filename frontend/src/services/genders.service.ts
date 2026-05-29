@@ -1,4 +1,3 @@
-// services/users.service.ts
 import api from '@/api/axios'
 import type { GenderResponse } from '@/types/gender.types'
 

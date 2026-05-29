@@ -1,3 +1,5 @@
+import type { InterestResponse } from './interest.types'
+
 export interface MemberResponse {
   id: string
   name: string
@@ -10,6 +12,9 @@ export interface MemberResponse {
   notes: string
   genderId: number
   countryId: number
+
+  interests: InterestResponse[]
+
   createdAt: string
 }
 
@@ -23,6 +28,8 @@ export interface MemberCreatePayload {
   notes: string | null
   genderId: number | null
   countryId: number | null
+
+  interestIds: number[]
 }
 
 export interface MemberUpdatePayload {
@@ -35,4 +42,6 @@ export interface MemberUpdatePayload {
   notes: string | null
   genderId: number | null
   countryId: number | null
+
+  interestIds: number[]
 }

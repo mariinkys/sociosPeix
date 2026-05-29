@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 public record MemberRequest(
         @NotBlank(message = "Name is required")
         @Size(max = 100, message = "Name must not exceed 100 characters")
@@ -28,5 +30,7 @@ public record MemberRequest(
         String notes,
 
         Integer genderId,
-        Integer countryId
+        Integer countryId,
+
+        List<Integer> interestIds
 ) {}

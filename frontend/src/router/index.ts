@@ -38,6 +38,24 @@ const routes = [
     component: () => import('@/views/members/UpsertView.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/interests',
+    name: 'Interests',
+    component: () => import('@/views/interests/ListView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/interests/new',
+    name: 'New Interest',
+    component: () => import('@/views/interests/UpsertView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/interests/:id/edit',
+    name: 'Update Interest',
+    component: () => import('@/views/interests/UpsertView.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

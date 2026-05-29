@@ -57,7 +57,7 @@ public class MemberController {
         var member = memberUseCase.createMember(
                 request.name(), request.surname(), request.secondSurname(),
                 request.email(), request.birthdate(), request.phone(), request.notes(),
-                request.genderId(), request.countryId()
+                request.genderId(), request.countryId(), request.interestIds()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(MemberResponse.from(member));
     }
@@ -68,7 +68,7 @@ public class MemberController {
         var member = memberUseCase.updateMember(
                 id, request.name(), request.surname(), request.secondSurname(),
                 request.email(), request.birthdate(), request.phone(), request.notes(),
-                request.genderId(), request.countryId()
+                request.genderId(), request.countryId(), request.interestIds()
         );
         return ResponseEntity.ok(MemberResponse.from(member));
     }

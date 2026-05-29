@@ -14,4 +14,6 @@ public interface MemberRepository {
     Page<Member> findAll(String search, Pageable pageable);
     List<Member> findByBirthday(int day, int month);
     void deleteById(UUID id);
+
+    void syncInterests(UUID memberId, List<Integer> interestIds);
 }

@@ -14,6 +14,7 @@ import { membersService } from '@/services/members.service'
 import type { MemberCreatePayload, MemberUpdatePayload } from '@/types/member.types'
 import CountrySelect from '@/components/country/SelectorComponent.vue'
 import GenderSelect from '@/components/gender/SelectorComponent.vue'
+import InterestsSelect from '@/components/interest/MultiSelect.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -34,6 +35,7 @@ const model = ref<MemberCreatePayload>({
   notes: null,
   genderId: null,
   countryId: null,
+  interestIds: [],
 })
 
 const resolver = ({ values }: FormResolverOptions) => {
@@ -118,6 +120,7 @@ onMounted(async () => {
       notes: member.notes,
       genderId: member.genderId,
       countryId: member.countryId,
+      interestIds: member.interests.map((i) => i.id),
     }
   } catch {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load member', life: 3000 })
@@ -129,216 +132,252 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="p-6 max-w-2xl mx-auto space-y-6">
-    <div class="flex items-center gap-3">
-      <Button
-        icon="pi pi-arrow-left"
-        severity="secondary"
-        text
-        rounded
-        @click="router.push('/members')"
-        aria-label="Go back"
-      />
-      <div>
-        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-          {{ isEdit ? 'Edit Member' : 'New Member' }}
-        </h1>
-        <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-          {{
-            isEdit
-              ? "Update the member's details below"
-              : 'Fill in the details to create a new member'
-          }}
-        </p>
-      </div>
-    </div>
-
+  <div class="p-6 space-y-6">
     <div v-if="fetchLoading" class="flex items-center justify-center py-24">
       <i class="pi pi-spinner pi-spin text-2xl text-surface-400" />
     </div>
 
-    <Card v-else class="border border-surface-200 dark:border-surface-700 shadow-sm">
-      <template #content>
-        <Form
-          v-slot="$form"
-          :initialValues="model"
-          :resolver
-          :validateOnBlur="true"
-          :validateOnValueUpdate="true"
-          class="p-2 space-y-6"
-          @submit="onSubmit"
-        >
-          <div class="space-y-4">
-            <h2
-              class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
-            >
-              Personal Details
-            </h2>
+    <Form
+      v-else
+      v-slot="$form"
+      :initialValues="model"
+      :resolver
+      :validateOnBlur="true"
+      :validateOnValueUpdate="true"
+      class="space-y-6"
+      @submit="onSubmit"
+    >
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-3">
+          <Button
+            icon="pi pi-arrow-left"
+            severity="secondary"
+            text
+            rounded
+            @click="router.push('/members')"
+            aria-label="Go back"
+          />
+          <div>
+            <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
+              {{ isEdit ? 'Edit Member' : 'New Member' }}
+            </h1>
+            <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
+              {{
+                isEdit
+                  ? "Update the member's details below"
+                  : 'Fill in the details to create a new member'
+              }}
+            </p>
+          </div>
+        </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField v-slot="$field" name="name" class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                  Name <span class="text-red-500">*</span>
-                </label>
-                <InputText
-                  v-model="model.name"
-                  placeholder="Enter name"
-                  :invalid="$field?.invalid"
-                  fluid
-                />
-                <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
-                  {{ $field.error?.message }}
-                </Message>
-              </FormField>
+        <div class="flex items-center gap-2 shrink-0">
+          <Button label="Cancel" severity="secondary" outlined @click="router.push('/members')" />
+          <Button
+            type="submit"
+            :label="isEdit ? 'Save Changes' : 'Create Member'"
+            :icon="isEdit ? 'pi pi-check' : 'pi pi-user-plus'"
+            iconPos="right"
+            :loading="loading"
+            :disabled="!$form.valid"
+          />
+        </div>
+      </div>
 
-              <FormField v-slot="$field" name="surname" class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                  Surname <span class="text-red-500">*</span>
-                </label>
-                <InputText
-                  v-model="model.surname"
-                  placeholder="Enter surname"
-                  :invalid="$field?.invalid"
-                  fluid
-                />
-                <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
-                  {{ $field.error?.message }}
-                </Message>
-              </FormField>
+      <!-- Two-column grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <!-- Left Side-->
+        <Card class="lg:col-span-2 border border-surface-200 dark:border-surface-700 shadow-sm">
+          <template #content>
+            <div class="p-2 space-y-6">
+              <div class="space-y-4">
+                <h2
+                  class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
+                >
+                  Personal Details
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField v-slot="$field" name="name" class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                      Name <span class="text-red-500">*</span>
+                    </label>
+                    <InputText
+                      v-model="model.name"
+                      placeholder="Enter name"
+                      :invalid="$field?.invalid"
+                      fluid
+                    />
+                    <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                      {{ $field.error?.message }}
+                    </Message>
+                  </FormField>
+
+                  <FormField v-slot="$field" name="surname" class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                      Surname <span class="text-red-500">*</span>
+                    </label>
+                    <InputText
+                      v-model="model.surname"
+                      placeholder="Enter surname"
+                      :invalid="$field?.invalid"
+                      fluid
+                    />
+                    <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                      {{ $field.error?.message }}
+                    </Message>
+                  </FormField>
+                </div>
+
+                <FormField v-slot="$field" name="secondSurname" class="flex flex-col gap-1.5">
+                  <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                    Second Surname
+                  </label>
+                  <InputText
+                    v-model="model.secondSurname"
+                    placeholder="Enter second surname"
+                    :invalid="$field?.invalid"
+                    fluid
+                  />
+                  <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                    {{ $field.error?.message }}
+                  </Message>
+                </FormField>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField v-slot="$field" name="birthdate" class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                      Birthdate
+                    </label>
+                    <InputText
+                      v-model="model.birthdate"
+                      type="date"
+                      :invalid="$field?.invalid"
+                      fluid
+                    />
+                    <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                      {{ $field.error?.message }}
+                    </Message>
+                  </FormField>
+
+                  <FormField v-slot="$field" name="genderId" class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                      Gender
+                    </label>
+                    <GenderSelect v-model="model.genderId" :invalid="$field?.invalid" />
+                    <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                      {{ $field.error?.message }}
+                    </Message>
+                  </FormField>
+                </div>
+              </div>
+
+              <div class="border-t border-surface-100 dark:border-surface-800" />
+
+              <div class="space-y-4">
+                <h2
+                  class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
+                >
+                  Contact
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField v-slot="$field" name="email" class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                      Email <span class="text-red-500">*</span>
+                    </label>
+                    <InputText
+                      v-model="model.email"
+                      type="email"
+                      placeholder="Enter email"
+                      autocomplete="email"
+                      :invalid="$field?.invalid"
+                      fluid
+                    />
+                    <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                      {{ $field.error?.message }}
+                    </Message>
+                  </FormField>
+
+                  <FormField v-slot="$field" name="phone" class="flex flex-col gap-1.5">
+                    <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                      Phone
+                    </label>
+                    <InputText
+                      v-model="model.phone"
+                      type="tel"
+                      placeholder="Enter phone"
+                      :invalid="$field?.invalid"
+                      fluid
+                    />
+                    <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                      {{ $field.error?.message }}
+                    </Message>
+                  </FormField>
+                </div>
+
+                <FormField v-slot="$field" name="countryId" class="flex flex-col gap-1.5">
+                  <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                    Country
+                  </label>
+                  <CountrySelect v-model="model.countryId" :invalid="$field?.invalid" />
+                  <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                    {{ $field.error?.message }}
+                  </Message>
+                </FormField>
+              </div>
+
+              <div class="border-t border-surface-100 dark:border-surface-800" />
+
+              <div class="space-y-4">
+                <h2
+                  class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
+                >
+                  Notes
+                </h2>
+
+                <FormField v-slot="$field" name="notes" class="flex flex-col gap-1.5">
+                  <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                    Notes
+                  </label>
+                  <Textarea
+                    v-model="model.notes"
+                    placeholder="Any additional notes"
+                    :invalid="$field?.invalid"
+                    rows="4"
+                    fluid
+                  />
+                  <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                    {{ $field.error?.message }}
+                  </Message>
+                </FormField>
+              </div>
             </div>
+          </template>
+        </Card>
 
-            <FormField v-slot="$field" name="secondSurname" class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Second Surname
-              </label>
-              <InputText
-                v-model="model.secondSurname"
-                placeholder="Enter second surname"
-                :invalid="$field?.invalid"
-                fluid
-              />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
-                {{ $field.error?.message }}
-              </Message>
-            </FormField>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField v-slot="$field" name="birthdate" class="flex flex-col gap-1.5">
+        <!-- Right Side -->
+        <Card class="border border-surface-200 dark:border-surface-700 shadow-sm">
+          <template #content>
+            <div class="p-2 space-y-4">
+              <h2
+                class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
+              >
+                Interests
+              </h2>
+              <div class="flex flex-col gap-1.5">
                 <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                  Birthdate
+                  Interests
                 </label>
-                <InputText v-model="model.birthdate" type="date" :invalid="$field?.invalid" fluid />
-                <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
-                  {{ $field.error?.message }}
-                </Message>
-              </FormField>
-
-              <FormField v-slot="$field" name="genderId" class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                  Gender
-                </label>
-                <GenderSelect v-model="model.genderId" :invalid="$field?.invalid" />
-                <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
-                  {{ $field.error?.message }}
-                </Message>
-              </FormField>
+                <InterestsSelect v-model="model.interestIds" />
+                <p class="text-xs text-surface-400 dark:text-surface-500">
+                  Select one or more interests for this member
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div class="border-t border-surface-100 dark:border-surface-800"></div>
-
-          <div class="space-y-4">
-            <h2
-              class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
-            >
-              Contact
-            </h2>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField v-slot="$field" name="email" class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                  Email <span class="text-red-500">*</span>
-                </label>
-                <InputText
-                  v-model="model.email"
-                  type="email"
-                  placeholder="Enter email"
-                  autocomplete="email"
-                  :invalid="$field?.invalid"
-                  fluid
-                />
-                <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
-                  {{ $field.error?.message }}
-                </Message>
-              </FormField>
-
-              <FormField v-slot="$field" name="phone" class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                  Phone
-                </label>
-                <InputText
-                  v-model="model.phone"
-                  type="tel"
-                  placeholder="Enter phone"
-                  :invalid="$field?.invalid"
-                  fluid
-                />
-                <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
-                  {{ $field.error?.message }}
-                </Message>
-              </FormField>
-            </div>
-
-            <FormField v-slot="$field" name="countryId" class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Country
-              </label>
-              <CountrySelect v-model="model.countryId" :invalid="$field?.invalid" />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
-                {{ $field.error?.message }}
-              </Message>
-            </FormField>
-          </div>
-
-          <div class="border-t border-surface-100 dark:border-surface-800" />
-
-          <div class="space-y-4">
-            <h2
-              class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
-            >
-              Notes
-            </h2>
-
-            <FormField v-slot="$field" name="notes" class="flex flex-col gap-1.5">
-              <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Notes
-              </label>
-              <Textarea
-                v-model="model.notes"
-                placeholder="Any additional notes"
-                :invalid="$field?.invalid"
-                rows="4"
-                fluid
-              />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
-                {{ $field.error?.message }}
-              </Message>
-            </FormField>
-          </div>
-
-          <div class="flex items-center justify-end gap-3 pt-2">
-            <Button label="Cancel" severity="secondary" outlined @click="router.push('/members')" />
-            <Button
-              type="submit"
-              :label="isEdit ? 'Save Changes' : 'Create Member'"
-              :icon="isEdit ? 'pi pi-check' : 'pi pi-user-plus'"
-              iconPos="right"
-              :loading="loading"
-              :disabled="!$form.valid"
-            />
-          </div>
-        </Form>
-      </template>
-    </Card>
+          </template>
+        </Card>
+      </div>
+    </Form>
   </div>
 </template>

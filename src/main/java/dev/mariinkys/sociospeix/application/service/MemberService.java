@@ -37,11 +37,16 @@ public class MemberService implements MemberUseCase {
     @Transactional
     public Member createMember(String name, String surname, String secondSurname, String email,
                                String birthdate, String phone, String notes,
-                               Integer genderId, Integer countryId) {
-        var member = new Member(name, surname, nullToEmpty(secondSurname), email,
-                parseDate(birthdate), nullToEmpty(phone), nullToEmpty(notes),
-                resolveGender(genderId), resolveCountry(countryId));
-        return memberRepository.save(member);
+                               Integer genderId, Integer countryId, List<Integer> interestIds) {
+        var member = memberRepository.save(
+                new Member(name, surname, nullToEmpty(secondSurname), email,
+                        parseDate(birthdate), nullToEmpty(phone), nullToEmpty(notes),
+                        resolveGender(genderId), resolveCountry(countryId))
+        );
+        if (interestIds != null && !interestIds.isEmpty()) {
+            memberRepository.syncInterests(member.getId(), interestIds);
+        }
+        return memberRepository.findById(member.getId()).orElseThrow();
     }
 
     @Override
@@ -68,13 +73,15 @@ public class MemberService implements MemberUseCase {
     @Transactional
     public Member updateMember(UUID id, String name, String surname, String secondSurname,
                                String email, String birthdate, String phone, String notes,
-                               Integer genderId, Integer countryId) {
+                               Integer genderId, Integer countryId, List<Integer> interestIds) {
         Member existing = getMemberById(id);
-        return memberRepository.save(
+        memberRepository.save(
                 existing.withUpdatedDetails(name, surname, nullToEmpty(secondSurname),
                         email, parseDate(birthdate), nullToEmpty(phone), nullToEmpty(notes),
                         resolveGender(genderId), resolveCountry(countryId))
         );
+        memberRepository.syncInterests(id, interestIds != null ? interestIds : List.of());
+        return memberRepository.findById(id).orElseThrow();
     }
 
     @Override

@@ -89,6 +89,18 @@ const isActive = (path: string) => route.path === path
           >
             Members
           </RouterLink>
+
+          <RouterLink
+            to="/interests"
+            :class="[
+              'px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-150',
+              isActive('/interests')
+                ? 'bg-surface-100 dark:bg-surface-800 text-surface-900 dark:text-surface-0'
+                : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
+            ]"
+          >
+            Interests
+          </RouterLink>
         </nav>
       </div>
 
@@ -181,6 +193,20 @@ const isActive = (path: string) => route.path === path
         >
           <i class="pi pi-users mr-2 text-xs"></i>
           Members
+        </RouterLink>
+
+        <RouterLink
+          to="/interests"
+          :class="[
+            'flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150',
+            isActive('/interests')
+              ? 'bg-surface-100 dark:bg-surface-800 text-surface-900 dark:text-surface-0'
+              : 'text-surface-600 dark:text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-800',
+          ]"
+          @click="menuOpen = false"
+        >
+          <i class="pi pi-users mr-2 text-xs"></i>
+          Interests
         </RouterLink>
 
         <div

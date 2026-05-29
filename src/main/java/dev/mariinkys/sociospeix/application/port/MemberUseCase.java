@@ -10,12 +10,12 @@ import java.util.UUID;
 public interface MemberUseCase {
     Member createMember(String name, String surname, String secondSurname, String email,
                         String birthdate, String phone, String notes,
-                        Integer genderId, Integer countryId);
+                        Integer genderId, Integer countryId, List<Integer> interestIds);
     Member getMemberById(UUID id);
     Page<Member> getAllMembers(String search, Pageable pageable);
     List<Member> getTodaysBirthdays();
     Member updateMember(UUID id, String name, String surname, String secondSurname,
                         String email, String birthdate, String phone, String notes,
-                        Integer genderId, Integer countryId);
+                        Integer genderId, Integer countryId, List<Integer> interestIds);
     void deleteMember(UUID id);
 }

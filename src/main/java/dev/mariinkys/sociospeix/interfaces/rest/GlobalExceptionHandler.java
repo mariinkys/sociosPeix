@@ -1,9 +1,6 @@
 package dev.mariinkys.sociospeix.interfaces.rest;
 
-import dev.mariinkys.sociospeix.application.exception.EmailAlreadyInUseException;
-import dev.mariinkys.sociospeix.application.exception.InvalidRefreshTokenException;
-import dev.mariinkys.sociospeix.application.exception.MemberNotFoundException;
-import dev.mariinkys.sociospeix.application.exception.UserNotFoundException;
+import dev.mariinkys.sociospeix.application.exception.*;
 import dev.mariinkys.sociospeix.interfaces.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,6 +91,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MemberNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleMemberNotFound(MemberNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(404, ex.getMessage()));
+    }
+
+    @ExceptionHandler(InterestNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleInterestNotFound(InterestNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(404, ex.getMessage()));
