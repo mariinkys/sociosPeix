@@ -9,6 +9,8 @@ import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import ConfirmDialog from 'primevue/confirmdialog'
+import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { membersService } from '@/services/members.service'
 import type { MemberCreatePayload, MemberUpdatePayload } from '@/types/member.types'
@@ -19,11 +21,13 @@ import InterestsSelect from '@/components/interest/MultiSelect.vue'
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
+const confirm = useConfirm()
 
 const memberId = computed(() => route.params.id as string | undefined)
 const isEdit = computed(() => !!memberId.value)
 const loading = ref(false)
 const fetchLoading = ref(!!route.params.id)
+const deleteLoading = ref(false)
 
 const model = ref<MemberCreatePayload>({
   name: '',
@@ -37,6 +41,31 @@ const model = ref<MemberCreatePayload>({
   countryId: null,
   interestIds: [],
 })
+
+async function fetchMember() {
+  if (!isEdit.value) return
+  fetchLoading.value = true
+  try {
+    const member = await membersService.getById(memberId.value!)
+    model.value = {
+      name: member.name,
+      surname: member.surname,
+      secondSurname: member.secondSurname,
+      email: member.email,
+      birthdate: member.birthdate,
+      phone: member.phone,
+      notes: member.notes,
+      genderId: member.genderId,
+      countryId: member.countryId,
+      interestIds: member.interests.map((i) => i.id),
+    }
+  } catch {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load member', life: 3000 })
+    router.push('/members')
+  } finally {
+    fetchLoading.value = false
+  }
+}
 
 const resolver = ({ values }: FormResolverOptions) => {
   const errors: Record<string, { message: string }[]> = {}
@@ -105,29 +134,40 @@ async function onSubmit({ valid }: FormSubmitEvent) {
   }
 }
 
+function confirmDelete() {
+  confirm.require({
+    message: `Are you sure you want to delete this member? This action cannot be undone.`,
+    header: 'Delete Member',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: { label: 'Cancel', severity: 'secondary', outlined: true },
+    acceptProps: { label: 'Delete', severity: 'danger' },
+    accept: async () => {
+      deleteLoading.value = true
+      try {
+        await membersService.delete(memberId.value!)
+        toast.add({
+          severity: 'success',
+          summary: 'Deleted',
+          detail: 'Member deleted successfully.',
+          life: 3000,
+        })
+        router.push('/members')
+      } catch {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete member. Please try again.',
+          life: 3000,
+        })
+      } finally {
+        deleteLoading.value = false
+      }
+    },
+  })
+}
+
 onMounted(async () => {
-  if (!isEdit.value) return
-  fetchLoading.value = true
-  try {
-    const member = await membersService.getById(memberId.value!)
-    model.value = {
-      name: member.name,
-      surname: member.surname,
-      secondSurname: member.secondSurname,
-      email: member.email,
-      birthdate: member.birthdate,
-      phone: member.phone,
-      notes: member.notes,
-      genderId: member.genderId,
-      countryId: member.countryId,
-      interestIds: member.interests.map((i) => i.id),
-    }
-  } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load member', life: 3000 })
-    router.push('/members')
-  } finally {
-    fetchLoading.value = false
-  }
+  fetchMember()
 })
 </script>
 
@@ -147,6 +187,8 @@ onMounted(async () => {
       class="space-y-6"
       @submit="onSubmit"
     >
+      <ConfirmDialog />
+
       <div class="flex items-center justify-between gap-3 flex-wrap">
         <div class="flex items-center gap-3">
           <Button
@@ -180,6 +222,15 @@ onMounted(async () => {
             iconPos="right"
             :loading="loading"
             :disabled="!$form.valid"
+          />
+          <Button
+            v-if="isEdit"
+            icon="pi pi-trash"
+            severity="danger"
+            outlined
+            :loading="deleteLoading"
+            aria-label="Delete member"
+            @click="confirmDelete"
           />
         </div>
       </div>
