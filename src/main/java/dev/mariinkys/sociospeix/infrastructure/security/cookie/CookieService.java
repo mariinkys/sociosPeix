@@ -12,13 +12,16 @@ public class CookieService {
     @Value("${app.cookie.secure}")
     private boolean secure;
 
+    @Value("${security.jwt.expiration}")
+    private long jwtExpirationMs;
+
     public ResponseCookie createAccessTokenCookie(String token) {
         return ResponseCookie.from("access_token", token)
                 .httpOnly(true)
                 .secure(secure)
                 .sameSite("Strict")
                 .path("/")
-                .maxAge(Duration.ofMinutes(15))
+                .maxAge(Duration.ofMillis(jwtExpirationMs))
                 .build();
     }
 
