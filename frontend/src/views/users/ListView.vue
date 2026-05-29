@@ -4,6 +4,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
 import { useToast } from 'primevue/usetoast'
+import InputText from 'primevue/inputtext'
 import type { DataTableSortEvent, DataTablePageEvent } from 'primevue/datatable'
 import { usersService } from '@/services/users.service'
 import type { UserResponse } from '@/types/user.types'
@@ -13,6 +14,9 @@ const toast = useToast()
 const users = ref<UserResponse[]>([])
 const loading = ref(false)
 const totalElements = ref(0)
+
+const search = ref('')
+let debounceTimer: ReturnType<typeof setTimeout>
 
 const page = ref(0)
 const size = ref(10)
@@ -27,6 +31,7 @@ async function fetchUsers() {
       size: size.value,
       sortBy: sortBy.value,
       sortDir: sortDir.value,
+      search: search.value || undefined,
     })
     users.value = data.content
     totalElements.value = data.totalElements
@@ -57,16 +62,43 @@ function onSort(event: DataTableSortEvent) {
   }
 }
 
+function onSearch() {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    page.value = 0
+    fetchUsers()
+  }, 500)
+}
+
 onMounted(fetchUsers)
 </script>
 
 <template>
   <div class="p-6 space-y-4">
-    <div>
-      <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">Users</h1>
-      <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-        {{ totalElements }} total users
-      </p>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">Users</h1>
+        <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
+          {{ totalElements }} total users
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="relative flex-1 sm:flex-none">
+          <InputText
+            v-model="search"
+            placeholder="Search users..."
+            class="pl-9 w-full sm:w-56"
+            @input="onSearch"
+          />
+        </div>
+        <!-- <Button
+          label="New Member"
+          icon="pi pi-plus"
+          class="shrink-0"
+          @click="router.push('/members/new')"
+        /> -->
+      </div>
     </div>
 
     <DataTable

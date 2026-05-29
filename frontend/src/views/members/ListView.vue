@@ -2,8 +2,11 @@
 import { ref, onMounted } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import { useToast } from 'primevue/usetoast'
 import Button from 'primevue/button'
+import ConfirmDialog from 'primevue/confirmdialog'
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
+import InputText from 'primevue/inputtext'
 import type {
   DataTableSortEvent,
   DataTablePageEvent,
@@ -14,11 +17,15 @@ import type { MemberResponse } from '@/types/member.types'
 import { useRouter } from 'vue-router'
 
 const toast = useToast()
+const confirm = useConfirm()
 const router = useRouter()
 
 const members = ref<MemberResponse[]>([])
 const loading = ref(false)
 const totalElements = ref(0)
+
+const search = ref('')
+let debounceTimer: ReturnType<typeof setTimeout>
 
 const page = ref(0)
 const size = ref(10)
@@ -33,6 +40,7 @@ async function fetchMembers() {
       size: size.value,
       sortBy: sortBy.value,
       sortDir: sortDir.value,
+      search: search.value || undefined,
     })
     members.value = data.content
     totalElements.value = data.totalElements
@@ -68,12 +76,61 @@ function onRowClick(event: DataTableRowClickEvent) {
   router.push(`/members/${member.id}/edit`)
 }
 
+function confirmDelete(event: Event, member: MemberResponse) {
+  // Stop the click from bubbling up to onRowClick
+  event.stopPropagation()
+
+  confirm.require({
+    message: `Are you sure you want to delete ${member.fullName}? This action cannot be undone.`,
+    header: 'Delete Member',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancel',
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: 'Delete',
+      severity: 'danger',
+    },
+    accept: async () => {
+      try {
+        await membersService.delete(member.id)
+        toast.add({
+          severity: 'success',
+          summary: 'Deleted',
+          detail: `${member.fullName} has been deleted.`,
+          life: 3000,
+        })
+        fetchMembers()
+      } catch {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete member. Please try again.',
+          life: 3000,
+        })
+      }
+    },
+  })
+}
+
+function onSearch() {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    page.value = 0
+    fetchMembers()
+  }, 500)
+}
+
 onMounted(fetchMembers)
 </script>
 
 <template>
   <div class="p-6 space-y-4">
-    <div class="flex items-center justify-between">
+    <ConfirmDialog />
+
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">Members</h1>
         <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
@@ -81,7 +138,22 @@ onMounted(fetchMembers)
         </p>
       </div>
 
-      <Button label="New Member" icon="pi pi-plus" @click="router.push('/members/new')" />
+      <div class="flex items-center gap-2">
+        <div class="relative flex-1 sm:flex-none">
+          <InputText
+            v-model="search"
+            placeholder="Search members..."
+            class="pl-9 w-full sm:w-56"
+            @input="onSearch"
+          />
+        </div>
+        <Button
+          label="New Member"
+          icon="pi pi-plus"
+          class="shrink-0"
+          @click="router.push('/members/new')"
+        />
+      </div>
     </div>
 
     <DataTable
@@ -107,9 +179,11 @@ onMounted(fetchMembers)
             <div
               class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 flex items-center justify-center text-sm font-semibold shrink-0"
             >
-              {{ data.name.charAt(0).toUpperCase() }}
+              {{ data.fullName.charAt(0).toUpperCase() }}
             </div>
-            <span class="font-medium text-surface-900 dark:text-surface-0">{{ data.name }}</span>
+            <span class="font-medium text-surface-900 dark:text-surface-0">{{
+              data.fullName
+            }}</span>
           </div>
         </template>
       </Column>
@@ -120,17 +194,51 @@ onMounted(fetchMembers)
         </template>
       </Column>
 
-      <Column field="createdAt" header="Created At" sortable>
+      <Column field="phone" header="Phone" sortable>
         <template #body="{ data }: { data: MemberResponse }">
-          <span class="text-surface-500 dark:text-surface-400 text-sm">
+          <span class="text-surface-600 dark:text-surface-400">{{ data.phone }}</span>
+        </template>
+      </Column>
+
+      <Column field="birthdate" header="Birthdate" sortable>
+        <template #body="{ data }: { data: MemberResponse }">
+          <span v-if="data.birthdate" class="text-surface-500 dark:text-surface-400 text-sm">
             {{
-              new Date(data.createdAt).toLocaleDateString('en-GB', {
+              new Date(data.birthdate).toLocaleDateString('es-ES', {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
               })
             }}
           </span>
+        </template>
+      </Column>
+
+      <Column field="createdAt" header="Created At" sortable>
+        <template #body="{ data }: { data: MemberResponse }">
+          <span v-if="data.createdAt" class="text-surface-500 dark:text-surface-400 text-sm">
+            {{
+              new Date(data.createdAt).toLocaleDateString('es-ES', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })
+            }}
+          </span>
+        </template>
+      </Column>
+
+      <Column style="width: 4rem">
+        <template #body="{ data }: { data: MemberResponse }">
+          <Button
+            icon="pi pi-trash"
+            severity="danger"
+            text
+            rounded
+            size="small"
+            aria-label="Delete member"
+            @click="confirmDelete($event, data)"
+          />
         </template>
       </Column>
 

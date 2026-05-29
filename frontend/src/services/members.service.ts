@@ -23,6 +23,11 @@ class MembersService {
     const { data } = await api.put<MemberResponse>(`/api/members/${id}`, payload)
     return data
   }
+
+  async delete(id: string): Promise<void> {
+    const { data } = await api.delete<void>(`/api/members/${id}`)
+    return data
+  }
 }
 
 export const membersService = new MembersService()

@@ -12,4 +12,5 @@ export interface PaginatedParams {
   size?: number
   sortBy?: string
   sortDir?: 'asc' | 'desc'
+  search?: string
 }
