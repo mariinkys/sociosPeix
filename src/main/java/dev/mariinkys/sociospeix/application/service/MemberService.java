@@ -14,9 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
+
+import static dev.mariinkys.sociospeix.application.utils.CommonUtils.nullToEmpty;
+import static dev.mariinkys.sociospeix.application.utils.CommonUtils.parseDate;
 
 @Service
 public class MemberService implements MemberUseCase {
@@ -104,16 +106,4 @@ public class MemberService implements MemberUseCase {
                 .orElseThrow(() -> new IllegalArgumentException("Country not found with id: " + id));
     }
 
-    private String nullToEmpty(String value) {
-        return value == null ? "" : value;
-    }
-
-    private LocalDate parseDate(String date) {
-        if (date == null || date.isBlank()) return null;
-        try {
-            return LocalDate.parse(date);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date format. Expected yyyy-MM-dd");
-        }
-    }
 }

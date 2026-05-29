@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
+import static dev.mariinkys.sociospeix.application.utils.CommonUtils.nullToEmpty;
+
 @Service
 public class InterestService implements InterestUseCase {
 
@@ -20,7 +22,7 @@ public class InterestService implements InterestUseCase {
     @Override
     @Transactional
     public Interest createInterest(String name, String description) {
-        return interestRepository.save(new Interest(null, name, description));
+        return interestRepository.save(new Interest(null, name, nullToEmpty(description)));
     }
 
     @Override
@@ -40,7 +42,7 @@ public class InterestService implements InterestUseCase {
     @Transactional
     public Interest updateInterest(Integer id, String name, String description) {
         getInterestById(id); // throws if not found
-        return interestRepository.save(new Interest(id, name, description));
+        return interestRepository.save(new Interest(id, name, nullToEmpty(description)));
     }
 
     @Override
