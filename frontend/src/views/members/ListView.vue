@@ -3,11 +3,18 @@ import { ref, onMounted } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useToast } from 'primevue/usetoast'
-import type { DataTableSortEvent, DataTablePageEvent } from 'primevue/datatable'
+import Button from 'primevue/button'
+import type {
+  DataTableSortEvent,
+  DataTablePageEvent,
+  DataTableRowClickEvent,
+} from 'primevue/datatable'
 import { membersService } from '@/services/members.service'
 import type { MemberResponse } from '@/types/member.types'
+import { useRouter } from 'vue-router'
 
 const toast = useToast()
+const router = useRouter()
 
 const members = ref<MemberResponse[]>([])
 const loading = ref(false)
@@ -56,16 +63,25 @@ function onSort(event: DataTableSortEvent) {
   }
 }
 
+function onRowClick(event: DataTableRowClickEvent) {
+  const member = event.data as MemberResponse
+  router.push(`/members/${member.id}/edit`)
+}
+
 onMounted(fetchMembers)
 </script>
 
 <template>
   <div class="p-6 space-y-4">
-    <div>
-      <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">Members</h1>
-      <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-        {{ totalElements }} total members
-      </p>
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">Members</h1>
+        <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
+          {{ totalElements }} total members
+        </p>
+      </div>
+
+      <Button label="New Member" icon="pi pi-plus" @click="router.push('/members/new')" />
     </div>
 
     <DataTable
@@ -77,9 +93,11 @@ onMounted(fetchMembers)
       lazy
       paginator
       removableSort
+      row-hover
       paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
       currentPageReportTemplate="{first} to {last} of {totalRecords}"
       class="border border-surface-200 dark:border-surface-700 rounded-xl overflow-hidden"
+      @row-click="onRowClick"
       @page="onPage"
       @sort="onSort"
     >

@@ -26,6 +26,18 @@ const routes = [
     component: () => import('@/views/members/ListView.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/members/new',
+    name: 'New Member',
+    component: () => import('@/views/members/UpsertView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/members/:id/edit',
+    name: 'Update Member',
+    component: () => import('@/views/members/UpsertView.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({
