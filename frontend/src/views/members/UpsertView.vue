@@ -17,6 +17,7 @@ import type { MemberCreatePayload, MemberUpdatePayload } from '@/types/member.ty
 import CountrySelect from '@/components/country/SelectorComponent.vue'
 import GenderSelect from '@/components/gender/SelectorComponent.vue'
 import InterestsSelect from '@/components/interest/MultiSelect.vue'
+import MemberEmailsCard from '@/components/member/EmailsCard.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -334,9 +335,18 @@ onMounted(async () => {
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField v-slot="$field" name="email" class="flex flex-col gap-1.5">
-                    <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      Email <span class="text-red-500">*</span>
-                    </label>
+                    <div class="flex items-center justify-between w-full">
+                      <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                        Email <span class="text-red-500">*</span>
+                      </label>
+                      <i
+                        v-if="isEdit"
+                        v-tooltip.top="
+                          'Changing the email will hide previously sent emails, as they are matched by email address.'
+                        "
+                        class="pi pi-exclamation-triangle text-amber-500 text-xs cursor-default"
+                      ></i>
+                    </div>
                     <InputText
                       v-model="model.email"
                       type="email"
@@ -408,26 +418,30 @@ onMounted(async () => {
         </Card>
 
         <!-- Right Side -->
-        <Card class="border border-surface-200 dark:border-surface-700 shadow-sm">
-          <template #content>
-            <div class="p-2 space-y-4">
-              <h2
-                class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
-              >
-                Interests
-              </h2>
-              <div class="flex flex-col gap-1.5">
-                <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+        <div class="lg:col-span-1 space-y-6">
+          <Card class="border border-surface-200 dark:border-surface-700 shadow-sm">
+            <template #content>
+              <div class="p-2 space-y-4">
+                <h2
+                  class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
+                >
                   Interests
-                </label>
-                <InterestsSelect v-model="model.interestIds" />
-                <p class="text-xs text-surface-400 dark:text-surface-500">
-                  Select one or more interests for this member
-                </p>
+                </h2>
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                    Interests
+                  </label>
+                  <InterestsSelect v-model="model.interestIds" />
+                  <p class="text-xs text-surface-400 dark:text-surface-500">
+                    Select one or more interests for this member
+                  </p>
+                </div>
               </div>
-            </div>
-          </template>
-        </Card>
+            </template>
+          </Card>
+
+          <MemberEmailsCard v-if="isEdit && memberId" :memberId="memberId" />
+        </div>
       </div>
     </Form>
   </div>
