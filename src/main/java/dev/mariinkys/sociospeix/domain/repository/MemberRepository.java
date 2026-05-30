@@ -15,5 +15,10 @@ public interface MemberRepository {
     List<Member> findByBirthday(int day, int month);
     void deleteById(UUID id);
 
+    // For Interests Filtering...
     void syncInterests(UUID memberId, List<Integer> interestIds);
+
+    // For email sending
+    List<Member> findAllMembers();
+    List<Member> findAllByAnyInterestId(List<Integer> interestIds);
 }

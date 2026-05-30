@@ -37,4 +37,15 @@ public interface MemberJpaRepository extends JpaRepository<MemberJpaEntity, UUID
                                   @Param("interestIds") List<Integer> interestIds,
                                   @Param("interestCount") long interestCount,
                                   Pageable pageable);
+
+    @Query("SELECT m FROM MemberJpaEntity m")
+    List<MemberJpaEntity> findAllMembers();
+
+    @Query("""
+    SELECT DISTINCT m FROM MemberJpaEntity m
+    JOIN m.interests i
+    WHERE i.id IN :interestIds
+    """)
+    List<MemberJpaEntity> findAllByAnyInterestId(@Param("interestIds") List<Integer> interestIds);
+
 }

@@ -99,4 +99,30 @@ public class MemberRepositoryImpl implements MemberRepository {
         member.setInterests(new ArrayList<>(interests));
         jpaRepository.save(member);
     }
+
+    @Override
+    public List<Member> findAllMembers() {
+        return jpaRepository.findAllMembers().stream()
+                .map(entity -> {
+                    var interests = interestJpaRepository.findByMemberId(entity.getId())
+                            .stream()
+                            .map(e -> new Interest(e.getId(), e.getName(), e.getDescription()))
+                            .toList();
+                    return mapper.toDomain(entity).withInterests(interests);
+                })
+                .toList();
+    }
+
+    @Override
+    public List<Member> findAllByAnyInterestId(List<Integer> interestIds) {
+        return jpaRepository.findAllByAnyInterestId(interestIds).stream()
+                .map(entity -> {
+                    var interests = interestJpaRepository.findByMemberId(entity.getId())
+                            .stream()
+                            .map(e -> new Interest(e.getId(), e.getName(), e.getDescription()))
+                            .toList();
+                    return mapper.toDomain(entity).withInterests(interests);
+                })
+                .toList();
+    }
 }

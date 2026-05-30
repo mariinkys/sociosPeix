@@ -17,6 +17,7 @@ import type { MemberCreatePayload, MemberUpdatePayload } from '@/types/member.ty
 import CountrySelect from '@/components/country/SelectorComponent.vue'
 import GenderSelect from '@/components/gender/SelectorComponent.vue'
 import InterestsSelect from '@/components/interest/MultiSelect.vue'
+import MemberEmailsCard from '@/components/member/EmailsCard.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -429,6 +430,8 @@ onMounted(async () => {
           </template>
         </Card>
       </div>
+
+      <MemberEmailsCard v-if="isEdit && memberId" :memberId="memberId" />
     </Form>
   </div>
 </template>

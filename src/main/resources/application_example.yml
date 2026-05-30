@@ -31,4 +31,9 @@ spring:
 security:
   jwt:
     secret: your-256-bit-secret-key-change-this-in-production-please
-    expiration: 86400000
+    expiration: 10800000
+
+email:
+  from: ${EMAIL_FROM:onboarding@resend.dev}
+  resend:
+    api-key: ${RESEND_API_KEY}
