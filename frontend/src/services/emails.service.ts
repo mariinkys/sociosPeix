@@ -21,6 +21,11 @@ class EmailsService {
     return data
   }
 
+  async getToday(): Promise<EmailResponse[]> {
+    const { data } = await api.get<EmailResponse[]>('/api/emails/today')
+    return data
+  }
+
   async getById(id: string): Promise<EmailResponse> {
     const { data } = await api.get<EmailResponse>(`/api/emails/${id}`)
     return data

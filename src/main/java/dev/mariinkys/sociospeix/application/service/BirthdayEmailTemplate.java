@@ -22,7 +22,7 @@ public class BirthdayEmailTemplate {
             <body style="font-family: Arial, sans-serif; background-color: #fff7e6; color: #333;">
               <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px;
                           padding: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center;">
-                <img src="cid:logo" alt="Hotel Casa Peix" style="max-width: 200px; margin-bottom: 20px;"/>
+                <img src="cid:logo" alt="Hotel Casa Peix (Logo)" style="max-width: 200px; margin-bottom: 20px;"/>
                 <h1 style="color: #d35400;">¡Feliz Cumpleaños, %s!</h1>
                 <p style="font-size: 16px; line-height: 1.6;">
                   Esperamos que este día esté lleno de alegría, momentos especiales y felicidad.

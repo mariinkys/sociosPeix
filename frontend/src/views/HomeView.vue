@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import TodayEmailsCard from '@/components/email/TodayEmailsCard.vue'
 import TodayBirthdayCard from '@/components/member/TodayBirthdayCard.vue'
 </script>
 
@@ -10,5 +11,7 @@ import TodayBirthdayCard from '@/components/member/TodayBirthdayCard.vue'
     </div>
 
     <TodayBirthdayCard />
+
+    <TodayEmailsCard />
   </div>
 </template>

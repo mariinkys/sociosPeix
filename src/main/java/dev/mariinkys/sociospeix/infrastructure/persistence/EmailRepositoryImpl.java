@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,6 +39,14 @@ public class EmailRepositoryImpl implements EmailRepository {
     @Override
     public Page<Email> findAll(Pageable pageable) {
         return jpaRepository.findAll(pageable).map(this::toDomain);
+    }
+
+    @Override
+    public List<Email> findToday() {
+        return jpaRepository.findToday(LocalDate.now().atStartOfDay())
+                .stream()
+                .map(this::toDomain)
+                .toList();
     }
 
     @Override

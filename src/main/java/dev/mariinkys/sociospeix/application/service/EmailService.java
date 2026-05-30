@@ -96,6 +96,12 @@ public class EmailService implements EmailUseCase {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Email> getTodayEmails() {
+        return emailRepository.findToday();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<Email> getAllEmailsByMember(UUID memberId, Pageable pageable) {
         return emailRepository.findByMember(memberId, pageable);
     }

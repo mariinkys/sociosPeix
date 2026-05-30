@@ -41,6 +41,15 @@ public class EmailController {
         ));
     }
 
+    @GetMapping("/today")
+    public ResponseEntity<List<EmailResponse>> getToday() {
+        var emails = emailUseCase.getTodayEmails()
+                .stream()
+                .map(EmailResponse::from)
+                .toList();
+        return ResponseEntity.ok(emails);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<EmailResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(EmailResponse.from(emailUseCase.getEmailById(id)));

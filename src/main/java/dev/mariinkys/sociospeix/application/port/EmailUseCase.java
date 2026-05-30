@@ -17,6 +17,7 @@ public interface EmailUseCase {
     Email sendToInterests(List<Integer> interestIds, String subject, String htmlBody,
                           List<EmailAttachment> attachments);
     Page<Email> getAllEmails(Pageable pageable);
+    List<Email> getTodayEmails();
     Page<Email> getAllEmailsByMember(UUID memberId, Pageable pageable);
     Email getEmailById(UUID id);
     EmailProviderStatus getProviderStatus();
