@@ -1,14 +1,18 @@
+c
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import DataTable from 'primevue/datatable'
+import DataTable, { type DataTableRowClickEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import { useToast } from 'primevue/usetoast'
 import { membersService } from '@/services/members.service'
 import type { MemberResponse } from '@/types/member.types'
+import { useRouter } from 'vue-router'
 
 const toast = useToast()
+const router = useRouter()
+
 const members = ref<MemberResponse[]>([])
 const loading = ref(false)
 
@@ -28,6 +32,11 @@ async function fetchTodayBirthdays() {
   }
 }
 
+function onRowClick(event: DataTableRowClickEvent) {
+  const member = event.data as MemberResponse
+  router.push(`/members/${member.id}/edit`)
+}
+
 onMounted(fetchTodayBirthdays)
 </script>
 
@@ -35,7 +44,6 @@ onMounted(fetchTodayBirthdays)
   <Card class="border border-surface-200 dark:border-surface-700 shadow-sm">
     <template #content>
       <div class="space-y-4">
-        <!-- Header -->
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <i class="pi pi-gift text-primary-500 dark:text-primary-400" />
@@ -62,8 +70,13 @@ onMounted(fetchTodayBirthdays)
           />
         </div>
 
-        <!-- Table -->
-        <DataTable :value="members" :loading="loading" size="small">
+        <DataTable
+          :value="members"
+          :loading="loading"
+          size="small"
+          row-hover
+          @row-click="onRowClick"
+        >
           <Column field="fullName" header="Member">
             <template #body="{ data }: { data: MemberResponse }">
               <div class="flex items-center gap-2">
