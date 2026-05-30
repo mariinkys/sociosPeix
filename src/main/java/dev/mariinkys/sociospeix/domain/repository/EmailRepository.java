@@ -13,4 +13,5 @@ public interface EmailRepository {
     Page<Email> findAll(Pageable pageable);
     Page<Email> findByMember(UUID memberId, Pageable pageable);
     int countRecipientsToday(String provider);
+    boolean alreadySentTodayTo(String recipientEmail, String subject);
 }

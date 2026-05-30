@@ -33,10 +33,17 @@ public class ResendEmailProvider implements EmailPort {
                      List<EmailAttachment> attachments) {
 
         var resendAttachments = attachments.stream()
-                .map(a -> Attachment.builder()
-                        .fileName(a.filename())
-                        .content(Base64.getEncoder().encodeToString(a.content()))
-                        .build())
+                .map(a -> {
+                    var builder = Attachment.builder()
+                            .fileName(a.filename())
+                            .content(Base64.getEncoder().encodeToString(a.content()));
+
+                    if (a.contentId() != null) {
+                        builder.contentId(a.contentId());
+                    }
+
+                    return builder.build();
+                })
                 .toList();
 
         var options = CreateEmailOptions.builder()

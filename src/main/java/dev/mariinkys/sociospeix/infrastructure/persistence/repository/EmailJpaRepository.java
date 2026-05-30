@@ -24,4 +24,15 @@ public interface EmailJpaRepository extends JpaRepository<EmailJpaEntity, UUID> 
     """)
     int countRecipientsToday(@Param("provider") String provider,
                              @Param("startOfDay") LocalDateTime startOfDay);
+
+    @Query(value = """
+        SELECT COUNT(*) > 0 FROM emails e
+        JOIN email_recipients r ON r.email_id = e.id
+        WHERE e.subject = :subject
+          AND r.email   = :recipientEmail
+          AND e.created_at >= :startOfDay
+    """, nativeQuery = true)
+    boolean alreadySentTodayTo(@Param("recipientEmail") String recipientEmail,
+                               @Param("subject") String subject,
+                               @Param("startOfDay") LocalDateTime startOfDay);
 }

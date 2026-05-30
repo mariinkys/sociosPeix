@@ -46,6 +46,13 @@ public class EmailRepositoryImpl implements EmailRepository {
     }
 
     @Override
+    public boolean alreadySentTodayTo(String recipientEmail, String subject) {
+        return jpaRepository.alreadySentTodayTo(
+                recipientEmail, subject, LocalDate.now().atStartOfDay()
+        );
+    }
+
+    @Override
     public int countRecipientsToday(String provider) {
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
         return jpaRepository.countRecipientsToday(provider, startOfDay);
