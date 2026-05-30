@@ -73,11 +73,16 @@ onMounted(fetchTodayBirthdays)
         <DataTable
           :value="members"
           :loading="loading"
+          :rows="5"
+          :rowsPerPageOptions="[5, 10, 25]"
+          paginator
+          paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+          currentPageReportTemplate="{first} to {last} of {totalRecords}"
           size="small"
           row-hover
           @row-click="onRowClick"
         >
-          <Column field="fullName" header="Member">
+          <Column field="fullName" header="Member" style="width: 25%" sortable>
             <template #body="{ data }: { data: MemberResponse }">
               <div class="flex items-center gap-2">
                 <div
@@ -92,13 +97,13 @@ onMounted(fetchTodayBirthdays)
             </template>
           </Column>
 
-          <Column field="email" header="Email">
+          <Column field="email" header="Email" style="width: 25%">
             <template #body="{ data }: { data: MemberResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">{{ data.email }}</span>
             </template>
           </Column>
 
-          <Column field="phone" header="Phone">
+          <Column field="phone" header="Phone" style="width: 25%">
             <template #body="{ data }: { data: MemberResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{ data.phone ?? '—' }}
@@ -106,7 +111,7 @@ onMounted(fetchTodayBirthdays)
             </template>
           </Column>
 
-          <Column field="birthdate" header="Birthday">
+          <Column field="birthdate" header="Birthday" style="width: 25%">
             <template #body="{ data }: { data: MemberResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{

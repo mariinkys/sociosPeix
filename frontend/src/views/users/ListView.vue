@@ -116,7 +116,7 @@ onMounted(fetchUsers)
       @page="onPage"
       @sort="onSort"
     >
-      <Column field="name" header="Name" sortable>
+      <Column field="name" header="Name" style="width: 30%" sortable>
         <template #body="{ data }: { data: UserResponse }">
           <div class="flex items-center gap-3">
             <div
@@ -129,19 +129,19 @@ onMounted(fetchUsers)
         </template>
       </Column>
 
-      <Column field="email" header="Email" sortable>
+      <Column field="email" header="Email" style="width: 30%" sortable>
         <template #body="{ data }: { data: UserResponse }">
           <span class="text-surface-600 dark:text-surface-400">{{ data.email }}</span>
         </template>
       </Column>
 
-      <Column field="role" header="Role">
+      <Column field="role" header="Role" style="width: 20%">
         <template #body="{ data }: { data: UserResponse }">
           <Tag :value="data.role" :severity="data.role === 'ADMIN' ? 'info' : 'success'" />
         </template>
       </Column>
 
-      <Column field="createdAt" header="Created At" sortable>
+      <Column field="createdAt" header="Created At" style="width: 20%" sortable>
         <template #body="{ data }: { data: UserResponse }">
           <span class="text-surface-500 dark:text-surface-400 text-sm">
             {{

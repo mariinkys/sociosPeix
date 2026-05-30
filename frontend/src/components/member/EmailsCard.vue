@@ -119,21 +119,21 @@ onMounted(fetchEmails)
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
           @page="onPage"
         >
-          <Column field="subject" header="Subject">
+          <Column field="subject" header="Subject" style="width: 50%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
                 data.subject
               }}</span>
             </template>
           </Column>
-          <Column field="provider" header="Provider">
+          <Column field="provider" header="Provider" style="width: 15%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm capitalize">{{
                 data.provider
               }}</span>
             </template>
           </Column>
-          <Column field="createdAt" header="Sent At">
+          <Column field="createdAt" header="Sent At" style="width: 25%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{
@@ -146,17 +146,19 @@ onMounted(fetchEmails)
               </span>
             </template>
           </Column>
-          <Column style="width: 4rem">
+          <Column style="width: 10%">
             <template #body="{ data }: { data: EmailResponse }">
-              <Button
-                icon="pi pi-eye"
-                severity="secondary"
-                text
-                rounded
-                size="small"
-                aria-label="View email"
-                @click="openPreview(data)"
-              />
+              <div class="flex justify-end">
+                <Button
+                  icon="pi pi-eye"
+                  severity="secondary"
+                  text
+                  rounded
+                  size="small"
+                  aria-label="View email"
+                  @click="openPreview(data)"
+                />
+              </div>
             </template>
           </Column>
           <template #empty>

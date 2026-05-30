@@ -124,13 +124,13 @@ onMounted(fetchInterests)
       class="border border-surface-200 dark:border-surface-700 rounded-xl overflow-hidden"
       @row-click="onRowClick"
     >
-      <Column field="name" header="Name" sortable>
+      <Column field="name" header="Name" style="width: 30%" sortable>
         <template #body="{ data }: { data: InterestResponse }">
           <span class="font-medium text-surface-900 dark:text-surface-0">{{ data.name }}</span>
         </template>
       </Column>
 
-      <Column field="description" header="Description">
+      <Column field="description" header="Description" style="width: 60%">
         <template #body="{ data }: { data: InterestResponse }">
           <span class="text-surface-500 dark:text-surface-400 text-sm">
             {{ data.description ?? '—' }}
@@ -138,17 +138,19 @@ onMounted(fetchInterests)
         </template>
       </Column>
 
-      <Column style="width: 4rem">
+      <Column style="width: 10%">
         <template #body="{ data }: { data: InterestResponse }">
-          <Button
-            icon="pi pi-trash"
-            severity="danger"
-            text
-            rounded
-            size="small"
-            aria-label="Delete interest"
-            @click="confirmDelete($event, data)"
-          />
+          <div class="flex justify-end">
+            <Button
+              icon="pi pi-trash"
+              severity="danger"
+              text
+              rounded
+              size="small"
+              aria-label="Delete interest"
+              @click="confirmDelete($event, data)"
+            />
+          </div>
         </template>
       </Column>
 

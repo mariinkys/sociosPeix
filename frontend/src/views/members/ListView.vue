@@ -194,7 +194,7 @@ onMounted(async () => {
       @page="onPage"
       @sort="onSort"
     >
-      <Column field="name" header="Name" sortable>
+      <Column field="name" header="Name" style="width: 30%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <div class="flex items-center gap-3">
             <div
@@ -209,19 +209,19 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column field="email" header="Email" sortable>
+      <Column field="email" header="Email" style="width: 20%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span class="text-surface-600 dark:text-surface-400">{{ data.email }}</span>
         </template>
       </Column>
 
-      <Column field="phone" header="Phone" sortable>
+      <Column field="phone" header="Phone" style="width: 20%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span class="text-surface-600 dark:text-surface-400">{{ data.phone }}</span>
         </template>
       </Column>
 
-      <Column field="birthdate" header="Birthdate" sortable>
+      <Column field="birthdate" header="Birthdate" style="width: 10%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span v-if="data.birthdate" class="text-surface-500 dark:text-surface-400 text-sm">
             {{
@@ -235,7 +235,7 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column field="createdAt" header="Created At" sortable>
+      <Column field="createdAt" header="Created At" style="width: 10%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span v-if="data.createdAt" class="text-surface-500 dark:text-surface-400 text-sm">
             {{
@@ -249,17 +249,19 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column style="width: 4rem">
+      <Column style="width: 10%">
         <template #body="{ data }: { data: MemberResponse }">
-          <Button
-            icon="pi pi-trash"
-            severity="danger"
-            text
-            rounded
-            size="small"
-            aria-label="Delete member"
-            @click="confirmDelete($event, data)"
-          />
+          <div class="flex justify-end">
+            <Button
+              icon="pi pi-trash"
+              severity="danger"
+              text
+              rounded
+              size="small"
+              aria-label="Delete member"
+              @click="confirmDelete($event, data)"
+            />
+          </div>
         </template>
       </Column>
 

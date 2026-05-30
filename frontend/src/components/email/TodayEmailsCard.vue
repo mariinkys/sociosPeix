@@ -87,29 +87,38 @@ onMounted(fetchTodayEmails)
           />
         </div>
 
-        <DataTable :value="emails" :loading="loading" size="small">
-          <Column field="subject" header="Subject">
+        <DataTable
+          :value="emails"
+          :loading="loading"
+          :rows="10"
+          :rowsPerPageOptions="[5, 10, 25]"
+          paginator
+          paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+          currentPageReportTemplate="{first} to {last} of {totalRecords}"
+          size="small"
+        >
+          <Column field="subject" header="Subject" style="width: 40%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
                 data.subject
               }}</span>
             </template>
           </Column>
-          <Column field="provider" header="Provider">
+          <Column field="provider" header="Provider" style="width: 10%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm capitalize">{{
                 data.provider
               }}</span>
             </template>
           </Column>
-          <Column field="recipientCount" header="Sent To">
+          <Column field="recipientCount" header="Sent To" sortable style="width: 10%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm capitalize">{{
                 data.recipientCount
               }}</span>
             </template>
           </Column>
-          <Column field="createdAt" header="Sent At">
+          <Column field="createdAt" header="Sent At" sortable style="width: 30%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{
@@ -122,17 +131,19 @@ onMounted(fetchTodayEmails)
               </span>
             </template>
           </Column>
-          <Column style="width: 4rem">
+          <Column style="width: 10%">
             <template #body="{ data }: { data: EmailResponse }">
-              <Button
-                icon="pi pi-eye"
-                severity="secondary"
-                text
-                rounded
-                size="small"
-                aria-label="View email"
-                @click="openPreview(data)"
-              />
+              <div class="flex justify-end">
+                <Button
+                  icon="pi pi-eye"
+                  severity="secondary"
+                  text
+                  rounded
+                  size="small"
+                  aria-label="View email"
+                  @click="openPreview(data)"
+                />
+              </div>
             </template>
           </Column>
           <template #empty>
