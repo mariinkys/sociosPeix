@@ -24,6 +24,11 @@ class MembersService {
     return data
   }
 
+  async getToday(): Promise<MemberResponse[]> {
+    const { data } = await api.get<MemberResponse[]>('/api/members/birthdays/today')
+    return data
+  }
+
   async getById(id: string): Promise<MemberResponse> {
     const { data } = await api.get<MemberResponse>(`/api/members/${id}`)
     return data
