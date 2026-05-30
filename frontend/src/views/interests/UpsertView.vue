@@ -8,6 +8,8 @@ import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import ConfirmDialog from 'primevue/confirmdialog'
+import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { interestsService } from '@/services/interests.service'
 import type { InterestPayload } from '@/types/interest.types'
@@ -15,6 +17,7 @@ import type { InterestPayload } from '@/types/interest.types'
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
+const confirm = useConfirm()
 
 const interestId = computed(() => {
   const id = route.params.id
@@ -23,6 +26,7 @@ const interestId = computed(() => {
 const isEdit = computed(() => !!interestId.value)
 const loading = ref(false)
 const fetchLoading = ref(!!route.params.id)
+const deleteLoading = ref(false)
 
 const model = ref<InterestPayload>({
   name: '',
@@ -76,6 +80,38 @@ async function onSubmit({ valid }: FormSubmitEvent) {
   }
 }
 
+function confirmDelete() {
+  confirm.require({
+    message: `Are you sure you want to delete this interest? This action cannot be undone.`,
+    header: 'Delete Interest',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: { label: 'Cancel', severity: 'secondary', outlined: true },
+    acceptProps: { label: 'Delete', severity: 'danger' },
+    accept: async () => {
+      deleteLoading.value = true
+      try {
+        await interestsService.delete(interestId.value!)
+        toast.add({
+          severity: 'success',
+          summary: 'Deleted',
+          detail: 'Interest deleted successfully.',
+          life: 3000,
+        })
+        router.push('/interests')
+      } catch {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete interest. Please try again.',
+          life: 3000,
+        })
+      } finally {
+        deleteLoading.value = false
+      }
+    },
+  })
+}
+
 onMounted(async () => {
   if (!isEdit.value) return
   try {
@@ -100,26 +136,40 @@ onMounted(async () => {
 
 <template>
   <div class="p-6 max-w-2xl mx-auto space-y-6">
-    <div class="flex items-center gap-3">
-      <Button
-        icon="pi pi-arrow-left"
-        severity="secondary"
-        text
-        rounded
-        aria-label="Go back"
-        @click="router.push('/interests')"
-      />
-      <div>
-        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-          {{ isEdit ? 'Edit Interest' : 'New Interest' }}
-        </h1>
-        <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-          {{
-            isEdit
-              ? "Update the interest's details below"
-              : 'Fill in the details to create a new interest'
-          }}
-        </p>
+    <div class="flex items-center justify-between gap-3 flex-wrap">
+      <div class="flex items-center gap-3">
+        <Button
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          text
+          rounded
+          aria-label="Go back"
+          @click="router.push('/interests')"
+        />
+        <div>
+          <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
+            {{ isEdit ? 'Edit Interest' : 'New Interest' }}
+          </h1>
+          <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
+            {{
+              isEdit
+                ? "Update the interest's details below"
+                : 'Fill in the details to create a new interest'
+            }}
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <Button
+          v-if="isEdit"
+          icon="pi pi-trash"
+          severity="danger"
+          outlined
+          :loading="deleteLoading"
+          aria-label="Delete interest"
+          @click="confirmDelete"
+        />
       </div>
     </div>
 
@@ -138,6 +188,8 @@ onMounted(async () => {
           class="p-2 space-y-6"
           @submit="onSubmit"
         >
+          <ConfirmDialog />
+
           <FormField v-slot="$field" name="name" class="flex flex-col gap-1.5">
             <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
               Name <span class="text-red-500">*</span>
