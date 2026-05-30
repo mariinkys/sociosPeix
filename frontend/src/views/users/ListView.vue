@@ -157,7 +157,7 @@ onMounted(fetchUsers)
 
       <template #empty>
         <div class="flex flex-col items-center justify-center py-16 gap-3 text-surface-400">
-          <i class="pi pi-users text-4xl" />
+          <i class="pi pi-users text-4xl"></i>
           <p class="text-sm">No users found</p>
         </div>
       </template>

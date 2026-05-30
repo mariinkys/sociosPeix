@@ -176,7 +176,7 @@ const isActive = (path: string) => route.path === path
             ]"
             @click="menuOpen = false"
           >
-            <i class="pi pi-shield mr-2 text-xs"></i>
+            <i class="pi pi-users mr-2 text-xs"></i>
             Users
           </RouterLink>
         </template>
@@ -205,7 +205,7 @@ const isActive = (path: string) => route.path === path
           ]"
           @click="menuOpen = false"
         >
-          <i class="pi pi-users mr-2 text-xs"></i>
+          <i class="pi pi-tag mr-2 text-xs"></i>
           Interests
         </RouterLink>
 
