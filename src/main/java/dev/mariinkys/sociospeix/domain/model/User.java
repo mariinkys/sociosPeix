@@ -45,6 +45,11 @@ public class User {
                 failedLoginAttempts, lockedUntil, createdAt, LocalDateTime.now());
     }
 
+    public User withRole(Role role) {
+        return new User(this.id, this.name, this.email, this.password, role,
+                this.failedLoginAttempts, this.lockedUntil, this.createdAt, LocalDateTime.now());
+    }
+
     public User incrementFailedAttempts() {
         return new User(id, name, email, password, role,
                 failedLoginAttempts + 1, lockedUntil, createdAt, updatedAt);

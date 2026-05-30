@@ -123,7 +123,9 @@ const isActive = (path: string) => route.path === path
           v-if="auth.isAuthenticated"
           class="hidden md:inline text-xs text-surface-400 dark:text-surface-500 mr-2 max-w-[180px] truncate"
         >
-          {{ auth.user?.email }}
+          <RouterLink :to="`/users/${auth.user?.id}/edit`">
+            {{ auth.user?.email }}
+          </RouterLink>
         </span>
 
         <!-- Logout, desktop only -->

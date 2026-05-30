@@ -3,13 +3,20 @@ import { ref, onMounted } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
+import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
 import InputText from 'primevue/inputtext'
-import type { DataTableSortEvent, DataTablePageEvent } from 'primevue/datatable'
+import type {
+  DataTableSortEvent,
+  DataTablePageEvent,
+  DataTableRowClickEvent,
+} from 'primevue/datatable'
 import { usersService } from '@/services/users.service'
 import type { UserResponse } from '@/types/user.types'
+import { useRouter } from 'vue-router'
 
 const toast = useToast()
+const router = useRouter()
 
 const users = ref<UserResponse[]>([])
 const loading = ref(false)
@@ -70,6 +77,11 @@ function onSearch() {
   }, 500)
 }
 
+function onRowClick(event: DataTableRowClickEvent) {
+  const user = event.data as UserResponse
+  router.push(`/users/${user.id}/edit`)
+}
+
 onMounted(fetchUsers)
 </script>
 
@@ -92,12 +104,12 @@ onMounted(fetchUsers)
             @input="onSearch"
           />
         </div>
-        <!-- <Button
-          label="New Member"
+        <Button
+          label="New User"
           icon="pi pi-plus"
           class="shrink-0"
-          @click="router.push('/members/new')"
-        /> -->
+          @click="router.push('/users/new')"
+        />
       </div>
     </div>
 
@@ -110,9 +122,11 @@ onMounted(fetchUsers)
       lazy
       paginator
       removableSort
+      row-hover
       paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
       currentPageReportTemplate="{first} to {last} of {totalRecords}"
       class="border border-surface-200 dark:border-surface-700 rounded-xl overflow-hidden"
+      @row-click="onRowClick"
       @page="onPage"
       @sort="onSort"
     >

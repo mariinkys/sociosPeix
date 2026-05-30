@@ -1,6 +1,7 @@
 package dev.mariinkys.sociospeix.application.port;
 
 import dev.mariinkys.sociospeix.application.service.RequesterContext;
+import dev.mariinkys.sociospeix.domain.model.Role;
 import dev.mariinkys.sociospeix.domain.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,5 +14,6 @@ public interface UserUseCase {
     User getUserByEmail(String email);
     Page<User> getAllUsers(String search, Pageable pageable);
     User updateUser(UUID id, String name, String email, RequesterContext requester);
+    User updateUserRole(UUID id, Role role);
     void deleteUser(UUID id, RequesterContext requester);
 }

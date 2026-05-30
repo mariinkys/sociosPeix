@@ -9,6 +9,7 @@ import dev.mariinkys.sociospeix.application.service.LoginAttemptService;
 import dev.mariinkys.sociospeix.interfaces.dto.auth.AuthRequest;
 import dev.mariinkys.sociospeix.interfaces.dto.auth.AuthResponse;
 import dev.mariinkys.sociospeix.interfaces.dto.auth.RegisterRequest;
+import dev.mariinkys.sociospeix.interfaces.dto.user.UserResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -49,14 +50,13 @@ public class AuthController {
         this.loginAttemptService = loginAttemptService;
     }
 
+    // TODO: Maybe this makes more sense in the user controller?
     @PostMapping("/register")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request,
-                                                 HttpServletResponse response) {
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
         userUseCase.createUser(request.name(), request.email(), request.password());
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(issueTokensAndBuildResponse(request.email(), request.password(), response));
+        var user = userUseCase.getUserByEmail(request.email());
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.from(user));
     }
 
     @PostMapping("/login")

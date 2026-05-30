@@ -3,6 +3,7 @@ package dev.mariinkys.sociospeix.application.service;
 import dev.mariinkys.sociospeix.application.exception.EmailAlreadyInUseException;
 import dev.mariinkys.sociospeix.application.exception.UserNotFoundException;
 import dev.mariinkys.sociospeix.application.port.PasswordHasher;
+import dev.mariinkys.sociospeix.domain.model.Role;
 import dev.mariinkys.sociospeix.domain.model.User;
 import dev.mariinkys.sociospeix.domain.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -67,6 +68,14 @@ public class UserService implements UserUseCase {
             throw new AccessDeniedException("You can only update your own account");
         }
         return userRepository.save(target.withUpdatedDetails(name, email));
+    }
+
+    @Override
+    @Transactional
+    public User updateUserRole(UUID id, Role role) {
+        User existing = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        return userRepository.save(existing.withRole(role));
     }
 
     @Override

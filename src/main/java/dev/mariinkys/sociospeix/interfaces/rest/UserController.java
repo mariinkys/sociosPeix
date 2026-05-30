@@ -4,6 +4,7 @@ import dev.mariinkys.sociospeix.application.port.UserUseCase;
 import dev.mariinkys.sociospeix.application.service.RequesterContext;
 import dev.mariinkys.sociospeix.interfaces.dto.PageResponse;
 import dev.mariinkys.sociospeix.interfaces.dto.user.UpdateRequest;
+import dev.mariinkys.sociospeix.interfaces.dto.user.UpdateRoleRequest;
 import dev.mariinkys.sociospeix.interfaces.dto.user.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -58,6 +59,13 @@ public class UserController {
                                                @AuthenticationPrincipal UserDetails userDetails) {
         var user = userUseCase.updateUser(id, request.name(), request.email(), requesterContext(userDetails));
         return ResponseEntity.ok(UserResponse.from(user));
+    }
+
+    @PatchMapping("/{id}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponse> updateRole(@PathVariable UUID id,
+                                                   @Valid @RequestBody UpdateRoleRequest request) {
+        return ResponseEntity.ok(UserResponse.from(userUseCase.updateUserRole(id, request.role())));
     }
 
     // ADMIN deletes anyone, USER deletes only themselves (enforced in service)

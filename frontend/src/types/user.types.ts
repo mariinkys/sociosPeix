@@ -7,3 +7,9 @@ export interface UserResponse {
   role: UserRole
   createdAt: string
 }
+
+export interface UserUpdatePayload {
+  name: string
+  email: string
+  password: string
+}
