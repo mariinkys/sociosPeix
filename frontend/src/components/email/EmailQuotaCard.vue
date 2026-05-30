@@ -48,12 +48,12 @@ onMounted(fetchStatus)
 </script>
 
 <template>
-  <Card class="border border-surface-200 dark:border-surface-700 shadow-sm max-w-sm">
+  <Card class="border border-surface-200 dark:border-surface-700 shadow-sm max-w-sm h-full">
     <template #content>
       <div class="p-2 space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <i class="pi pi-envelope text-primary-500 dark:text-primary-400" />
+            <i class="pi pi-envelope text-primary-500 dark:text-primary-400"></i>
             <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
               Email Quota
             </h2>
@@ -71,7 +71,7 @@ onMounted(fetchStatus)
         </div>
 
         <div v-if="loading && !status" class="flex items-center justify-center py-6">
-          <i class="pi pi-spinner pi-spin text-2xl text-surface-400" />
+          <i class="pi pi-spinner pi-spin text-2xl text-surface-400"></i>
         </div>
 
         <template v-else-if="status">

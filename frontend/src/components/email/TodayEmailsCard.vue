@@ -102,6 +102,13 @@ onMounted(fetchTodayEmails)
               }}</span>
             </template>
           </Column>
+          <Column field="recipientCount" header="Sent To">
+            <template #body="{ data }: { data: EmailResponse }">
+              <span class="text-surface-500 dark:text-surface-400 text-sm capitalize">{{
+                data.recipientCount
+              }}</span>
+            </template>
+          </Column>
           <Column field="createdAt" header="Sent At">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">

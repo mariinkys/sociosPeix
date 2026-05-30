@@ -1,9 +1,7 @@
-import logoBase64 from '@/assets/logo.png?inline'
-
 export type EmailTemplate = 'none' | 'basic' | 'birthday'
 
 const LOGO_IMG = `<div style="text-align: center; margin-bottom: 20px;">
-  <img src="${logoBase64}" alt="Hotel Casa Peix" style="width: 250px; height: auto;" />
+  <img src="https://images.squarespace-cdn.com/content/v1/699ab1eb39e853263ee0615b/1771745788131-LD0BLUE7YKG5DIQWZER9/CASA+PEIX_LOGO_VECTOR_ROJO.png" alt="Hotel Casa Peix" style="width: 250px; height: auto; display: block; margin: 0 auto;" />
 </div>`
 
 export function applyTemplate(body: string, template: EmailTemplate): string {
@@ -12,45 +10,51 @@ export function applyTemplate(body: string, template: EmailTemplate): string {
 
   if (template === 'basic') {
     return `<!DOCTYPE html>
-      <html>
-      <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; color: #333;">
-        <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-          ${LOGO_IMG}
-          <p style="font-size: 16px; line-height: 1.6;">${inlinedBody}</p>
-          <p style="font-size: 14px; color: #5b5b5b; text-align: center; margin-top: 30px;">
-            ¡Gracias por confiar en nosotros!<br/>El equipo del Hotel Casa Peix.
-          </p>
-          <p style="font-size: 12px; color: #777; text-align: center;">
-            (Puede darse de baja en cualquier momento escribiendo un correo a infohotelcasapeix@gmail.com)
-          </p>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
+    <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; color: #333; margin: 0; padding: 20px 0;">
+      <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); box-sizing: border-box; overflow: hidden;">
+        ${LOGO_IMG}
+        <div style="font-size: 16px; line-height: 1.6; overflow-wrap: break-word; word-break: break-word; max-width: 100%;">
+          ${inlinedBody}
         </div>
-      </body>
-      </html>`
+        <p style="font-size: 14px; color: #5b5b5b; text-align: center; margin-top: 30px;">
+          ¡Gracias por confiar en nosotros!<br/>El equipo del Hotel Casa Peix.
+        </p>
+        <p style="font-size: 12px; color: #777; text-align: center;">
+          (Puede darse de baja en cualquier momento escribiendo un correo a infohotelcasapeix@gmail.com)
+        </p>
+      </div>
+    </body>
+    </html>`
   }
 
-  if (template === 'birthday') {
-    return `<!DOCTYPE html>
-      <html>
-      <body style="font-family: Arial, sans-serif; background-color: #fff7e6; color: #333;">
-        <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center;">
-          ${LOGO_IMG}
-          <h1 style="color: #d35400;">¡Feliz Cumpleaños!</h1>
-          <p style="font-size: 16px; line-height: 1.6;">
-            Esperamos que este día esté lleno de alegría, momentos especiales y felicidad.
-          </p>
-          <p style="font-size: 16px; line-height: 1.6;">
-            Como muestra de nuestro cariño, queremos recordarle que siempre será bienvenido(a) en nuestro hotel.
-          </p>
-          <p style="font-size: 14px; color: #5b5b5b; margin-top: 30px;">
-            Con nuestros mejores deseos,<br/>El equipo del Hotel Casa Peix.
-          </p>
-          <p style="font-size: 12px; color: #777; text-align: center;">
-            (Puede darse de baja en cualquier momento escribiendo un correo a infohotelcasapeix@gmail.com)
-          </p>
-        </div>
-      </body>
-      </html>`
-  }
+  // if (template === 'birthday') {
+  //   return `<!DOCTYPE html>
+  //     <html>
+  //     <body style="font-family: Arial, sans-serif; background-color: #fff7e6; color: #333;">
+  //       <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center;">
+  //         ${LOGO_IMG}
+  //         <h1 style="color: #d35400;">¡Feliz Cumpleaños!</h1>
+  //         <p style="font-size: 16px; line-height: 1.6;">
+  //           Esperamos que este día esté lleno de alegría, momentos especiales y felicidad.
+  //         </p>
+  //         <p style="font-size: 16px; line-height: 1.6;">
+  //           Como muestra de nuestro cariño, queremos recordarle que siempre será bienvenido(a) en nuestro hotel.
+  //         </p>
+  //         <p style="font-size: 14px; color: #5b5b5b; margin-top: 30px;">
+  //           Con nuestros mejores deseos,<br/>El equipo del Hotel Casa Peix.
+  //         </p>
+  //         <p style="font-size: 12px; color: #777; text-align: center;">
+  //           (Puede darse de baja en cualquier momento escribiendo un correo a infohotelcasapeix@gmail.com)
+  //         </p>
+  //       </div>
+  //     </body>
+  //     </html>`
+  // }
 
   return body
 }

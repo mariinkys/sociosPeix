@@ -8,11 +8,15 @@ import Message from 'primevue/message'
 import { useToast } from 'primevue/usetoast'
 import { emailsService } from '@/services/emails.service'
 import { applyTemplate, wrapEmailBody, TEMPLATE_OPTIONS } from '@/utils/emailTemplates'
+import InterestsSelect from '@/components/interest/MultiSelect.vue'
 import type { EmailTemplate } from '@/utils/emailTemplates'
 
-const props = defineProps<{ memberId: string }>()
-const emit = defineEmits<{ sent: [] }>()
+const props = defineProps<{
+  mode: 'member' | 'interests'
+  memberId?: string
+}>()
 
+const emit = defineEmits<{ sent: [] }>()
 const toast = useToast()
 
 const visible = defineModel<boolean>('visible', { required: true })
@@ -23,13 +27,15 @@ const sendLoading = ref(false)
 const template = ref<EmailTemplate>('none')
 const subject = ref('')
 const htmlBody = ref('')
+const interestIds = ref<number[]>([])
 const subjectError = ref('')
 const bodyError = ref('')
+const interestError = ref('')
 const attachments = ref<File[]>([])
 const attachmentError = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
 
-const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024 // 5 MB
+const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024
 
 const totalAttachmentSize = computed(() => attachments.value.reduce((sum, f) => sum + f.size, 0))
 
@@ -40,13 +46,23 @@ function formatSize(bytes: number): string {
 
 const renderedHtml = computed(() => wrapEmailBody(applyTemplate(htmlBody.value, template.value)))
 
+const dialogTitle = computed(() =>
+  step.value === 'preview'
+    ? `Preview — ${subject.value}`
+    : props.mode === 'interests'
+      ? 'Send Email by Interest'
+      : 'Send Email',
+)
+
 function reset() {
   step.value = 'compose'
   template.value = 'none'
   subject.value = ''
   htmlBody.value = ''
+  interestIds.value = []
   subjectError.value = ''
   bodyError.value = ''
+  interestError.value = ''
   attachments.value = []
   attachmentError.value = ''
 }
@@ -54,6 +70,7 @@ function reset() {
 function validate(): boolean {
   subjectError.value = ''
   bodyError.value = ''
+  interestError.value = ''
   let valid = true
   if (!subject.value.trim()) {
     subjectError.value = 'Subject is required'
@@ -61,6 +78,10 @@ function validate(): boolean {
   }
   if (!htmlBody.value.replace(/<[^>]*>/g, '').trim()) {
     bodyError.value = 'Body is required'
+    valid = false
+  }
+  if (props.mode === 'interests' && interestIds.value.length === 0) {
+    interestError.value = 'Select at least one interest'
     valid = false
   }
   if (attachmentError.value) valid = false
@@ -74,17 +95,13 @@ function goToPreview() {
 function onFileChange(event: Event) {
   const input = event.target as HTMLInputElement
   if (!input.files) return
-
-  const incoming = Array.from(input.files)
-  const combined = [...attachments.value, ...incoming]
+  const combined = [...attachments.value, ...Array.from(input.files)]
   const total = combined.reduce((sum, f) => sum + f.size, 0)
-
   if (total > MAX_ATTACHMENT_BYTES) {
     attachmentError.value = `Total size exceeds the 5 MB limit (${formatSize(total)} selected)`
     input.value = ''
     return
   }
-
   attachmentError.value = ''
   attachments.value = combined
   input.value = ''
@@ -98,11 +115,18 @@ function removeAttachment(index: number) {
 async function onSend() {
   sendLoading.value = true
   try {
-    await emailsService.sendToMember(
-      props.memberId,
-      { subject: subject.value, htmlBody: renderedHtml.value },
-      attachments.value.length ? attachments.value : undefined,
-    )
+    if (props.mode === 'interests') {
+      await emailsService.sendToInterests(
+        { subject: subject.value, htmlBody: renderedHtml.value, interestIds: interestIds.value },
+        attachments.value.length ? attachments.value : undefined,
+      )
+    } else {
+      await emailsService.sendToMember(
+        props.memberId!,
+        { subject: subject.value, htmlBody: renderedHtml.value },
+        attachments.value.length ? attachments.value : undefined,
+      )
+    }
     toast.add({
       severity: 'success',
       summary: 'Sent',
@@ -122,7 +146,7 @@ async function onSend() {
 <template>
   <Dialog
     v-model:visible="visible"
-    :header="step === 'compose' ? 'Send Email' : `Preview — ${subject}`"
+    :header="dialogTitle"
     :style="{ width: '900px' }"
     :breakpoints="{ '1024px': '90vw', '768px': '95vw' }"
     modal
@@ -149,6 +173,23 @@ async function onSend() {
             {{ opt.label }}
           </button>
         </div>
+      </div>
+
+      <div v-if="mode === 'interests'" class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+          Interests <span class="text-red-500">*</span>
+        </label>
+        <InterestsSelect
+          v-model="interestIds"
+          :invalid="!!interestError"
+          @update:modelValue="interestError = ''"
+        />
+        <Message v-if="interestError" severity="error" size="small" variant="simple">
+          {{ interestError }}
+        </Message>
+        <p class="text-xs text-surface-400">
+          The email will be sent to all members that have at least one of the selected interests.
+        </p>
       </div>
 
       <div class="flex flex-col gap-1.5">
@@ -178,9 +219,9 @@ async function onSend() {
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-          Attachments
-        </label>
+        <label class="text-sm font-medium text-surface-700 dark:text-surface-300"
+          >Attachments</label
+        >
         <div class="flex items-center gap-2">
           <Button
             label="Add files"
@@ -198,11 +239,9 @@ async function onSend() {
           </span>
           <input ref="fileInput" type="file" multiple class="hidden" @change="onFileChange" />
         </div>
-
         <Message v-if="attachmentError" severity="error" size="small" variant="simple">
           {{ attachmentError }}
         </Message>
-
         <div v-if="attachments.length > 0" class="flex flex-wrap gap-2 mt-1">
           <div
             v-for="(file, i) in attachments"

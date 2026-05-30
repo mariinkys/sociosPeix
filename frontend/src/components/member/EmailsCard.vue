@@ -171,8 +171,9 @@ onMounted(fetchEmails)
   </Card>
 
   <SendEmailDialog
+    mode="member"
+    :member-id="memberId"
     v-model:visible="sendDialogVisible"
-    :member-id="props.memberId"
     @sent="fetchEmails"
   />
 
