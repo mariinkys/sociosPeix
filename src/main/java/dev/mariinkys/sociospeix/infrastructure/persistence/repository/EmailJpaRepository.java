@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface EmailJpaRepository extends JpaRepository<EmailJpaEntity, UUID> {
@@ -15,4 +16,12 @@ public interface EmailJpaRepository extends JpaRepository<EmailJpaEntity, UUID> 
         WHERE (SELECT m.email FROM MemberJpaEntity m WHERE m.id = :memberId) MEMBER OF e.recipientEmails
     """)
     Page<EmailJpaEntity> findByMemberId(@Param("memberId") UUID memberId, Pageable pageable);
+
+    @Query("""
+        SELECT COALESCE(SUM(SIZE(e.recipientEmails)), 0) FROM EmailJpaEntity e
+        WHERE e.provider = :provider
+          AND e.createdAt >= :startOfDay
+    """)
+    int countRecipientsToday(@Param("provider") String provider,
+                             @Param("startOfDay") LocalDateTime startOfDay);
 }

@@ -2,6 +2,7 @@ package dev.mariinkys.sociospeix.interfaces.rest;
 
 import dev.mariinkys.sociospeix.application.port.EmailUseCase;
 import dev.mariinkys.sociospeix.domain.model.EmailAttachment;
+import dev.mariinkys.sociospeix.interfaces.dto.email.EmailProviderStatusResponse;
 import dev.mariinkys.sociospeix.interfaces.dto.email.EmailResponse;
 import dev.mariinkys.sociospeix.interfaces.dto.PageResponse;
 import dev.mariinkys.sociospeix.interfaces.dto.email.SendEmailRequest;
@@ -92,6 +93,13 @@ public class EmailController {
                 request.interestIds(), request.subject(), request.htmlBody(), toAttachments(attachments)
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(EmailResponse.from(email));
+    }
+
+    @GetMapping("/provider/status")
+    public ResponseEntity<EmailProviderStatusResponse> getProviderStatus() {
+        return ResponseEntity.ok(
+                EmailProviderStatusResponse.from(emailUseCase.getProviderStatus())
+        );
     }
 
     // Converts Spring MultipartFile → domain EmailAttachment

@@ -8,6 +8,13 @@ export interface EmailResponse {
   createdAt: string
 }
 
+export interface EmailProviderStatusResponse {
+  provider: string
+  dailyLimit: number
+  sentToday: number
+  remaining: number
+}
+
 export interface SendEmailPayload {
   subject: string
   htmlBody: string

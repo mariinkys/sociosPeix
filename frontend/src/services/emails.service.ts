@@ -2,6 +2,7 @@
 import api from '@/api/axios'
 import type { PageResponse, PaginatedParams } from '@/types/common.types'
 import type {
+  EmailProviderStatusResponse,
   EmailResponse,
   SendEmailPayload,
   SendEmailToInterestsPayload,
@@ -63,6 +64,11 @@ class EmailsService {
       '/api/emails/send/interests',
       buildFormData(payload, attachments),
     )
+    return data
+  }
+
+  async getProviderStatus(): Promise<EmailProviderStatusResponse> {
+    const { data } = await api.get<EmailProviderStatusResponse>(`api/emails/provider/status`)
     return data
   }
 }

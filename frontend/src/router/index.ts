@@ -56,6 +56,12 @@ const routes = [
     component: () => import('@/views/interests/UpsertView.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/tools',
+    name: 'Tools',
+    component: () => import('@/views/ToolsView.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

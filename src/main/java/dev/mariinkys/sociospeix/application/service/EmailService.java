@@ -1,5 +1,6 @@
 package dev.mariinkys.sociospeix.application.service;
 
+import dev.mariinkys.sociospeix.application.exception.DailyEmailLimitException;
 import dev.mariinkys.sociospeix.application.exception.EmailNotFoundException;
 import dev.mariinkys.sociospeix.application.exception.EmailSendException;
 import dev.mariinkys.sociospeix.application.exception.MemberNotFoundException;
@@ -106,9 +107,20 @@ public class EmailService implements EmailUseCase {
                 .orElseThrow(() -> new EmailNotFoundException(id));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public EmailProviderStatus getProviderStatus() {
+        int limit = emailPort.getDailyLimit();
+        int sentToday = emailRepository.countRecipientsToday(emailPort.getProviderName());
+        return new EmailProviderStatus(emailPort.getProviderName(), limit, sentToday, limit - sentToday);
+    }
+
     // sends via the provider and persists the record
     private Email send(String subject, String htmlBody,
                        List<String> recipients, List<EmailAttachment> attachments) {
+
+        checkDailyLimit(recipients.size());
+
         try {
             emailPort.send(subject, htmlBody, recipients, attachments);
             log.info("Email sent via {} to {} recipients", emailPort.getProviderName(), recipients.size());
@@ -121,5 +133,20 @@ public class EmailService implements EmailUseCase {
         return emailRepository.save(
                 new Email(subject, htmlBody, emailPort.getProviderName(), recipients)
         );
+    }
+
+    private void checkDailyLimit(int requested) {
+        int limit = emailPort.getDailyLimit();
+        int sentToday = emailRepository.countRecipientsToday(emailPort.getProviderName());
+        int remaining = limit - sentToday;
+
+        if (requested > remaining) {
+            throw new DailyEmailLimitException(
+                    emailPort.getProviderName(), limit, sentToday, requested
+            );
+        }
+
+        log.debug("Daily limit check passed for {}: {}/{} used, requesting {}",
+                emailPort.getProviderName(), sentToday, limit, requested);
     }
 }

@@ -37,3 +37,4 @@ email:
   from: ${EMAIL_FROM:onboarding@resend.dev}
   resend:
     api-key: ${RESEND_API_KEY}
+    daily-limit: 100

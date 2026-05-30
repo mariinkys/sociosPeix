@@ -12,4 +12,5 @@ public interface EmailRepository {
     Optional<Email> findById(UUID id);
     Page<Email> findAll(Pageable pageable);
     Page<Email> findByMember(UUID memberId, Pageable pageable);
+    int countRecipientsToday(String provider);
 }

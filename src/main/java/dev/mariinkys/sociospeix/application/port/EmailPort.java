@@ -11,4 +11,6 @@ public interface EmailPort {
               List<EmailAttachment> attachments);
 
     String getProviderName(); // stored in DB so we know which provider sent each email
+
+    int getDailyLimit(); // each provider implementation has to declare this
 }

@@ -18,10 +18,13 @@ public class ResendEmailProvider implements EmailPort {
 
     private final Resend resend;
     private final String from;
+    private final int dailyLimit;
 
     public ResendEmailProvider(EmailProperties properties) {
-        this.resend = new Resend(properties.getResend().getApiKey());
+        var config = properties.forProvider("resend");
+        this.resend = new Resend(config.getApiKey());
         this.from = properties.getFrom();
+        this.dailyLimit = config.getDailyLimit();
     }
 
     @Override
@@ -52,7 +55,8 @@ public class ResendEmailProvider implements EmailPort {
     }
 
     @Override
-    public String getProviderName() {
-        return "RESEND";
-    }
+    public String getProviderName() { return "RESEND"; }
+
+    @Override
+    public int getDailyLimit() { return dailyLimit; }
 }

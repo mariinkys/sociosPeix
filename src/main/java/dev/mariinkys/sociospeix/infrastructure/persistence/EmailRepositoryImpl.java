@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,6 +43,12 @@ public class EmailRepositoryImpl implements EmailRepository {
     @Override
     public Page<Email> findByMember(UUID memberId, Pageable pageable) {
         return jpaRepository.findByMemberId(memberId, pageable).map(this::toDomain);
+    }
+
+    @Override
+    public int countRecipientsToday(String provider) {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        return jpaRepository.countRecipientsToday(provider, startOfDay);
     }
 
     private Email toDomain(EmailJpaEntity e) {

@@ -1,5 +1,6 @@
 package dev.mariinkys.sociospeix.application.port;
 
+import dev.mariinkys.sociospeix.application.service.EmailProviderStatus;
 import dev.mariinkys.sociospeix.domain.model.Email;
 import dev.mariinkys.sociospeix.domain.model.EmailAttachment;
 import org.springframework.data.domain.Page;
@@ -18,4 +19,5 @@ public interface EmailUseCase {
     Page<Email> getAllEmails(Pageable pageable);
     Page<Email> getAllEmailsByMember(UUID memberId, Pageable pageable);
     Email getEmailById(UUID id);
+    EmailProviderStatus getProviderStatus();
 }
