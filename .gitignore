@@ -34,3 +34,5 @@ build/
 
 # App
 src/main/resources/application.yml
+docker-compose.override.yml
+.env
