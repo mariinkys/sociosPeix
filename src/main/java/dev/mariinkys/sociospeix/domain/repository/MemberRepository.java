@@ -21,4 +21,7 @@ public interface MemberRepository {
     // For email sending
     List<Member> findAllMembers();
     List<Member> findAllByAnyInterestId(List<Integer> interestIds);
+
+    // For Excel exporting
+    List<Member> findAllForExport(String search, List<Integer> interestIds);
 }

@@ -125,4 +125,19 @@ public class MemberRepositoryImpl implements MemberRepository {
                 })
                 .toList();
     }
+
+    @Override
+    public List<Member> findAllForExport(String search, List<Integer> interestIds) {
+        List<Integer> ids = interestIds == null ? List.of() : interestIds;
+        return jpaRepository.findAllForExport(search, ids, ids.size())
+                .stream()
+                .map(entity -> {
+                    var interests = interestJpaRepository.findByMemberId(entity.getId())
+                            .stream()
+                            .map(e -> new Interest(e.getId(), e.getName(), e.getDescription()))
+                            .toList();
+                    return mapper.toDomain(entity).withInterests(interests);
+                })
+                .toList();
+    }
 }

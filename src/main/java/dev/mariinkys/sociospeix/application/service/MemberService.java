@@ -1,6 +1,7 @@
 package dev.mariinkys.sociospeix.application.service;
 
 import dev.mariinkys.sociospeix.application.exception.MemberNotFoundException;
+import dev.mariinkys.sociospeix.application.port.ExcelExporter;
 import dev.mariinkys.sociospeix.application.port.MemberUseCase;
 import dev.mariinkys.sociospeix.domain.model.Country;
 import dev.mariinkys.sociospeix.domain.model.Gender;
@@ -26,13 +27,16 @@ public class MemberService implements MemberUseCase {
     private final MemberRepository memberRepository;
     private final GenderRepository genderRepository;
     private final CountryRepository countryRepository;
+    private final ExcelExporter<Member> memberExcelExporter;
 
     public MemberService(MemberRepository memberRepository,
                          GenderRepository genderRepository,
-                         CountryRepository countryRepository) {
+                         CountryRepository countryRepository,
+                         ExcelExporter<Member> memberExcelExporter) {
         this.memberRepository = memberRepository;
         this.genderRepository = genderRepository;
         this.countryRepository = countryRepository;
+        this.memberExcelExporter = memberExcelExporter;
     }
 
     @Override
@@ -91,6 +95,13 @@ public class MemberService implements MemberUseCase {
     public void deleteMember(UUID id) {
         getMemberById(id);
         memberRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public byte[] exportMembers(String search, List<Integer> interestIds) {
+        List<Member> members = memberRepository.findAllForExport(search, interestIds);
+        return memberExcelExporter.export(members);
     }
 
     // Returns null if no id provided — gender/country are optional

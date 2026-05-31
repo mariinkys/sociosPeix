@@ -7,7 +7,9 @@ import dev.mariinkys.sociospeix.interfaces.dto.PageResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +40,19 @@ public class MemberController {
         var result = memberUseCase.getAllMembers(search, interestIds, pageable)
                 .map(MemberResponse::from);
         return ResponseEntity.ok(PageResponse.from(result));
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> export(
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(required = false) List<Integer> interestIds) {
+
+        byte[] file = memberUseCase.exportMembers(search, interestIds);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"members.xlsx\"")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(file);
     }
 
     @GetMapping("/{id}")

@@ -25,6 +25,7 @@ const router = useRouter()
 
 const members = ref<MemberResponse[]>([])
 const loading = ref(false)
+const exportLoading = ref(false)
 const totalElements = ref(0)
 
 const search = ref('')
@@ -128,6 +129,25 @@ function onInterestFilter() {
   fetchMembers()
 }
 
+async function onExport() {
+  exportLoading.value = true
+  try {
+    await membersService.export(
+      search.value || undefined,
+      selectedInterests.value.length ? selectedInterests.value.map((i) => i.id) : undefined,
+    )
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to export members.',
+      life: 3000,
+    })
+  } finally {
+    exportLoading.value = false
+  }
+}
+
 onMounted(async () => {
   allInterests.value = await interestsService.getAll()
   fetchMembers()
@@ -168,6 +188,16 @@ onMounted(async () => {
           @update:modelValue="onInterestFilter"
         />
 
+        <Button
+          label="Export"
+          icon="pi pi-download"
+          severity="secondary"
+          outlined
+          class="shrink-0"
+          :disabled="loading"
+          :loading="exportLoading"
+          @click="onExport"
+        />
         <Button
           label="New Member"
           icon="pi pi-plus"

@@ -18,4 +18,6 @@ public interface MemberUseCase {
                         String email, String birthdate, String phone, String notes,
                         Integer genderId, Integer countryId, List<Integer> interestIds);
     void deleteMember(UUID id);
+
+    byte[] exportMembers(String search, List<Integer> interestIds);
 }

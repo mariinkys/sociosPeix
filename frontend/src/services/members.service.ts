@@ -24,6 +24,19 @@ class MembersService {
     return data
   }
 
+  async export(search?: string, interestIds?: number[]): Promise<void> {
+    const response = await api.get('/api/members/export', {
+      params: { search: search || undefined, interestIds },
+      responseType: 'blob',
+    })
+    const url = URL.createObjectURL(response.data)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'members.xlsx'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   async getToday(): Promise<MemberResponse[]> {
     const { data } = await api.get<MemberResponse[]>('/api/members/birthdays/today')
     return data

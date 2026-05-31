@@ -48,4 +48,21 @@ public interface MemberJpaRepository extends JpaRepository<MemberJpaEntity, UUID
     """)
     List<MemberJpaEntity> findAllByAnyInterestId(@Param("interestIds") List<Integer> interestIds);
 
+    @Query("""
+        SELECT m FROM MemberJpaEntity m
+        WHERE (:search IS NULL OR :search = ''
+            OR LOWER(m.name)          LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(m.surname)       LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(m.secondSurname) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(m.email)         LIKE LOWER(CONCAT('%', :search, '%')))
+        AND (:interestCount = 0L OR
+            (SELECT COUNT(DISTINCT i.id) FROM MemberJpaEntity m2
+             JOIN m2.interests i
+             WHERE m2.id = m.id AND i.id IN :interestIds) = :interestCount)
+        ORDER BY m.surname ASC
+        """)
+    List<MemberJpaEntity> findAllForExport(@Param("search") String search,
+                                           @Param("interestIds") List<Integer> interestIds,
+                                           @Param("interestCount") long interestCount);
+
 }
