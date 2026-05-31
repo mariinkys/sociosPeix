@@ -12,7 +12,7 @@ import InterestsSelect from '@/components/interest/MultiSelect.vue'
 import type { EmailTemplate } from '@/utils/emailTemplates'
 
 const props = defineProps<{
-  mode: 'member' | 'interests'
+  mode: 'member' | 'interests' | 'all'
   memberId?: string
 }>()
 
@@ -51,9 +51,10 @@ const dialogTitle = computed(() =>
     ? `Preview — ${subject.value}`
     : props.mode === 'interests'
       ? 'Send Email by Interest'
-      : 'Send Email',
+      : props.mode === 'all'
+        ? 'Send Email to All Members'
+        : 'Send Email',
 )
-
 function reset() {
   step.value = 'compose'
   template.value = 'none'
@@ -118,6 +119,11 @@ async function onSend() {
     if (props.mode === 'interests') {
       await emailsService.sendToInterests(
         { subject: subject.value, htmlBody: renderedHtml.value, interestIds: interestIds.value },
+        attachments.value.length ? attachments.value : undefined,
+      )
+    } else if (props.mode === 'all') {
+      await emailsService.sendToAll(
+        { subject: subject.value, htmlBody: renderedHtml.value },
         attachments.value.length ? attachments.value : undefined,
       )
     } else {

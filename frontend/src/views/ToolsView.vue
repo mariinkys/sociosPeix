@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import EmailQuotaCard from '@/components/email/EmailQuotaCard.vue'
 import SendEmailByInterestCard from '@/components/email/SendEmailByInterestCard.vue'
+import SendEmailToAllCard from '@/components/email/SendEmailsToAllCard.vue'
 </script>
 
 <template>
@@ -13,6 +14,7 @@ import SendEmailByInterestCard from '@/components/email/SendEmailByInterestCard.
     <div class="flex flex-wrap gap-6 items-stretch">
       <EmailQuotaCard class="flex-1 min-w-72" />
       <SendEmailByInterestCard class="flex-1 min-w-72" />
+      <SendEmailToAllCard class="flex-1 min-w-72" />
     </div>
   </div>
 </template>
