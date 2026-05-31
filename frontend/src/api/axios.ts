@@ -11,8 +11,9 @@ api.interceptors.response.use(
     const url = error.config?.url ?? ''
     const isAuthEndpoint = url.includes('/api/auth/')
     const isSessionCheck = url.includes('/api/users/me')
+    const isPasswordCheck = url.includes('/password')
 
-    if (error.response?.status === 401 && !isAuthEndpoint && !isSessionCheck) {
+    if (error.response?.status === 401 && !isAuthEndpoint && !isSessionCheck && !isPasswordCheck) {
       import('@/stores/auth').then(({ useAuthStore }) => useAuthStore().clearUser())
       window.location.href = '/login'
     }

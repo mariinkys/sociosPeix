@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import api from '@/api/axios'
-import type { AuthResponse, LoginPayload, RegisterPayload } from '@/types/auth.types'
+import type { AuthResponse, LoginPayload } from '@/types/auth.types'
 import type { UserResponse } from '@/types/user.types'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -24,11 +24,11 @@ export const useAuthStore = defineStore('auth', () => {
     initPromise = Promise.resolve()
   }
 
-  async function register(payload: RegisterPayload): Promise<void> {
-    const { data } = await api.post<AuthResponse>('/api/auth/register', payload)
-    user.value = data
-    initPromise = Promise.resolve()
-  }
+  // async function register(payload: RegisterPayload): Promise<void> {
+  //   const { data } = await api.post<AuthResponse>('/api/auth/register', payload)
+  //   user.value = data
+  //   initPromise = Promise.resolve()
+  // }
 
   async function logout(): Promise<void> {
     await api.post<void>('/api/auth/logout')
@@ -60,7 +60,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAdmin,
     init,
     login,
-    register,
+    //register,
     logout,
     fetchCurrentUser,
     clearUser,

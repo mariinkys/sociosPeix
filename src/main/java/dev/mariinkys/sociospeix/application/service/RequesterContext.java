@@ -1,3 +1,5 @@
 package dev.mariinkys.sociospeix.application.service;
 
-public record RequesterContext(String email, boolean isAdmin) {}
+import java.util.UUID;
+
+public record RequesterContext(UUID id, String email, boolean isAdmin) {}

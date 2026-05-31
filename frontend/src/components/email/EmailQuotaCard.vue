@@ -6,6 +6,8 @@ import { useToast } from 'primevue/usetoast'
 import { emailsService } from '@/services/emails.service'
 import type { EmailProviderStatusResponse } from '@/types/email.types'
 
+defineOptions({ inheritAttrs: false })
+
 const toast = useToast()
 
 const status = ref<EmailProviderStatusResponse | null>(null)
@@ -48,7 +50,10 @@ onMounted(fetchStatus)
 </script>
 
 <template>
-  <Card class="border border-surface-200 dark:border-surface-700 shadow-sm max-w-sm h-full">
+  <Card
+    v-bind="$attrs"
+    class="border border-surface-200 dark:border-surface-700 shadow-sm max-w-sm h-full"
+  >
     <template #content>
       <div class="p-2 space-y-4">
         <div class="flex items-center justify-between">

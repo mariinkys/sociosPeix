@@ -1,8 +1,10 @@
 package dev.mariinkys.sociospeix.application.service;
 
 import dev.mariinkys.sociospeix.application.exception.EmailAlreadyInUseException;
+import dev.mariinkys.sociospeix.application.exception.InvalidPasswordException;
 import dev.mariinkys.sociospeix.application.exception.UserNotFoundException;
 import dev.mariinkys.sociospeix.application.port.PasswordHasher;
+import dev.mariinkys.sociospeix.domain.model.Role;
 import dev.mariinkys.sociospeix.domain.model.User;
 import dev.mariinkys.sociospeix.domain.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -39,7 +41,7 @@ public class UserService implements UserUseCase {
     public User getUserById(UUID id, RequesterContext requester) {
         User target = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        if (!requester.isAdmin() && !target.getEmail().equals(requester.email())) {
+        if (!requester.isAdmin() && !target.getId().equals(requester.id())) {
             throw new AccessDeniedException("You can only access your own account");
         }
         return target;
@@ -63,7 +65,7 @@ public class UserService implements UserUseCase {
     public User updateUser(UUID id, String name, String email, RequesterContext requester) {
         User target = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        if (!requester.isAdmin() && !target.getEmail().equals(requester.email())) {
+        if (!requester.isAdmin() && !target.getId().equals(requester.id())) {
             throw new AccessDeniedException("You can only update your own account");
         }
         return userRepository.save(target.withUpdatedDetails(name, email));
@@ -71,10 +73,40 @@ public class UserService implements UserUseCase {
 
     @Override
     @Transactional
+    public User updateUserRole(UUID id, Role role) {
+        User existing = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        return userRepository.save(existing.withRole(role));
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(UUID id, String currentPassword, String newPassword,
+                               RequesterContext requester) {
+        User target = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        if (!requester.isAdmin()) {
+            if (!target.getId().equals(requester.id())) {
+                throw new AccessDeniedException("You can only change your own password");
+            }
+            if (currentPassword == null || currentPassword.isBlank()) {
+                throw new InvalidPasswordException();
+            }
+            if (!passwordHasher.matches(currentPassword, target.getPassword())) {
+                throw new InvalidPasswordException();
+            }
+        }
+
+        userRepository.save(target.withPassword(passwordHasher.hash(newPassword)));
+    }
+
+    @Override
+    @Transactional
     public void deleteUser(UUID id, RequesterContext requester) {
         User target = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        if (!requester.isAdmin() && !target.getEmail().equals(requester.email())) {
+        if (!requester.isAdmin() && !target.getId().equals(requester.id())) {
             throw new AccessDeniedException("You can only delete your own account");
         }
         userRepository.deleteById(id);

@@ -46,11 +46,13 @@ const isActive = (path: string) => route.path === path
       <div class="flex items-center gap-4">
         <!-- Logo -->
         <RouterLink to="/" class="flex items-center gap-2 shrink-0 select-none">
-          <div
-            class="w-7 h-7 rounded-md bg-primary-600 dark:bg-primary-500 flex items-center justify-center shrink-0"
-          >
-            <span class="text-white text-xs font-bold">SP</span>
-          </div>
+          <img
+            src="@/assets/icon.png"
+            alt="SociosPeix"
+            class="w-7 h-7 rounded-md object-contain"
+            width="28"
+            height="28"
+          />
           <span class="text-sm font-semibold text-surface-900 dark:text-surface-0 tracking-tight">
             SociosPeix
           </span>
@@ -123,7 +125,9 @@ const isActive = (path: string) => route.path === path
           v-if="auth.isAuthenticated"
           class="hidden md:inline text-xs text-surface-400 dark:text-surface-500 mr-2 max-w-[180px] truncate"
         >
-          {{ auth.user?.email }}
+          <RouterLink :to="`/users/${auth.user?.id}/edit`">
+            {{ auth.user?.email }}
+          </RouterLink>
         </span>
 
         <!-- Logout, desktop only -->

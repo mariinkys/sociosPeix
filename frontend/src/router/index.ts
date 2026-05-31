@@ -21,6 +21,18 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
+    path: '/users/new',
+    name: 'New User',
+    component: () => import('@/views/users/UpsertView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/users/:id/edit',
+    name: 'Update User',
+    component: () => import('@/views/users/UpsertView.vue'),
+    meta: { requiresAuth: true, requiresSelfOrAdmin: true },
+  },
+  {
     path: '/members',
     name: 'Members',
     component: () => import('@/views/members/ListView.vue'),
@@ -79,6 +91,14 @@ router.beforeEach(async (to) => {
 
   if (to.meta.requiresAdmin && !auth.isAdmin) {
     return { name: 'Home' } // authenticated but wrong role we go back to home
+  }
+
+  if (to.meta.requiresSelfOrAdmin) {
+    const targetId = to.params.id as string
+    const isSelf = auth.user?.id === targetId
+    if (!auth.isAdmin && !isSelf) {
+      return { name: 'Home' }
+    }
   }
 
   if (to.meta.guestOnly && auth.isAuthenticated) {
