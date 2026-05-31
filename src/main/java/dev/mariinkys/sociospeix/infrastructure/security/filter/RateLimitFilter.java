@@ -40,6 +40,12 @@ public class RateLimitFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
 
+        // OPTIONS preflight requests must never consume rate limit tokens
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         if (RATE_LIMITED.stream().noneMatch(request.getRequestURI()::equals)) {
             chain.doFilter(request, response);
             return;
@@ -54,8 +60,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
             response.setStatus(429);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getWriter().write("""
-                    {"status":429,"message":"Too many requests, please try again later.","timestamp":"%s"}
-                    """.formatted(LocalDateTime.now()));
+            {"status":429,"message":"Too many requests, please try again later.","timestamp":"%s"}
+            """.formatted(LocalDateTime.now()));
         }
     }
 

@@ -7,6 +7,8 @@ app:
     max-login-attempts: 5
     lockout-duration-minutes: 15
     trust-proxy: ${TRUST_PROXY:false} # only set true when behind a trusted proxy
+    filter:
+      order: 10
 
 spring:
   datasource:

@@ -5,7 +5,6 @@ import dev.mariinkys.sociospeix.application.service.RefreshTokenService;
 import dev.mariinkys.sociospeix.domain.model.User;
 import dev.mariinkys.sociospeix.infrastructure.security.cookie.CookieService;
 import dev.mariinkys.sociospeix.infrastructure.security.jwt.JwtService;
-import dev.mariinkys.sociospeix.application.service.LoginAttemptService;
 import dev.mariinkys.sociospeix.interfaces.dto.auth.AuthRequest;
 import dev.mariinkys.sociospeix.interfaces.dto.auth.AuthResponse;
 import dev.mariinkys.sociospeix.interfaces.dto.auth.RegisterRequest;
@@ -18,8 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,20 +31,17 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final UserUseCase userUseCase;
     private final CookieService cookieService;
-    private final LoginAttemptService loginAttemptService;
 
     public AuthController(AuthenticationManager authManager,
                           JwtService jwtService,
                           RefreshTokenService refreshTokenService,
                           UserUseCase userUseCase,
-                          CookieService cookieService,
-                          LoginAttemptService loginAttemptService) {
+                          CookieService cookieService) {
         this.authManager = authManager;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
         this.userUseCase = userUseCase;
         this.cookieService = cookieService;
-        this.loginAttemptService = loginAttemptService;
     }
 
     // TODO: Maybe this makes more sense in the user controller?
@@ -93,16 +87,8 @@ public class AuthController {
     // Authenticates, sets cookies, returns user info shared by login and register
     private AuthResponse issueTokensAndBuildResponse(String email, String rawPassword,
                                                      HttpServletResponse response) {
-        try {
-            authManager.authenticate(new UsernamePasswordAuthenticationToken(email, rawPassword));
-            loginAttemptService.onSuccess(email);
-        }catch (LockedException e) {
-            System.out.println("User " + email + " is locked");
-            throw e; // handled by GlobalExceptionHandler
-        }  catch (BadCredentialsException e) {
-            loginAttemptService.onFailure(email);
-            throw e;
-        }
+
+        authManager.authenticate(new UsernamePasswordAuthenticationToken(email, rawPassword));
 
         User user = userUseCase.getUserByEmail(email);
         setTokenCookies(email, response);
