@@ -14,7 +14,7 @@ import { useToast } from 'primevue/usetoast'
 import { usersService } from '@/services/users.service'
 import { useAuthStore } from '@/stores/auth'
 import type { RegisterPayload } from '@/types/auth.types'
-import type { UserUpdatePayload, UserRole } from '@/types/user.types'
+import type { UserUpdatePayload, UserRole, UpdatePasswordPayload } from '@/types/user.types'
 
 const router = useRouter()
 const route = useRoute()
@@ -24,10 +24,12 @@ const authStore = useAuthStore()
 
 const userId = computed(() => route.params.id as string | undefined)
 const isEdit = computed(() => !!userId.value)
+const isSelf = computed(() => authStore.user?.id === userId.value)
 const loading = ref(false)
 const fetchLoading = ref(!!route.params.id)
 const deleteLoading = ref(false)
 const roleLoading = ref(false)
+const passwordLoading = ref(false)
 const currentRole = ref<UserRole>('USER')
 const selectedRole = ref<UserRole>('USER')
 
@@ -38,6 +40,7 @@ const roleOptions: { label: string; value: UserRole }[] = [
 
 const roleChanged = computed(() => selectedRole.value !== currentRole.value)
 
+// Main form
 const model = ref<RegisterPayload>({
   name: '',
   email: '',
@@ -61,8 +64,8 @@ const resolver = ({ values }: FormResolverOptions) => {
 
   if (!isEdit.value && !values.password) {
     errors.password = [{ message: 'Password is required' }]
-  } else if (values.password && String(values.password).length < 6) {
-    errors.password = [{ message: 'Password must be at least 6 characters' }]
+  } else if (values.password && String(values.password).length < 8) {
+    errors.password = [{ message: 'Password must be at least 8 characters' }]
   }
 
   return { errors }
@@ -73,12 +76,7 @@ async function onSubmit({ valid }: FormSubmitEvent) {
   loading.value = true
   try {
     if (isEdit.value) {
-      const payload: UserUpdatePayload = {
-        name: model.value.name,
-        email: model.value.email,
-        password: model.value.password,
-      }
-      if (model.value.password) payload.password = model.value.password
+      const payload: UserUpdatePayload = { name: model.value.name, email: model.value.email }
       await usersService.update(userId.value!, payload)
       toast.add({
         severity: 'success',
@@ -108,6 +106,61 @@ async function onSubmit({ valid }: FormSubmitEvent) {
   }
 }
 
+// Password card
+const passwordModel = ref({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+const passwordError = ref('')
+
+const passwordResolver = ({ values }: FormResolverOptions) => {
+  const errors: Record<string, { message: string }[]> = {}
+
+  if (!authStore.isAdmin && !values.currentPassword) {
+    errors.currentPassword = [{ message: 'Current password is required' }]
+  }
+
+  if (!values.newPassword) {
+    errors.newPassword = [{ message: 'New password is required' }]
+  } else if (String(values.newPassword).length < 8) {
+    errors.newPassword = [{ message: 'Password must be at least 8 characters' }]
+  }
+
+  if (!values.confirmPassword) {
+    errors.confirmPassword = [{ message: 'Please confirm the new password' }]
+  } else if (values.newPassword !== values.confirmPassword) {
+    errors.confirmPassword = [{ message: 'Passwords do not match' }]
+  }
+
+  return { errors }
+}
+
+async function onPasswordSubmit({ valid }: FormSubmitEvent) {
+  if (!valid) return
+  passwordLoading.value = true
+  passwordError.value = ''
+  try {
+    const payload: UpdatePasswordPayload = {
+      currentPassword: authStore.isAdmin ? null : passwordModel.value.currentPassword,
+      newPassword: passwordModel.value.newPassword,
+    }
+    await usersService.updatePassword(userId.value!, payload)
+    toast.add({
+      severity: 'success',
+      summary: 'Password updated',
+      detail: 'Password changed successfully.',
+      life: 3000,
+    })
+    passwordModel.value = { currentPassword: '', newPassword: '', confirmPassword: '' }
+  } catch {
+    passwordError.value = 'Failed to update password. Check your current password and try again.'
+  } finally {
+    passwordLoading.value = false
+  }
+}
+
+// Role card
 async function onRoleChange() {
   roleLoading.value = true
   try {
@@ -127,6 +180,7 @@ async function onRoleChange() {
   }
 }
 
+// Delete
 function confirmDelete() {
   confirm.require({
     message: 'Are you sure you want to delete this user? This action cannot be undone.',
@@ -203,10 +257,10 @@ onMounted(async () => {
         </div>
       </div>
 
-      <!-- NORMAL USERS SHOULD NOT BE ABLE TO DELTE THEMSELVES -->
       <div class="flex items-center gap-2 shrink-0">
+        <!-- Admins can delete anyone except themselves, regular users cannot delete -->
         <Button
-          v-if="isEdit"
+          v-if="isEdit && authStore.isAdmin && !isSelf"
           icon="pi pi-trash"
           severity="danger"
           outlined
@@ -218,7 +272,7 @@ onMounted(async () => {
     </div>
 
     <div v-if="fetchLoading" class="flex items-center justify-center py-24">
-      <i class="pi pi-spinner pi-spin text-2xl text-surface-400" />
+      <i class="pi pi-spinner pi-spin text-2xl text-surface-400"></i>
     </div>
 
     <template v-else>
@@ -265,12 +319,10 @@ onMounted(async () => {
               </Message>
             </FormField>
 
-            <FormField v-slot="$field" name="password" class="flex flex-col gap-1.5">
+            <!-- Password only on create -->
+            <FormField v-if="!isEdit" v-slot="$field" name="password" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Password <span v-if="!isEdit" class="text-red-500">*</span>
-                <span v-else class="text-surface-400 font-normal"
-                  >(leave blank to keep current)</span
-                >
+                Password <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="model.password"
@@ -299,9 +351,100 @@ onMounted(async () => {
         </template>
       </Card>
 
-      <!-- Role card — edit mode, admin only -->
+      <!-- Password card, edit mode only -->
+      <Card v-if="isEdit" class="border border-surface-200 dark:border-surface-700 shadow-sm">
+        <template #content>
+          <Form
+            :initialValues="passwordModel"
+            :resolver="passwordResolver"
+            :validateOnBlur="true"
+            :validateOnValueUpdate="true"
+            class="p-2 space-y-4"
+            @submit="onPasswordSubmit"
+          >
+            <div class="flex items-center gap-2">
+              <i class="pi pi-lock text-primary-500 dark:text-primary-400"></i>
+              <h2
+                class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
+              >
+                Change Password
+              </h2>
+            </div>
+
+            <!-- Current password, only required for non-admins -->
+            <FormField
+              v-if="!authStore.isAdmin"
+              v-slot="$field"
+              name="currentPassword"
+              class="flex flex-col gap-1.5"
+            >
+              <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                Current Password <span class="text-red-500">*</span>
+              </label>
+              <InputText
+                v-model="passwordModel.currentPassword"
+                type="password"
+                placeholder="Enter current password"
+                :invalid="$field?.invalid"
+                fluid
+              />
+              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                {{ $field.error?.message }}
+              </Message>
+            </FormField>
+
+            <FormField v-slot="$field" name="newPassword" class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                New Password <span class="text-red-500">*</span>
+              </label>
+              <InputText
+                v-model="passwordModel.newPassword"
+                type="password"
+                placeholder="Enter new password"
+                :invalid="$field?.invalid"
+                fluid
+              />
+              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                {{ $field.error?.message }}
+              </Message>
+            </FormField>
+
+            <FormField v-slot="$field" name="confirmPassword" class="flex flex-col gap-1.5">
+              <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
+                Confirm New Password <span class="text-red-500">*</span>
+              </label>
+              <InputText
+                v-model="passwordModel.confirmPassword"
+                type="password"
+                placeholder="Repeat new password"
+                :invalid="$field?.invalid"
+                fluid
+              />
+              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+                {{ $field.error?.message }}
+              </Message>
+            </FormField>
+
+            <Message v-if="passwordError" severity="error" size="small" variant="simple">
+              {{ passwordError }}
+            </Message>
+
+            <div class="flex justify-end pt-1">
+              <Button
+                type="submit"
+                label="Update Password"
+                icon="pi pi-lock"
+                iconPos="right"
+                :loading="passwordLoading"
+              />
+            </div>
+          </Form>
+        </template>
+      </Card>
+
+      <!-- Role card: edit mode, admin only (and not for self) -->
       <Card
-        v-if="isEdit && authStore.isAdmin"
+        v-if="isEdit && authStore.isAdmin && !isSelf"
         class="border border-surface-200 dark:border-surface-700 shadow-sm"
       >
         <template #content>

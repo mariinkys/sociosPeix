@@ -11,5 +11,9 @@ export interface UserResponse {
 export interface UserUpdatePayload {
   name: string
   email: string
-  password: string
+}
+
+export interface UpdatePasswordPayload {
+  currentPassword: string | null // required for regular users, ignored for admins
+  newPassword: string
 }

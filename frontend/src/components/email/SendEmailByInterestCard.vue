@@ -4,11 +4,14 @@ import Card from 'primevue/card'
 import Button from 'primevue/button'
 import SendEmailDialog from '@/components/email/SendEmailDialog.vue'
 
+defineOptions({ inheritAttrs: false })
+
 const dialogVisible = ref(false)
 </script>
 
 <template>
   <Card
+    v-bind="$attrs"
     class="border border-surface-200 dark:border-surface-700 shadow-sm max-w-sm [&_.p-card-body]:h-full [&_.p-card-content]:h-full"
   >
     <template #content>

@@ -1,7 +1,12 @@
 import api from '@/api/axios'
 import type { RegisterPayload } from '@/types/auth.types'
 import type { PageResponse, PaginatedParams } from '@/types/common.types'
-import type { UserResponse, UserRole, UserUpdatePayload } from '@/types/user.types'
+import type {
+  UpdatePasswordPayload,
+  UserResponse,
+  UserRole,
+  UserUpdatePayload,
+} from '@/types/user.types'
 
 class UsersService {
   async getAll(params?: PaginatedParams): Promise<PageResponse<UserResponse>> {
@@ -26,6 +31,11 @@ class UsersService {
 
   async updateRole(id: string, role: UserRole): Promise<UserResponse> {
     const { data } = await api.patch<UserResponse>(`/api/users/${id}/role`, { role })
+    return data
+  }
+
+  async updatePassword(id: string, payload: UpdatePasswordPayload): Promise<void> {
+    const { data } = await api.patch<void>(`/api/users/${id}/password`, payload)
     return data
   }
 

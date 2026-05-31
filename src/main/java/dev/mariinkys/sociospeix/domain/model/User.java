@@ -50,6 +50,11 @@ public class User {
                 this.failedLoginAttempts, this.lockedUntil, this.createdAt, LocalDateTime.now());
     }
 
+    public User withPassword(String hashedPassword) {
+        return new User(this.id, this.name, this.email, hashedPassword, this.role,
+                this.failedLoginAttempts, this.lockedUntil, this.createdAt, LocalDateTime.now());
+    }
+
     public User incrementFailedAttempts() {
         return new User(id, name, email, password, role,
                 failedLoginAttempts + 1, lockedUntil, createdAt, updatedAt);

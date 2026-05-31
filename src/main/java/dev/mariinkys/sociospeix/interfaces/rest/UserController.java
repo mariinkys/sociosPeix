@@ -3,6 +3,7 @@ package dev.mariinkys.sociospeix.interfaces.rest;
 import dev.mariinkys.sociospeix.application.port.UserUseCase;
 import dev.mariinkys.sociospeix.application.service.RequesterContext;
 import dev.mariinkys.sociospeix.interfaces.dto.PageResponse;
+import dev.mariinkys.sociospeix.interfaces.dto.user.ChangePasswordRequest;
 import dev.mariinkys.sociospeix.interfaces.dto.user.UpdateRequest;
 import dev.mariinkys.sociospeix.interfaces.dto.user.UpdateRoleRequest;
 import dev.mariinkys.sociospeix.interfaces.dto.user.UserResponse;
@@ -68,6 +69,15 @@ public class UserController {
         return ResponseEntity.ok(UserResponse.from(userUseCase.updateUserRole(id, request.role())));
     }
 
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<Void> changePassword(@PathVariable UUID id,
+                                               @Valid @RequestBody ChangePasswordRequest request,
+                                               @AuthenticationPrincipal UserDetails userDetails) {
+        userUseCase.changePassword(id, request.currentPassword(), request.newPassword(),
+                requesterContext(userDetails));
+        return ResponseEntity.noContent().build();
+    }
+
     // ADMIN deletes anyone, USER deletes only themselves (enforced in service)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id,
@@ -85,6 +95,7 @@ public class UserController {
     private RequesterContext requesterContext(UserDetails userDetails) {
         boolean isAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN"));
-        return new RequesterContext(userDetails.getUsername(), isAdmin);
+        var user = userUseCase.getUserByEmail(userDetails.getUsername());
+        return new RequesterContext(user.getId(), userDetails.getUsername(), isAdmin);
     }
 }

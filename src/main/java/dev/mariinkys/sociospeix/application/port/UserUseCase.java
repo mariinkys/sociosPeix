@@ -15,5 +15,6 @@ public interface UserUseCase {
     Page<User> getAllUsers(String search, Pageable pageable);
     User updateUser(UUID id, String name, String email, RequesterContext requester);
     User updateUserRole(UUID id, Role role);
+    void changePassword(UUID id, String currentPassword, String newPassword, RequesterContext requester);
     void deleteUser(UUID id, RequesterContext requester);
 }
