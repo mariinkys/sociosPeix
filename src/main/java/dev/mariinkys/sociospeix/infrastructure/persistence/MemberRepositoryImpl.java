@@ -1,6 +1,5 @@
 package dev.mariinkys.sociospeix.infrastructure.persistence;
 
-import dev.mariinkys.sociospeix.domain.model.Interest;
 import dev.mariinkys.sociospeix.domain.model.Member;
 import dev.mariinkys.sociospeix.domain.repository.MemberRepository;
 import dev.mariinkys.sociospeix.infrastructure.persistence.entity.CountryJpaEntity;
@@ -12,6 +11,7 @@ import dev.mariinkys.sociospeix.infrastructure.persistence.repository.GenderJpaR
 import dev.mariinkys.sociospeix.infrastructure.persistence.repository.InterestJpaRepository;
 import dev.mariinkys.sociospeix.infrastructure.persistence.repository.MemberJpaRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
@@ -55,25 +55,32 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Optional<Member> findById(UUID id) {
-        return jpaRepository.findById(id).map(entity -> {
-            var interests = interestJpaRepository.findByMemberId(id)
-                    .stream()
-                    .map(e -> new Interest(e.getId(), e.getName(), e.getDescription()))
-                    .toList();
-            return mapper.toDomain(entity).withInterests(interests);
-        });
+        return jpaRepository.findByIdWithDetails(id).map(mapper::toDomain);
     }
+
 
     @Override
     public Page<Member> findAll(String search, List<Integer> interestIds, Pageable pageable) {
         List<Integer> ids = interestIds == null ? List.of() : interestIds;
-        return jpaRepository.findAll(search, ids, ids.size(), pageable).map(entity -> {
-            var interests = interestJpaRepository.findByMemberId(entity.getId())
-                    .stream()
-                    .map(e -> new Interest(e.getId(), e.getName(), e.getDescription()))
-                    .toList();
-            return mapper.toDomain(entity).withInterests(interests);
-        });
+        long interestCount = ids.size();
+
+        long total = jpaRepository.countWithFilters(search, ids, interestCount);
+
+        // Get all matching IDs in sorted order, then slice for the requested page
+        List<UUID> allIds = jpaRepository.findPageIds(search, ids, interestCount);
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), allIds.size());
+        List<UUID> pageIds = start >= allIds.size() ? List.of() : allIds.subList(start, end);
+
+        // Fetch full entities with all associations for just this page
+        List<Member> members = pageIds.isEmpty()
+                ? List.of()
+                : jpaRepository.findAllByIdWithDetails(pageIds)
+                .stream()
+                .map(mapper::toDomain)
+                .toList();
+
+        return new PageImpl<>(members, pageable, total);
     }
 
     @Override
@@ -90,39 +97,18 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void syncInterests(UUID memberId, List<Integer> interestIds) {
-        var member = jpaRepository.findById(memberId).orElseThrow();
-        var interests = interestIds.isEmpty()
-                ? List.<InterestJpaEntity>of()
-                : interestJpaRepository.findAllById(interestIds);
-
-        member.setInterests(new ArrayList<>(interests));
-        jpaRepository.save(member);
-    }
-
-    @Override
     public List<Member> findAllMembers() {
-        return jpaRepository.findAllMembers().stream()
-                .map(entity -> {
-                    var interests = interestJpaRepository.findByMemberId(entity.getId())
-                            .stream()
-                            .map(e -> new Interest(e.getId(), e.getName(), e.getDescription()))
-                            .toList();
-                    return mapper.toDomain(entity).withInterests(interests);
-                })
+        return jpaRepository.findAllMembers()
+                .stream()
+                .map(mapper::toDomain)
                 .toList();
     }
 
     @Override
     public List<Member> findAllByAnyInterestId(List<Integer> interestIds) {
-        return jpaRepository.findAllByAnyInterestId(interestIds).stream()
-                .map(entity -> {
-                    var interests = interestJpaRepository.findByMemberId(entity.getId())
-                            .stream()
-                            .map(e -> new Interest(e.getId(), e.getName(), e.getDescription()))
-                            .toList();
-                    return mapper.toDomain(entity).withInterests(interests);
-                })
+        return jpaRepository.findAllByAnyInterestId(interestIds)
+                .stream()
+                .map(mapper::toDomain)
                 .toList();
     }
 
@@ -131,13 +117,18 @@ public class MemberRepositoryImpl implements MemberRepository {
         List<Integer> ids = interestIds == null ? List.of() : interestIds;
         return jpaRepository.findAllForExport(search, ids, ids.size())
                 .stream()
-                .map(entity -> {
-                    var interests = interestJpaRepository.findByMemberId(entity.getId())
-                            .stream()
-                            .map(e -> new Interest(e.getId(), e.getName(), e.getDescription()))
-                            .toList();
-                    return mapper.toDomain(entity).withInterests(interests);
-                })
+                .map(mapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public void syncInterests(UUID memberId, List<Integer> interestIds) {
+        var member = jpaRepository.findById(memberId).orElseThrow();
+        var interests = interestIds.isEmpty()
+                ? List.<InterestJpaEntity>of()
+                : interestJpaRepository.findAllById(interestIds);
+
+        member.setInterests(new ArrayList<>(interests));
+        jpaRepository.save(member);
     }
 }

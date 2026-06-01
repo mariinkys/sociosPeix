@@ -22,29 +22,16 @@ public class MemberMapper {
                 ? new Country(entity.getCountry().getId(), entity.getCountry().getName())
                 : null;
 
-        List<Interest> interests = entity.getInterests()
-                .stream()
-                .map(i -> new Interest(
-                        i.getId(),
-                        i.getName(),
-                        i.getDescription()
-                ))
+        // Interests are already loaded via JOIN FETCH now
+        List<Interest> interests = entity.getInterests().stream()
+                .map(i -> new Interest(i.getId(), i.getName(), i.getDescription()))
                 .toList();
 
         return new Member(
-                entity.getId(),
-                entity.getName(),
-                entity.getSurname(),
-                entity.getSecondSurname(),
-                entity.getEmail(),
-                entity.getBirthdate(),
-                entity.getPhone(),
-                entity.getNotes(),
-                gender,
-                country,
-                interests,
-                entity.getCreatedAt(),
-                entity.getUpdatedAt()
+                entity.getId(), entity.getName(), entity.getSurname(),
+                entity.getSecondSurname(), entity.getEmail(), entity.getBirthdate(),
+                entity.getPhone(), entity.getNotes(), gender, country, interests,
+                entity.getCreatedAt(), entity.getUpdatedAt()
         );
     }
 
