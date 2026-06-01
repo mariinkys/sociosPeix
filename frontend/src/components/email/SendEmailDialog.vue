@@ -8,7 +8,7 @@ import Editor from 'primevue/editor'
 import Message from 'primevue/message'
 import { useToast } from 'primevue/usetoast'
 import { emailsService } from '@/services/emails.service'
-import { applyTemplate, wrapEmailBody, TEMPLATE_OPTIONS } from '@/utils/emailTemplates'
+import { applyTemplate, wrapEmailBody, getTemplateOptions } from '@/utils/emailTemplates'
 import InterestsSelect from '@/components/interest/MultiSelect.vue'
 import type { EmailTemplate } from '@/utils/emailTemplates'
 
@@ -41,6 +41,9 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024
 
 const totalAttachmentSize = computed(() => attachments.value.reduce((sum, f) => sum + f.size, 0))
+const templateOptions = computed(() => {
+  return getTemplateOptions()
+})
 
 function formatSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
@@ -177,7 +180,7 @@ async function onSend() {
         }}</label>
         <div class="flex gap-2">
           <button
-            v-for="opt in TEMPLATE_OPTIONS"
+            v-for="opt in templateOptions"
             :key="opt.value"
             type="button"
             class="flex-1 flex flex-col items-center gap-1.5 py-3 px-2 rounded-lg border text-xs font-medium transition-colors"

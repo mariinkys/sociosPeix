@@ -430,6 +430,11 @@ export default {
       previewFallback: 'Correo',
     },
 
+    templates: {
+      none: 'Sin Plantilla',
+      basic: 'Básica',
+    },
+
     descriptions: {
       sendToAll: 'Envía un correo a todos los miembros de la base de datos.',
       sendByInterest: 'Envía un correo a todos los miembros que compartan uno o más intereses.',

@@ -428,6 +428,11 @@ export default {
       previewFallback: 'Email',
     },
 
+    templates: {
+      none: 'No Template',
+      basic: 'Basic',
+    },
+
     descriptions: {
       sendToAll: 'Send an email to every member in the database.',
       sendByInterest: 'Send an email to all members that share one or more interests.',
