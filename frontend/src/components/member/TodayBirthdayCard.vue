@@ -1,6 +1,7 @@
 c
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import DataTable, { type DataTableRowClickEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -10,6 +11,7 @@ import { membersService } from '@/services/members.service'
 import type { MemberResponse } from '@/types/member.types'
 import { useRouter } from 'vue-router'
 
+const { t, locale } = useI18n({ useScope: 'global' })
 const toast = useToast()
 const router = useRouter()
 
@@ -23,8 +25,8 @@ async function fetchTodayBirthdays() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: "Failed to load today's birthdays.",
+      summary: t('common.feedback.error'),
+      detail: t('members.todayBirthdayCard.errors.load'),
       life: 3000,
     })
   } finally {
@@ -46,9 +48,9 @@ onMounted(fetchTodayBirthdays)
       <div class="space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <i class="pi pi-gift text-primary-500 dark:text-primary-400" />
+            <i class="pi pi-gift text-primary-500 dark:text-primary-400"></i>
             <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
-              Today's Birthdays
+              {{ t('members.todayBirthdayCard.title') }}
             </h2>
             <span
               v-if="members.length > 0"
@@ -64,7 +66,7 @@ onMounted(fetchTodayBirthdays)
             text
             rounded
             size="small"
-            aria-label="Refresh"
+            :aria-label="t('common.actions.refresh')"
             :loading="loading"
             @click="fetchTodayBirthdays"
           />
@@ -82,7 +84,7 @@ onMounted(fetchTodayBirthdays)
           row-hover
           @row-click="onRowClick"
         >
-          <Column field="fullName" header="Member" style="width: 25%" sortable>
+          <Column field="fullName" :header="t('common.fields.member')" style="width: 25%" sortable>
             <template #body="{ data }: { data: MemberResponse }">
               <div class="flex items-center gap-2">
                 <div
@@ -97,13 +99,13 @@ onMounted(fetchTodayBirthdays)
             </template>
           </Column>
 
-          <Column field="email" header="Email" style="width: 25%">
+          <Column field="email" :header="t('common.fields.email')" style="width: 25%">
             <template #body="{ data }: { data: MemberResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">{{ data.email }}</span>
             </template>
           </Column>
 
-          <Column field="phone" header="Phone" style="width: 25%">
+          <Column field="phone" :header="t('common.fields.phone')" style="width: 25%">
             <template #body="{ data }: { data: MemberResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{ data.phone ?? '—' }}
@@ -111,11 +113,11 @@ onMounted(fetchTodayBirthdays)
             </template>
           </Column>
 
-          <Column field="birthdate" header="Birthday" style="width: 25%">
+          <Column field="birthdate" :header="t('common.fields.birthday')" style="width: 25%">
             <template #body="{ data }: { data: MemberResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{
-                  new Date(data.birthdate).toLocaleDateString('es-ES', {
+                  new Date(data.birthdate).toLocaleDateString(locale, {
                     day: 'numeric',
                     month: 'long',
                   })
@@ -127,7 +129,7 @@ onMounted(fetchTodayBirthdays)
           <template #empty>
             <div class="flex flex-col items-center justify-center py-10 gap-2 text-surface-400">
               <i class="pi pi-gift text-3xl"></i>
-              <p class="text-sm">No birthdays today</p>
+              <p class="text-sm">{{ t('members.todayBirthdayCard.empty') }}</p>
             </div>
           </template>
         </DataTable>

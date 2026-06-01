@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { Form, FormField } from '@primevue/forms'
 import type { FormResolverOptions, FormSubmitEvent } from '@primevue/forms'
@@ -14,6 +15,7 @@ import { useToast } from 'primevue/usetoast'
 import { interestsService } from '@/services/interests.service'
 import type { InterestPayload } from '@/types/interest.types'
 
+const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
@@ -37,9 +39,9 @@ const resolver = ({ values }: FormResolverOptions) => {
   const errors: Record<string, { message: string }[]> = {}
 
   if (!values.name) {
-    errors.name = [{ message: 'Name is required' }]
+    errors.name = [{ message: t('interests.fields.name.required') }]
   } else if (String(values.name).length > 100) {
-    errors.name = [{ message: 'Name must not exceed 100 characters' }]
+    errors.name = [{ message: t('interests.fields.name.max') }]
   }
 
   return { errors }
@@ -54,16 +56,16 @@ async function onSubmit({ valid }: FormSubmitEvent) {
       await interestsService.update(interestId.value!, model.value)
       toast.add({
         severity: 'success',
-        summary: 'Saved',
-        detail: 'Interest updated successfully',
+        summary: t('common.feedback.saved'),
+        detail: t('interests.messages.updated'),
         life: 3000,
       })
     } else {
       await interestsService.create(model.value)
       toast.add({
         severity: 'success',
-        summary: 'Created',
-        detail: 'Interest created successfully',
+        summary: t('common.feedback.created'),
+        detail: t('interests.messages.created'),
         life: 3000,
       })
     }
@@ -72,7 +74,7 @@ async function onSubmit({ valid }: FormSubmitEvent) {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: isEdit.value ? 'Failed to update interest' : 'Failed to create interest',
+      detail: isEdit.value ? t('interests.messages.updateError') : t('interests.messages.createError'),
       life: 3000,
     })
   } finally {
@@ -82,27 +84,34 @@ async function onSubmit({ valid }: FormSubmitEvent) {
 
 function confirmDelete() {
   confirm.require({
-    message: `Are you sure you want to delete this interest? This action cannot be undone.`,
-    header: 'Delete Interest',
+    message: t('interests.deleteDialog.messageGeneric'),
+    header: t('interests.deleteDialog.title'),
     icon: 'pi pi-exclamation-triangle',
-    rejectProps: { label: 'Cancel', severity: 'secondary', outlined: true },
-    acceptProps: { label: 'Delete', severity: 'danger' },
+    rejectProps: {
+      label: t('common.actions.cancel'),
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: t('common.actions.delete'),
+      severity: 'danger',
+    },
     accept: async () => {
       deleteLoading.value = true
       try {
         await interestsService.delete(interestId.value!)
         toast.add({
           severity: 'success',
-          summary: 'Deleted',
-          detail: 'Interest deleted successfully.',
+          summary: t('common.feedback.deleted'),
+          detail: t('interests.deleteDialog.deletedSuccess'),
           life: 3000,
         })
         router.push('/interests')
       } catch {
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to delete interest. Please try again.',
+          summary: t('common.feedback.error'),
+          detail: t('interests.deleteDialog.error'),
           life: 3000,
         })
       } finally {
@@ -123,8 +132,8 @@ onMounted(async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to load interest',
+      summary: t('common.feedback.error'),
+      detail: t('interests.messages.loadError'),
       life: 3000,
     })
     router.push('/interests')
@@ -143,19 +152,15 @@ onMounted(async () => {
           severity="secondary"
           text
           rounded
-          aria-label="Go back"
+          :aria-label="t('common.actions.back')"
           @click="router.push('/interests')"
         />
         <div>
           <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-            {{ isEdit ? 'Edit Interest' : 'New Interest' }}
+            {{ isEdit ? t('interests.titles.edit') : t('interests.titles.create') }}
           </h1>
           <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-            {{
-              isEdit
-                ? "Update the interest's details below"
-                : 'Fill in the details to create a new interest'
-            }}
+            {{ isEdit ? t('interests.descriptions.edit') : t('interests.descriptions.create') }}
           </p>
         </div>
       </div>
@@ -167,7 +172,7 @@ onMounted(async () => {
           severity="danger"
           outlined
           :loading="deleteLoading"
-          aria-label="Delete interest"
+          :aria-label="t('interests.actions.delete')"
           @click="confirmDelete"
         />
       </div>
@@ -192,11 +197,11 @@ onMounted(async () => {
 
           <FormField v-slot="$field" name="name" class="flex flex-col gap-1.5">
             <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-              Name <span class="text-red-500">*</span>
+              {{ t('interests.fields.name.label') }} <span class="text-red-500">*</span>
             </label>
             <InputText
               v-model="model.name"
-              placeholder="Enter interest name"
+              :placeholder="t('interests.fields.name.placeholder')"
               :invalid="$field?.invalid"
               fluid
             />
@@ -207,11 +212,11 @@ onMounted(async () => {
 
           <FormField v-slot="$field" name="description" class="flex flex-col gap-1.5">
             <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-              Description
+              {{ t('interests.fields.description.label') }}
             </label>
             <Textarea
               v-model="model.description"
-              placeholder="Enter a description"
+              :placeholder="t('interests.fields.description.placeholder')"
               :invalid="$field?.invalid"
               rows="4"
               fluid
@@ -223,14 +228,14 @@ onMounted(async () => {
 
           <div class="flex items-center justify-end gap-3 pt-2">
             <Button
-              label="Cancel"
+              :label="t('common.actions.cancel')"
               severity="secondary"
               outlined
               @click="router.push('/interests')"
             />
             <Button
               type="submit"
-              :label="isEdit ? 'Save Changes' : 'Create Interest'"
+              :label="isEdit ? t('common.actions.saveChanges') : t('interests.actions.create')"
               :icon="isEdit ? 'pi pi-check' : 'pi pi-plus'"
               iconPos="right"
               :loading="loading"

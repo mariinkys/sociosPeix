@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { Form, FormField } from '@primevue/forms'
 import type { FormResolverOptions, FormSubmitEvent } from '@primevue/forms'
 import Card from 'primevue/card'
@@ -13,6 +14,7 @@ import type { LoginPayload } from '@/types/auth.types'
 import type { AxiosError } from 'axios'
 import { useToast } from 'primevue/usetoast'
 
+const { t } = useI18n({ useScope: 'global' })
 const auth = useAuthStore()
 const router = useRouter()
 const route = useRoute()
@@ -29,13 +31,13 @@ const resolver = ({ values }: FormResolverOptions) => {
   const password = values.password as string
 
   if (!email) {
-    errors.email = [{ message: 'Email is required' }]
+    errors.email = [{ message: t('common.validation.emailRequired') }]
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.email = [{ message: 'Must be a valid email' }]
+    errors.email = [{ message: t('common.validation.invalidEmail') }]
   }
 
   if (!password) {
-    errors.password = [{ message: 'Password is required' }]
+    errors.password = [{ message: t('common.validation.passwordRequired') }]
   }
 
   return { errors }
@@ -53,8 +55,8 @@ async function onSubmit({ valid }: FormSubmitEvent) {
     const err = e as AxiosError<{ message: string }>
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: err.response?.data?.message ?? 'Login failed',
+      summary: t('common.feedback.error'),
+      detail: err.response?.data?.message ?? t('auth.login.errors.loginFailed'),
       life: 3000,
     })
   } finally {
@@ -71,9 +73,11 @@ async function onSubmit({ valid }: FormSubmitEvent) {
       <template #content>
         <div class="space-y-8 p-2">
           <div class="text-center space-y-1">
-            <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">Sign in</h1>
+            <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
+              {{ t('auth.login.title') }}
+            </h1>
             <p class="text-sm text-surface-500 dark:text-surface-400">
-              Welcome back — please enter your details
+              {{ t('auth.login.description') }}
             </p>
           </div>
 
@@ -88,13 +92,12 @@ async function onSubmit({ valid }: FormSubmitEvent) {
           >
             <FormField v-slot="$field" name="email" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Email
+                {{ t('common.fields.email') }}
               </label>
-              <!-- ✅ v-model on your own ref, NOT $field.value -->
               <InputText
                 v-model="model.email"
                 type="email"
-                placeholder="Enter your email"
+                :placeholder="t('common.placeholders.enterYourEmail')"
                 autocomplete="email"
                 :invalid="$field?.invalid"
                 fluid
@@ -106,11 +109,11 @@ async function onSubmit({ valid }: FormSubmitEvent) {
 
             <FormField v-slot="$field" name="password" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Password
+                {{ t('common.fields.password') }}
               </label>
               <Password
                 v-model="model.password"
-                placeholder="Enter your password"
+                :placeholder="t('common.placeholders.enterPassword')"
                 :feedback="false"
                 :invalid="$field?.invalid"
                 toggleMask
@@ -123,7 +126,7 @@ async function onSubmit({ valid }: FormSubmitEvent) {
 
             <Button
               type="submit"
-              label="Sign in"
+              :label="t('auth.login.submit')"
               icon="pi pi-sign-in"
               iconPos="right"
               class="w-full"

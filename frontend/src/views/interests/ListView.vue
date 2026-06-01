@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -12,6 +13,7 @@ import type { DataTableRowClickEvent } from 'primevue/datatable'
 import { interestsService } from '@/services/interests.service'
 import type { InterestResponse } from '@/types/interest.types'
 
+const { t } = useI18n({ useScope: 'global' })
 const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
@@ -35,8 +37,8 @@ async function fetchInterests() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to load interests. Please try again.',
+      summary: t('common.feedback.error'),
+      detail: t('interests.messages.loadListError'),
       life: 3000,
     })
   } finally {
@@ -52,26 +54,30 @@ function onRowClick(event: DataTableRowClickEvent) {
 function confirmDelete(event: Event, interest: InterestResponse) {
   event.stopPropagation()
   confirm.require({
-    message: `Are you sure you want to delete "${interest.name}"? This action cannot be undone.`,
-    header: 'Delete Interest',
+    message: t('interests.deleteDialog.message', { name: interest.name }),
+    header: t('interests.deleteDialog.title'),
     icon: 'pi pi-exclamation-triangle',
-    rejectProps: { label: 'Cancel', severity: 'secondary', outlined: true },
-    acceptProps: { label: 'Delete', severity: 'danger' },
+    rejectProps: {
+      label: t('common.actions.cancel'),
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: { label: t('common.actions.delete'), severity: 'danger' },
     accept: async () => {
       try {
         await interestsService.delete(interest.id)
         toast.add({
           severity: 'success',
-          summary: 'Deleted',
-          detail: `"${interest.name}" has been deleted.`,
+          summary: t('common.feedback.deleted'),
+          detail: t('interests.deleteDialog.success', { name: interest.name }),
           life: 3000,
         })
         fetchInterests()
       } catch {
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to delete interest. Please try again.',
+          summary: t('common.feedback.error'),
+          detail: t('interests.deleteDialog.error'),
           life: 3000,
         })
       }
@@ -88,9 +94,11 @@ onMounted(fetchInterests)
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">Interests</h1>
+        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
+          {{ t('interests.titles.list') }}
+        </h1>
         <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-          {{ filtered.length }} interest{{ filtered.length !== 1 ? 's' : '' }}
+          {{ t('interests.list.count', filtered.length) }}
         </p>
       </div>
 
@@ -98,12 +106,12 @@ onMounted(fetchInterests)
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
-            placeholder="Search interests..."
+            :placeholder="t('common.placeholders.searchInterests')"
             class="pl-9 w-full sm:w-56"
           />
         </div>
         <Button
-          label="New Interest"
+          :label="t('interests.actions.createNew')"
           icon="pi pi-plus"
           class="shrink-0"
           @click="router.push('/interests/new')"
@@ -124,13 +132,17 @@ onMounted(fetchInterests)
       class="border border-surface-200 dark:border-surface-700 rounded-xl overflow-hidden"
       @row-click="onRowClick"
     >
-      <Column field="name" header="Name" style="width: 30%" sortable>
+      <Column field="name" :header="t('common.fields.name')" style="width: 30%" sortable>
         <template #body="{ data }: { data: InterestResponse }">
           <span class="font-medium text-surface-900 dark:text-surface-0">{{ data.name }}</span>
         </template>
       </Column>
 
-      <Column field="description" header="Description" style="width: 60%">
+      <Column
+        field="description"
+        :header="t('common.fields.description')"
+        style="width: 60%"
+      >
         <template #body="{ data }: { data: InterestResponse }">
           <span class="text-surface-500 dark:text-surface-400 text-sm">
             {{ data.description ?? '—' }}
@@ -147,7 +159,7 @@ onMounted(fetchInterests)
               text
               rounded
               size="small"
-              aria-label="Delete interest"
+              :aria-label="t('interests.actions.delete')"
               @click="confirmDelete($event, data)"
             />
           </div>
@@ -157,7 +169,7 @@ onMounted(fetchInterests)
       <template #empty>
         <div class="flex flex-col items-center justify-center py-16 gap-3 text-surface-400">
           <i class="pi pi-tag text-4xl"></i>
-          <p class="text-sm">No interests found</p>
+          <p class="text-sm">{{ t('interests.list.empty') }}</p>
         </div>
       </template>
     </DataTable>

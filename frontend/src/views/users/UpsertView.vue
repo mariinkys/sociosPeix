@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Form, FormField } from '@primevue/forms'
+import { useI18n } from 'vue-i18n'
 import type { FormResolverOptions, FormSubmitEvent } from '@primevue/forms'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
@@ -16,6 +17,7 @@ import { useAuthStore } from '@/stores/auth'
 import type { RegisterPayload } from '@/types/auth.types'
 import type { UserUpdatePayload, UserRole, UpdatePasswordPayload } from '@/types/user.types'
 
+const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
@@ -33,10 +35,10 @@ const passwordLoading = ref(false)
 const currentRole = ref<UserRole>('USER')
 const selectedRole = ref<UserRole>('USER')
 
-const roleOptions: { label: string; value: UserRole }[] = [
-  { label: 'User', value: 'USER' },
-  { label: 'Admin', value: 'ADMIN' },
-]
+const roleOptions = computed(() => [
+  { label: t('users.roles.USER'), value: 'USER' as UserRole },
+  { label: t('users.roles.ADMIN'), value: 'ADMIN' as UserRole },
+])
 
 const roleChanged = computed(() => selectedRole.value !== currentRole.value)
 
@@ -51,21 +53,21 @@ const resolver = ({ values }: FormResolverOptions) => {
   const errors: Record<string, { message: string }[]> = {}
 
   if (!values.name) {
-    errors.name = [{ message: 'Name is required' }]
+    errors.name = [{ message: t('users.fields.name.required') }]
   } else if (String(values.name).length > 100) {
-    errors.name = [{ message: 'Name must not exceed 100 characters' }]
+    errors.name = [{ message: t('users.fields.name.max') }]
   }
 
   if (!values.email) {
-    errors.email = [{ message: 'Email is required' }]
+    errors.email = [{ message: t('users.fields.email.required') }]
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(values.email))) {
-    errors.email = [{ message: 'Email must be valid' }]
+    errors.email = [{ message: t('users.fields.email.invalid') }]
   }
 
   if (!isEdit.value && !values.password) {
-    errors.password = [{ message: 'Password is required' }]
+    errors.password = [{ message: t('users.fields.password.required') }]
   } else if (values.password && String(values.password).length < 8) {
-    errors.password = [{ message: 'Password must be at least 8 characters' }]
+    errors.password = [{ message: t('users.fields.password.min') }]
   }
 
   return { errors }
@@ -80,16 +82,16 @@ async function onSubmit({ valid }: FormSubmitEvent) {
       await usersService.update(userId.value!, payload)
       toast.add({
         severity: 'success',
-        summary: 'Saved',
-        detail: 'User updated successfully',
+        summary: t('common.feedback.saved'),
+        detail: t('users.messages.updated'),
         life: 3000,
       })
     } else {
       await usersService.create(model.value)
       toast.add({
         severity: 'success',
-        summary: 'Created',
-        detail: 'User created successfully',
+        summary: t('common.feedback.created'),
+        detail: t('users.messages.created'),
         life: 3000,
       })
     }
@@ -97,8 +99,8 @@ async function onSubmit({ valid }: FormSubmitEvent) {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: isEdit.value ? 'Failed to update user' : 'Failed to create user',
+      summary: t('common.feedback.error'),
+      detail: isEdit.value ? t('users.messages.updateError') : t('users.messages.createError'),
       life: 3000,
     })
   } finally {
@@ -118,19 +120,19 @@ const passwordResolver = ({ values }: FormResolverOptions) => {
   const errors: Record<string, { message: string }[]> = {}
 
   if (!authStore.isAdmin && !values.currentPassword) {
-    errors.currentPassword = [{ message: 'Current password is required' }]
+    errors.currentPassword = [{ message: t('users.passwordCard.fields.currentPassword.required') }]
   }
 
   if (!values.newPassword) {
-    errors.newPassword = [{ message: 'New password is required' }]
+    errors.newPassword = [{ message: t('users.passwordCard.fields.newPassword.required') }]
   } else if (String(values.newPassword).length < 8) {
-    errors.newPassword = [{ message: 'Password must be at least 8 characters' }]
+    errors.newPassword = [{ message: t('users.passwordCard.fields.newPassword.min') }]
   }
 
   if (!values.confirmPassword) {
-    errors.confirmPassword = [{ message: 'Please confirm the new password' }]
+    errors.confirmPassword = [{ message: t('users.passwordCard.fields.confirmPassword.required') }]
   } else if (values.newPassword !== values.confirmPassword) {
-    errors.confirmPassword = [{ message: 'Passwords do not match' }]
+    errors.confirmPassword = [{ message: t('users.passwordCard.fields.confirmPassword.mismatch') }]
   }
 
   return { errors }
@@ -148,13 +150,13 @@ async function onPasswordSubmit({ valid }: FormSubmitEvent) {
     await usersService.updatePassword(userId.value!, payload)
     toast.add({
       severity: 'success',
-      summary: 'Password updated',
-      detail: 'Password changed successfully.',
+      summary: t('users.passwordCard.successTitle'),
+      detail: t('users.passwordCard.successDetail'),
       life: 3000,
     })
     passwordModel.value = { currentPassword: '', newPassword: '', confirmPassword: '' }
   } catch {
-    passwordError.value = 'Failed to update password. Check your current password and try again.'
+    passwordError.value = t('users.passwordCard.error')
   } finally {
     passwordLoading.value = false
   }
@@ -168,12 +170,19 @@ async function onRoleChange() {
     currentRole.value = selectedRole.value
     toast.add({
       severity: 'success',
-      summary: 'Role updated',
-      detail: `Role changed to ${selectedRole.value}`,
+      summary: t('users.roleCard.updatedTitle'),
+      detail: t('users.roleCard.updatedDetail', {
+        role: t(`users.roles.${selectedRole.value}`),
+      }),
       life: 3000,
     })
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update role', life: 3000 })
+    toast.add({
+      severity: 'error',
+      summary: t('common.feedback.error'),
+      detail: t('users.roleCard.updateError'),
+      life: 3000,
+    })
     selectedRole.value = currentRole.value
   } finally {
     roleLoading.value = false
@@ -183,27 +192,34 @@ async function onRoleChange() {
 // Delete
 function confirmDelete() {
   confirm.require({
-    message: 'Are you sure you want to delete this user? This action cannot be undone.',
-    header: 'Delete User',
+    message: t('users.deleteDialog.message'),
+    header: t('users.deleteDialog.title'),
     icon: 'pi pi-exclamation-triangle',
-    rejectProps: { label: 'Cancel', severity: 'secondary', outlined: true },
-    acceptProps: { label: 'Delete', severity: 'danger' },
+    rejectProps: {
+      label: t('common.actions.cancel'),
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: t('common.actions.delete'),
+      severity: 'danger',
+    },
     accept: async () => {
       deleteLoading.value = true
       try {
         await usersService.delete(userId.value!)
         toast.add({
           severity: 'success',
-          summary: 'Deleted',
-          detail: 'User deleted successfully.',
+          summary: t('common.feedback.deleted'),
+          detail: t('users.deleteDialog.success'),
           life: 3000,
         })
         router.push('/users')
       } catch {
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to delete user. Please try again.',
+          summary: t('common.feedback.error'),
+          detail: t('users.deleteDialog.error'),
           life: 3000,
         })
       } finally {
@@ -221,7 +237,12 @@ onMounted(async () => {
     currentRole.value = user.role
     selectedRole.value = user.role
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load user', life: 3000 })
+    toast.add({
+      severity: 'error',
+      summary: t('common.feedback.error'),
+      detail: t('users.messages.loadError'),
+      life: 3000,
+    })
     router.push('/users')
   } finally {
     fetchLoading.value = false
@@ -240,19 +261,15 @@ onMounted(async () => {
           severity="secondary"
           text
           rounded
-          aria-label="Go back"
+          :aria-label="t('common.actions.back')"
           @click="router.push('/users')"
         />
         <div>
           <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-            {{ isEdit ? 'Edit User' : 'New User' }}
+            {{ isEdit ? t('users.titles.edit') : t('users.titles.create') }}
           </h1>
           <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-            {{
-              isEdit
-                ? "Update the user's details below"
-                : 'Fill in the details to create a new user'
-            }}
+            {{ isEdit ? t('users.descriptions.edit') : t('users.descriptions.create') }}
           </p>
         </div>
       </div>
@@ -265,7 +282,7 @@ onMounted(async () => {
           severity="danger"
           outlined
           :loading="deleteLoading"
-          aria-label="Delete user"
+          :aria-label="t('users.actions.delete')"
           @click="confirmDelete"
         />
       </div>
@@ -290,11 +307,11 @@ onMounted(async () => {
           >
             <FormField v-slot="$field" name="name" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Name <span class="text-red-500">*</span>
+                {{ t('users.fields.name.label') }} <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="model.name"
-                placeholder="Enter name"
+                :placeholder="t('users.fields.name.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -310,7 +327,7 @@ onMounted(async () => {
               <InputText
                 v-model="model.email"
                 type="email"
-                placeholder="Enter email"
+                :placeholder="t('users.fields.email.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -322,12 +339,12 @@ onMounted(async () => {
             <!-- Password only on create -->
             <FormField v-if="!isEdit" v-slot="$field" name="password" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Password <span class="text-red-500">*</span>
+                {{ t('users.fields.password.label') }} <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="model.password"
                 type="password"
-                placeholder="Enter password"
+                :placeholder="t('users.fields.password.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -337,10 +354,15 @@ onMounted(async () => {
             </FormField>
 
             <div class="flex items-center justify-end gap-3 pt-2">
-              <Button label="Cancel" severity="secondary" outlined @click="router.push('/users')" />
+              <Button
+                :label="t('common.actions.cancel')"
+                severity="secondary"
+                outlined
+                @click="router.push('/users')"
+              />
               <Button
                 type="submit"
-                :label="isEdit ? 'Save Changes' : 'Create User'"
+                :label="isEdit ? t('common.actions.saveChanges') : t('users.actions.create')"
                 :icon="isEdit ? 'pi pi-check' : 'pi pi-plus'"
                 iconPos="right"
                 :loading="loading"
@@ -367,7 +389,7 @@ onMounted(async () => {
               <h2
                 class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
               >
-                Change Password
+                {{ t('users.passwordCard.title') }}
               </h2>
             </div>
 
@@ -379,12 +401,13 @@ onMounted(async () => {
               class="flex flex-col gap-1.5"
             >
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Current Password <span class="text-red-500">*</span>
+                {{ t('users.passwordCard.fields.currentPassword.label') }}
+                <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="passwordModel.currentPassword"
                 type="password"
-                placeholder="Enter current password"
+                :placeholder="t('users.passwordCard.fields.currentPassword.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -395,12 +418,12 @@ onMounted(async () => {
 
             <FormField v-slot="$field" name="newPassword" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                New Password <span class="text-red-500">*</span>
+                {{ t('users.passwordCard.fields.newPassword.label') }} <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="passwordModel.newPassword"
                 type="password"
-                placeholder="Enter new password"
+                :placeholder="t('users.passwordCard.fields.newPassword.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -411,12 +434,13 @@ onMounted(async () => {
 
             <FormField v-slot="$field" name="confirmPassword" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                Confirm New Password <span class="text-red-500">*</span>
+                {{ t('users.passwordCard.fields.confirmPassword.label') }}
+                <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="passwordModel.confirmPassword"
                 type="password"
-                placeholder="Repeat new password"
+                :placeholder="t('users.passwordCard.fields.confirmPassword.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -432,7 +456,7 @@ onMounted(async () => {
             <div class="flex justify-end pt-1">
               <Button
                 type="submit"
-                label="Update Password"
+                :label="t('users.passwordCard.submit')"
                 icon="pi pi-lock"
                 iconPos="right"
                 :loading="passwordLoading"
@@ -450,16 +474,16 @@ onMounted(async () => {
         <template #content>
           <div class="p-2 space-y-4">
             <div class="flex items-center gap-2">
-              <i class="pi pi-shield text-primary-500 dark:text-primary-400" />
+              <i class="pi pi-shield text-primary-500 dark:text-primary-400"></i>
               <h2
                 class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
               >
-                Role
+                {{ t('users.roleCard.title') }}
               </h2>
             </div>
 
             <p class="text-sm text-surface-500 dark:text-surface-400">
-              Changing this will immediately affect what the user can access.
+              {{ t('users.roleCard.description') }}
             </p>
 
             <div class="flex items-center gap-3">
@@ -471,7 +495,7 @@ onMounted(async () => {
                 class="flex-1"
               />
               <Button
-                label="Apply"
+                :label="t('common.actions.apply')"
                 icon="pi pi-check"
                 :loading="roleLoading"
                 :disabled="!roleChanged"

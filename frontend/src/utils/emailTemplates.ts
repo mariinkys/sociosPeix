@@ -1,3 +1,5 @@
+import { i18n } from '@/i18n'
+
 export type EmailTemplate = 'none' | 'basic' | 'birthday'
 
 const LOGO_IMG = `<div style="text-align: center; margin-bottom: 20px;">
@@ -91,8 +93,11 @@ export function wrapEmailBody(body: string): string {
     </html>`
 }
 
-export const TEMPLATE_OPTIONS = [
-  { value: 'none' as const, label: 'No template', icon: 'pi-align-left' },
-  { value: 'basic' as const, label: 'Basic', icon: 'pi-envelope' },
-  // { value: 'birthday' as const, label: 'Birthday', icon: 'pi-gift' },
-]
+export function getTemplateOptions() {
+  const t = i18n.global.t
+  return [
+    { value: 'none' as const, label: t('email.templates.none'), icon: 'pi-align-left' },
+    { value: 'basic' as const, label: t('email.templates.basic'), icon: 'pi-envelope' },
+    //{ value: 'birthday' as const, label: t('email.templates.birthday'), icon: 'pi-gift' },
+  ]
+}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -19,6 +20,7 @@ import type { MemberParams, MemberResponse } from '@/types/member.types'
 import type { InterestResponse } from '@/types/interest.types'
 import { useRouter } from 'vue-router'
 
+const { t, locale } = useI18n({ useScope: 'global' })
 const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
@@ -57,8 +59,8 @@ async function fetchMembers() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to load members. Please try again.',
+      summary: t('common.feedback.error'),
+      detail: t('members.messages.loadListError'),
       life: 3000,
     })
   } finally {
@@ -89,26 +91,33 @@ function onRowClick(event: DataTableRowClickEvent) {
 function confirmDelete(event: Event, member: MemberResponse) {
   event.stopPropagation()
   confirm.require({
-    message: `Are you sure you want to delete ${member.fullName}? This action cannot be undone.`,
-    header: 'Delete Member',
+    message: t('members.deleteDialog.message', { name: member.fullName }),
+    header: t('members.deleteDialog.title'),
     icon: 'pi pi-exclamation-triangle',
-    rejectProps: { label: 'Cancel', severity: 'secondary', outlined: true },
-    acceptProps: { label: 'Delete', severity: 'danger' },
+    rejectProps: {
+      label: t('common.actions.cancel'),
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: t('common.actions.delete'),
+      severity: 'danger',
+    },
     accept: async () => {
       try {
         await membersService.delete(member.id)
         toast.add({
           severity: 'success',
-          summary: 'Deleted',
-          detail: `${member.fullName} has been deleted.`,
+          summary: t('common.feedback.deleted'),
+          detail: t('members.deleteDialog.success', { name: member.fullName }),
           life: 3000,
         })
         fetchMembers()
       } catch {
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to delete member. Please try again.',
+          summary: t('common.feedback.error'),
+          detail: t('members.deleteDialog.error'),
           life: 3000,
         })
       }
@@ -139,8 +148,8 @@ async function onExport() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to export members.',
+      summary: t('common.feedback.error'),
+      detail: t('members.list.exportError'),
       life: 3000,
     })
   } finally {
@@ -160,9 +169,11 @@ onMounted(async () => {
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">Members</h1>
+        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
+          {{ t('members.titles.list') }}
+        </h1>
         <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-          {{ totalElements }} total members
+          {{ t('members.list.total', { total: totalElements }) }}
         </p>
       </div>
 
@@ -170,7 +181,7 @@ onMounted(async () => {
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
-            placeholder="Search members..."
+            :placeholder="t('members.filters.searchPlaceholder')"
             class="pl-9 w-full sm:w-48"
             @input="onSearch"
           />
@@ -180,16 +191,16 @@ onMounted(async () => {
           v-model="selectedInterests"
           :options="allInterests"
           optionLabel="name"
-          placeholder="Filter by interest..."
+          :placeholder="t('members.filters.interestsPlaceholder')"
           display="chip"
           filter
-          filterPlaceholder="Search..."
+          :filterPlaceholder="t('members.filters.interestsSearchPlaceholder')"
           class="w-full sm:w-56"
           @update:modelValue="onInterestFilter"
         />
 
         <Button
-          label="Export"
+          :label="t('common.actions.export')"
           icon="pi pi-download"
           severity="secondary"
           outlined
@@ -199,7 +210,7 @@ onMounted(async () => {
           @click="onExport"
         />
         <Button
-          label="New Member"
+          :label="t('members.actions.createNew')"
           icon="pi pi-plus"
           class="shrink-0"
           @click="router.push('/members/new')"
@@ -224,7 +235,7 @@ onMounted(async () => {
       @page="onPage"
       @sort="onSort"
     >
-      <Column field="name" header="Name" style="width: 30%" sortable>
+      <Column field="name" :header="t('common.fields.name')" style="width: 30%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <div class="flex items-center gap-3">
             <div
@@ -239,23 +250,23 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column field="email" header="Email" style="width: 20%" sortable>
+      <Column field="email" :header="t('common.fields.email')" style="width: 20%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span class="text-surface-600 dark:text-surface-400">{{ data.email }}</span>
         </template>
       </Column>
 
-      <Column field="phone" header="Phone" style="width: 20%" sortable>
+      <Column field="phone" :header="t('common.fields.phone')" style="width: 20%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span class="text-surface-600 dark:text-surface-400">{{ data.phone }}</span>
         </template>
       </Column>
 
-      <Column field="birthdate" header="Birthdate" style="width: 10%" sortable>
+      <Column field="birthdate" :header="t('common.fields.birthdate')" style="width: 15%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span v-if="data.birthdate" class="text-surface-500 dark:text-surface-400 text-sm">
             {{
-              new Date(data.birthdate).toLocaleDateString('es-ES', {
+              new Date(data.birthdate).toLocaleDateString(locale, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
@@ -265,11 +276,11 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column field="createdAt" header="Created At" style="width: 10%" sortable>
+      <Column field="createdAt" :header="t('common.fields.createdAt')" style="width: 10%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span v-if="data.createdAt" class="text-surface-500 dark:text-surface-400 text-sm">
             {{
-              new Date(data.createdAt).toLocaleDateString('es-ES', {
+              new Date(data.createdAt).toLocaleDateString(locale, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
@@ -279,7 +290,7 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column style="width: 10%">
+      <Column style="width: 5%">
         <template #body="{ data }: { data: MemberResponse }">
           <div class="flex justify-end">
             <Button
@@ -288,7 +299,7 @@ onMounted(async () => {
               text
               rounded
               size="small"
-              aria-label="Delete member"
+              :aria-label="t('members.actions.delete')"
               @click="confirmDelete($event, data)"
             />
           </div>
@@ -298,7 +309,7 @@ onMounted(async () => {
       <template #empty>
         <div class="flex flex-col items-center justify-center py-16 gap-3 text-surface-400">
           <i class="pi pi-users text-4xl"></i>
-          <p class="text-sm">No members found</p>
+          <p class="text-sm">{{ t('members.list.empty') }}</p>
         </div>
       </template>
     </DataTable>
