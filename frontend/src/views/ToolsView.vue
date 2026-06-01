@@ -2,6 +2,7 @@
 import EmailQuotaCard from '@/components/email/EmailQuotaCard.vue'
 import SendEmailByInterestCard from '@/components/email/SendEmailByInterestCard.vue'
 import SendEmailToAllCard from '@/components/email/SendEmailsToAllCard.vue'
+import VersionChip from '@/components/VersionChip.vue'
 </script>
 
 <template>
@@ -15,6 +16,10 @@ import SendEmailToAllCard from '@/components/email/SendEmailsToAllCard.vue'
       <EmailQuotaCard class="flex-1 min-w-72" />
       <SendEmailByInterestCard class="flex-1 min-w-72" />
       <SendEmailToAllCard class="flex-1 min-w-72" />
+    </div>
+
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2">
+      <VersionChip />
     </div>
   </div>
 </template>

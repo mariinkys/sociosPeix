@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Button from 'primevue/button'
+import VersionChip from '@/components/VersionChip.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -116,6 +117,10 @@ const isActive = (path: string) => route.path === path
             Tools
           </RouterLink>
         </nav>
+
+        <div v-if="!auth.isAuthenticated">
+          <VersionChip />
+        </div>
       </div>
 
       <!-- Right Side -->
