@@ -140,9 +140,6 @@ export default {
           birthday: 'Birthday',
           emptyPhone: '—',
         },
-        pagination: {
-          report: '{first} to {last} of {totalRecords}',
-        },
         empty: 'No birthdays today',
         toasts: {
           loadError: "Failed to load today's birthdays.",

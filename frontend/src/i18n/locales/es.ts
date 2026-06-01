@@ -141,9 +141,6 @@ export default {
           birthday: 'Cumpleaños',
           emptyPhone: '—',
         },
-        pagination: {
-          report: '{first} a {last} de {totalRecords}',
-        },
         empty: 'No hay cumpleaños hoy',
         toasts: {
           loadError: 'No se pudieron cargar los cumpleaños de hoy.',
