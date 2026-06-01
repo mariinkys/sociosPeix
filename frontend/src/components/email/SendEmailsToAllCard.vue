@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import SendEmailDialog from '@/components/email/SendEmailDialog.vue'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useI18n({ useScope: 'global' })
 
 const dialogVisible = ref(false)
 </script>
@@ -20,15 +23,15 @@ const dialogVisible = ref(false)
           <div class="flex items-center gap-2">
             <i class="pi pi-globe text-primary-500 dark:text-primary-400"></i>
             <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
-              Email All Members
+              {{ t('email.components.sendEmailsToAllCard.title') }}
             </h2>
           </div>
           <p class="text-sm text-surface-500 dark:text-surface-400">
-            Send an email to every member in the database.
+            {{ t('email.components.sendEmailsToAllCard.description') }}
           </p>
         </div>
         <Button
-          label="Compose Email"
+          :label="t('email.components.sendEmailsToAllCard.actions.compose')"
           icon="pi pi-send"
           size="small"
           fluid

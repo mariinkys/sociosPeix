@@ -3,6 +3,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Form, FormField } from '@primevue/forms'
+import { useI18n } from 'vue-i18n'
 import type { FormResolverOptions, FormSubmitEvent } from '@primevue/forms'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
@@ -19,6 +20,7 @@ import GenderSelect from '@/components/gender/SelectorComponent.vue'
 import InterestsSelect from '@/components/interest/MultiSelect.vue'
 import MemberEmailsCard from '@/components/member/EmailsCard.vue'
 
+const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
@@ -61,7 +63,12 @@ async function fetchMember() {
       interestIds: member.interests.map((i) => i.id),
     }
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load member', life: 3000 })
+    toast.add({
+      severity: 'error',
+      summary: t('common.error'),
+      detail: t('members.toasts.loadError'),
+      life: 3000,
+    })
     router.push('/members')
   } finally {
     fetchLoading.value = false
@@ -72,29 +79,29 @@ const resolver = ({ values }: FormResolverOptions) => {
   const errors: Record<string, { message: string }[]> = {}
 
   if (!values.name) {
-    errors.name = [{ message: 'Name is required' }]
+    errors.name = [{ message: t('members.form.name.required') }]
   } else if (String(values.name).length > 100) {
-    errors.name = [{ message: 'Name must not exceed 100 characters' }]
+    errors.name = [{ message: t('members.form.name.max') }]
   }
 
   if (!values.surname) {
-    errors.surname = [{ message: 'Surname is required' }]
+    errors.surname = [{ message: t('members.form.surname.required') }]
   } else if (String(values.surname).length > 100) {
-    errors.surname = [{ message: 'Surname must not exceed 100 characters' }]
+    errors.surname = [{ message: t('members.form.surname.max') }]
   }
 
   if (values.secondSurname && String(values.secondSurname).length > 100) {
-    errors.secondSurname = [{ message: 'Second surname must not exceed 100 characters' }]
+    errors.secondSurname = [{ message: t('members.form.secondSurname.max') }]
   }
 
   if (!values.email) {
-    errors.email = [{ message: 'Email is required' }]
+    errors.email = [{ message: t('members.form.email.required') }]
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(values.email))) {
-    errors.email = [{ message: 'Email must be valid' }]
+    errors.email = [{ message: t('members.form.email.invalid') }]
   }
 
   if (values.phone && String(values.phone).length > 30) {
-    errors.phone = [{ message: 'Phone must not exceed 30 characters' }]
+    errors.phone = [{ message: t('members.form.phone.max') }]
   }
 
   return { errors }
@@ -109,16 +116,16 @@ async function onSubmit({ valid }: FormSubmitEvent) {
       await membersService.update(memberId.value!, model.value as MemberUpdatePayload)
       toast.add({
         severity: 'success',
-        summary: 'Saved',
-        detail: 'Member updated successfully',
+        summary: t('common.saved'),
+        detail: t('members.toasts.updated'),
         life: 3000,
       })
     } else {
       await membersService.create(model.value)
       toast.add({
         severity: 'success',
-        summary: 'Created',
-        detail: 'Member created successfully',
+        summary: t('common.created'),
+        detail: t('members.toasts.created'),
         life: 3000,
       })
     }
@@ -126,8 +133,8 @@ async function onSubmit({ valid }: FormSubmitEvent) {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: isEdit.value ? 'Failed to update member' : 'Failed to create member',
+      summary: t('common.error'),
+      detail: isEdit.value ? t('members.toasts.updateError') : t('members.toasts.createError'),
       life: 3000,
     })
   } finally {
@@ -137,27 +144,34 @@ async function onSubmit({ valid }: FormSubmitEvent) {
 
 function confirmDelete() {
   confirm.require({
-    message: `Are you sure you want to delete this member? This action cannot be undone.`,
-    header: 'Delete Member',
+    message: t('members.deleteDialog.messageGeneric'),
+    header: t('members.deleteDialog.header'),
     icon: 'pi pi-exclamation-triangle',
-    rejectProps: { label: 'Cancel', severity: 'secondary', outlined: true },
-    acceptProps: { label: 'Delete', severity: 'danger' },
+    rejectProps: {
+      label: t('members.deleteDialog.reject'),
+      severity: 'secondary',
+      outlined: true,
+    },
+    acceptProps: {
+      label: t('members.deleteDialog.accept'),
+      severity: 'danger',
+    },
     accept: async () => {
       deleteLoading.value = true
       try {
         await membersService.delete(memberId.value!)
         toast.add({
           severity: 'success',
-          summary: 'Deleted',
-          detail: 'Member deleted successfully.',
+          summary: t('common.deleted'),
+          detail: t('members.deleteDialog.deletedSuccess'),
           life: 3000,
         })
         router.push('/members')
       } catch {
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to delete member. Please try again.',
+          summary: t('common.error'),
+          detail: t('members.deleteDialog.error'),
           life: 3000,
         })
       } finally {
@@ -175,7 +189,7 @@ onMounted(async () => {
 <template>
   <div class="p-6 space-y-6">
     <div v-if="fetchLoading" class="flex items-center justify-center py-24">
-      <i class="pi pi-spinner pi-spin text-2xl text-surface-400" />
+      <i class="pi pi-spinner pi-spin text-2xl text-surface-400"></i>
     </div>
 
     <Form
@@ -198,27 +212,28 @@ onMounted(async () => {
             text
             rounded
             @click="router.push('/members')"
-            aria-label="Go back"
+            :aria-label="t('members.actions.goBack')"
           />
           <div>
             <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-              {{ isEdit ? 'Edit Member' : 'New Member' }}
+              {{ isEdit ? t('members.page.editTitle') : t('members.page.newTitle') }}
             </h1>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-              {{
-                isEdit
-                  ? "Update the member's details below"
-                  : 'Fill in the details to create a new member'
-              }}
+              {{ isEdit ? t('members.page.editDescription') : t('members.page.newDescription') }}
             </p>
           </div>
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
-          <Button label="Cancel" severity="secondary" outlined @click="router.push('/members')" />
+          <Button
+            :label="t('common.cancel')"
+            severity="secondary"
+            outlined
+            @click="router.push('/members')"
+          />
           <Button
             type="submit"
-            :label="isEdit ? 'Save Changes' : 'Create Member'"
+            :label="isEdit ? t('common.saveChanges') : t('members.form.submitCreate')"
             :icon="isEdit ? 'pi pi-check' : 'pi pi-user-plus'"
             iconPos="right"
             :loading="loading"
@@ -230,7 +245,7 @@ onMounted(async () => {
             severity="danger"
             outlined
             :loading="deleteLoading"
-            aria-label="Delete member"
+            :aria-label="t('members.actions.deleteMember')"
             @click="confirmDelete"
           />
         </div>
@@ -246,17 +261,17 @@ onMounted(async () => {
                 <h2
                   class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
                 >
-                  Personal Details
+                  {{ t('members.sections.personalDetails') }}
                 </h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField v-slot="$field" name="name" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      Name <span class="text-red-500">*</span>
+                      {{ t('members.form.name.label') }} <span class="text-red-500">*</span>
                     </label>
                     <InputText
                       v-model="model.name"
-                      placeholder="Enter name"
+                      :placeholder="t('members.form.name.placeholder')"
                       :invalid="$field?.invalid"
                       fluid
                     />
@@ -267,11 +282,11 @@ onMounted(async () => {
 
                   <FormField v-slot="$field" name="surname" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      Surname <span class="text-red-500">*</span>
+                      {{ t('members.form.surname.label') }} <span class="text-red-500">*</span>
                     </label>
                     <InputText
                       v-model="model.surname"
-                      placeholder="Enter surname"
+                      :placeholder="t('members.form.surname.placeholder')"
                       :invalid="$field?.invalid"
                       fluid
                     />
@@ -283,11 +298,11 @@ onMounted(async () => {
 
                 <FormField v-slot="$field" name="secondSurname" class="flex flex-col gap-1.5">
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                    Second Surname
+                    {{ t('members.form.secondSurname.label') }}
                   </label>
                   <InputText
                     v-model="model.secondSurname"
-                    placeholder="Enter second surname"
+                    :placeholder="t('members.form.secondSurname.placeholder')"
                     :invalid="$field?.invalid"
                     fluid
                   />
@@ -299,7 +314,7 @@ onMounted(async () => {
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField v-slot="$field" name="birthdate" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      Birthdate
+                      {{ t('members.form.birthdate.label') }}
                     </label>
                     <InputText
                       v-model="model.birthdate"
@@ -314,7 +329,7 @@ onMounted(async () => {
 
                   <FormField v-slot="$field" name="genderId" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      Gender
+                      {{ t('members.form.gender.label') }}
                     </label>
                     <GenderSelect v-model="model.genderId" :invalid="$field?.invalid" />
                     <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
@@ -330,27 +345,25 @@ onMounted(async () => {
                 <h2
                   class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
                 >
-                  Contact
+                  {{ t('members.sections.contact') }}
                 </h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField v-slot="$field" name="email" class="flex flex-col gap-1.5">
                     <div class="flex items-center justify-between w-full">
                       <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                        Email <span class="text-red-500">*</span>
+                        {{ t('members.form.email.label') }} <span class="text-red-500">*</span>
                       </label>
                       <i
                         v-if="isEdit"
-                        v-tooltip.top="
-                          'Changing the email will hide previously sent emails, as they are matched by email address.'
-                        "
+                        v-tooltip.top="t('members.form.email.editWarning')"
                         class="pi pi-exclamation-triangle text-amber-500 text-xs cursor-default"
                       ></i>
                     </div>
                     <InputText
                       v-model="model.email"
                       type="email"
-                      placeholder="Enter email"
+                      :placeholder="t('members.form.email.placeholder')"
                       autocomplete="email"
                       :invalid="$field?.invalid"
                       fluid
@@ -362,12 +375,12 @@ onMounted(async () => {
 
                   <FormField v-slot="$field" name="phone" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      Phone
+                      {{ t('members.form.phone.label') }}
                     </label>
                     <InputText
                       v-model="model.phone"
                       type="tel"
-                      placeholder="Enter phone"
+                      :placeholder="t('members.form.phone.placeholder')"
                       :invalid="$field?.invalid"
                       fluid
                     />
@@ -379,7 +392,7 @@ onMounted(async () => {
 
                 <FormField v-slot="$field" name="countryId" class="flex flex-col gap-1.5">
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                    Country
+                    {{ t('members.form.country.label') }}
                   </label>
                   <CountrySelect v-model="model.countryId" :invalid="$field?.invalid" />
                   <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
@@ -394,16 +407,16 @@ onMounted(async () => {
                 <h2
                   class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
                 >
-                  Notes
+                  {{ t('members.sections.notes') }}
                 </h2>
 
                 <FormField v-slot="$field" name="notes" class="flex flex-col gap-1.5">
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                    Notes
+                    {{ t('members.form.notes.label') }}
                   </label>
                   <Textarea
                     v-model="model.notes"
-                    placeholder="Any additional notes"
+                    :placeholder="t('members.form.notes.placeholder')"
                     :invalid="$field?.invalid"
                     rows="4"
                     fluid
@@ -425,15 +438,15 @@ onMounted(async () => {
                 <h2
                   class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
                 >
-                  Interests
+                  {{ t('members.sections.interests') }}
                 </h2>
                 <div class="flex flex-col gap-1.5">
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                    Interests
+                    {{ t('members.form.interests.label') }}
                   </label>
                   <InterestsSelect v-model="model.interestIds" />
                   <p class="text-xs text-surface-400 dark:text-surface-500">
-                    Select one or more interests for this member
+                    {{ t('members.form.interests.help') }}
                   </p>
                 </div>
               </div>

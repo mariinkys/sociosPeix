@@ -1,12 +1,14 @@
-<!-- components/GenderSelect.vue -->
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AutoComplete from 'primevue/autocomplete'
 import type { GenderResponse } from '@/types/gender.types'
 import { gendersService } from '@/services/genders.service'
 
 const props = defineProps<{ modelValue: number | null; invalid?: boolean }>()
 const emit = defineEmits<{ 'update:modelValue': [value: number | null] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const all = ref<GenderResponse[]>([])
 const filtered = ref<GenderResponse[]>([])
@@ -45,7 +47,7 @@ function onClear() {
     v-model="selected"
     :suggestions="filtered"
     optionLabel="name"
-    placeholder="Search gender..."
+    :placeholder="t('genders.components.selector.placeholder')"
     forceSelection
     dropdown
     fluid

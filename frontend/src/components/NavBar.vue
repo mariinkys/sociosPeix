@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Button from 'primevue/button'
 import VersionChip from '@/components/VersionChip.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
+const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
@@ -77,7 +80,7 @@ const isActive = (path: string) => route.path === path
                   : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
               ]"
             >
-              Users
+              {{ t('navigation.nav.users') }}
             </RouterLink>
           </template>
 
@@ -90,7 +93,7 @@ const isActive = (path: string) => route.path === path
                 : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
             ]"
           >
-            Members
+            {{ t('navigation.nav.members') }}
           </RouterLink>
 
           <RouterLink
@@ -102,7 +105,7 @@ const isActive = (path: string) => route.path === path
                 : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
             ]"
           >
-            Interests
+            {{ t('navigation.nav.interests') }}
           </RouterLink>
 
           <RouterLink
@@ -114,7 +117,7 @@ const isActive = (path: string) => route.path === path
                 : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
             ]"
           >
-            Tools
+            {{ t('navigation.nav.tools') }}
           </RouterLink>
         </nav>
 
@@ -138,7 +141,7 @@ const isActive = (path: string) => route.path === path
         <!-- Logout, desktop only -->
         <div class="hidden md:flex items-center" v-if="auth.isAuthenticated">
           <Button
-            v-tooltip.bottom="'Sign out'"
+            v-tooltip.bottom="t('navigation.actions.signOut')"
             icon="pi pi-sign-out"
             severity="secondary"
             text
@@ -150,13 +153,19 @@ const isActive = (path: string) => route.path === path
 
         <Button
           :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'"
-          :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          :aria-label="
+            isDark
+              ? t('navigation.actions.switchToLightMode')
+              : t('navigation.actions.switchToDarkMode')
+          "
           severity="secondary"
           text
           rounded
           size="small"
           @click="toggleTheme"
         />
+
+        <LanguageSwitcher />
 
         <!-- Hamburger, mobile only -->
         <div class="md:hidden" v-if="auth.isAuthenticated">
@@ -166,7 +175,7 @@ const isActive = (path: string) => route.path === path
             text
             rounded
             size="small"
-            aria-label="Toggle menu"
+            :aria-label="t('navigation.actions.toggleMenu')"
             @click="menuOpen = !menuOpen"
           />
         </div>
@@ -198,7 +207,7 @@ const isActive = (path: string) => route.path === path
             @click="menuOpen = false"
           >
             <i class="pi pi-users mr-2 text-xs"></i>
-            Users
+            {{ t('navigation.nav.users') }}
           </RouterLink>
         </template>
 
@@ -213,7 +222,7 @@ const isActive = (path: string) => route.path === path
           @click="menuOpen = false"
         >
           <i class="pi pi-users mr-2 text-xs"></i>
-          Members
+          {{ t('navigation.nav.members') }}
         </RouterLink>
 
         <RouterLink
@@ -227,7 +236,7 @@ const isActive = (path: string) => route.path === path
           @click="menuOpen = false"
         >
           <i class="pi pi-tag mr-2 text-xs"></i>
-          Interests
+          {{ t('navigation.nav.interests') }}
         </RouterLink>
 
         <RouterLink
@@ -241,7 +250,7 @@ const isActive = (path: string) => route.path === path
           @click="menuOpen = false"
         >
           <i class="pi pi-wrench mr-2 text-xs"></i>
-          Tools
+          {{ t('navigation.nav.tools') }}
         </RouterLink>
 
         <div
@@ -251,7 +260,7 @@ const isActive = (path: string) => route.path === path
             {{ auth.user?.email }}
           </span>
           <Button
-            label="Sign out"
+            :label="t('navigation.actions.signOut')"
             icon="pi pi-sign-out"
             severity="secondary"
             text

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { ref, onMounted } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -15,6 +16,7 @@ import { usersService } from '@/services/users.service'
 import type { UserResponse } from '@/types/user.types'
 import { useRouter } from 'vue-router'
 
+const { t } = useI18n({ useScope: 'global' })
 const toast = useToast()
 const router = useRouter()
 
@@ -45,8 +47,8 @@ async function fetchUsers() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to load users. Please try again.',
+      summary: t('common.error'),
+      detail: t('users.list.toasts.loadError'),
       life: 3000,
     })
   } finally {
@@ -89,9 +91,11 @@ onMounted(fetchUsers)
   <div class="p-6 space-y-4">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">Users</h1>
+        <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
+          {{ t('users.list.page.title') }}
+        </h1>
         <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-          {{ totalElements }} total users
+          {{ t('users.list.page.totalUsers', { total: totalElements }) }}
         </p>
       </div>
 
@@ -99,13 +103,13 @@ onMounted(fetchUsers)
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
-            placeholder="Search users..."
+            :placeholder="t('users.list.filters.searchPlaceholder')"
             class="pl-9 w-full sm:w-56"
             @input="onSearch"
           />
         </div>
         <Button
-          label="New User"
+          :label="t('users.list.actions.newUser')"
           icon="pi pi-plus"
           class="shrink-0"
           @click="router.push('/users/new')"
@@ -130,7 +134,7 @@ onMounted(fetchUsers)
       @page="onPage"
       @sort="onSort"
     >
-      <Column field="name" header="Name" style="width: 30%" sortable>
+      <Column field="name" :header="t('users.list.table.name')" style="width: 30%" sortable>
         <template #body="{ data }: { data: UserResponse }">
           <div class="flex items-center gap-3">
             <div
@@ -143,23 +147,28 @@ onMounted(fetchUsers)
         </template>
       </Column>
 
-      <Column field="email" header="Email" style="width: 30%" sortable>
+      <Column field="email" :header="t('users.list.table.email')" style="width: 30%" sortable>
         <template #body="{ data }: { data: UserResponse }">
           <span class="text-surface-600 dark:text-surface-400">{{ data.email }}</span>
         </template>
       </Column>
 
-      <Column field="role" header="Role" style="width: 20%">
+      <Column field="role" :header="t('users.list.table.role')" style="width: 20%">
         <template #body="{ data }: { data: UserResponse }">
           <Tag :value="data.role" :severity="data.role === 'ADMIN' ? 'info' : 'success'" />
         </template>
       </Column>
 
-      <Column field="createdAt" header="Created At" style="width: 20%" sortable>
+      <Column
+        field="createdAt"
+        :header="t('users.list.table.createdAt')"
+        style="width: 20%"
+        sortable
+      >
         <template #body="{ data }: { data: UserResponse }">
           <span class="text-surface-500 dark:text-surface-400 text-sm">
             {{
-              new Date(data.createdAt).toLocaleDateString('en-GB', {
+              new Date(data.createdAt).toLocaleDateString('es-ES', {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
@@ -172,7 +181,7 @@ onMounted(fetchUsers)
       <template #empty>
         <div class="flex flex-col items-center justify-center py-16 gap-3 text-surface-400">
           <i class="pi pi-users text-4xl"></i>
-          <p class="text-sm">No users found</p>
+          <p class="text-sm">{{ t('users.list.empty') }}</p>
         </div>
       </template>
     </DataTable>

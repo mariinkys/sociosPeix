@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
@@ -17,6 +18,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{ sent: [] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 const toast = useToast()
 
 const visible = defineModel<boolean>('visible', { required: true })
@@ -48,13 +51,14 @@ const renderedHtml = computed(() => wrapEmailBody(applyTemplate(htmlBody.value, 
 
 const dialogTitle = computed(() =>
   step.value === 'preview'
-    ? `Preview — ${subject.value}`
+    ? t('email.components.sendEmailDialog.titles.preview', { subject: subject.value })
     : props.mode === 'interests'
-      ? 'Send Email by Interest'
+      ? t('email.components.sendEmailDialog.titles.byInterest')
       : props.mode === 'all'
-        ? 'Send Email to All Members'
-        : 'Send Email',
+        ? t('email.components.sendEmailDialog.titles.toAll')
+        : t('email.components.sendEmailDialog.titles.default'),
 )
+
 function reset() {
   step.value = 'compose'
   template.value = 'none'
@@ -74,15 +78,15 @@ function validate(): boolean {
   interestError.value = ''
   let valid = true
   if (!subject.value.trim()) {
-    subjectError.value = 'Subject is required'
+    subjectError.value = t('email.components.sendEmailDialog.validation.subjectRequired')
     valid = false
   }
   if (!htmlBody.value.replace(/<[^>]*>/g, '').trim()) {
-    bodyError.value = 'Body is required'
+    bodyError.value = t('email.components.sendEmailDialog.validation.bodyRequired')
     valid = false
   }
   if (props.mode === 'interests' && interestIds.value.length === 0) {
-    interestError.value = 'Select at least one interest'
+    t('email.components.sendEmailDialog.validation.interestsRequired')
     valid = false
   }
   if (attachmentError.value) valid = false
@@ -99,7 +103,12 @@ function onFileChange(event: Event) {
   const combined = [...attachments.value, ...Array.from(input.files)]
   const total = combined.reduce((sum, f) => sum + f.size, 0)
   if (total > MAX_ATTACHMENT_BYTES) {
-    attachmentError.value = `Total size exceeds the 5 MB limit (${formatSize(total)} selected)`
+    attachmentError.value = t(
+      'email.components.sendEmailDialog.validation.attachmentLimitExceeded',
+      {
+        size: formatSize(total),
+      },
+    )
     input.value = ''
     return
   }
@@ -135,14 +144,19 @@ async function onSend() {
     }
     toast.add({
       severity: 'success',
-      summary: 'Sent',
-      detail: 'Email sent successfully.',
+      summary: t('email.components.sendEmailDialog.toasts.sentTitle'),
+      detail: t('email.components.sendEmailDialog.toasts.sentDetail'),
       life: 3000,
     })
     visible.value = false
     emit('sent')
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to send email.', life: 3000 })
+    toast.add({
+      severity: 'error',
+      summary: t('common.error'),
+      detail: t('email.components.sendEmailDialog.toasts.sendError'),
+      life: 3000,
+    })
   } finally {
     sendLoading.value = false
   }
@@ -161,7 +175,9 @@ async function onSend() {
   >
     <div v-if="step === 'compose'" class="space-y-5 py-2">
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-medium text-surface-700 dark:text-surface-300">Template</label>
+        <label class="text-sm font-medium text-surface-700 dark:text-surface-300">{{
+          t('email.components.sendEmailDialog.fields.template')
+        }}</label>
         <div class="flex gap-2">
           <button
             v-for="opt in TEMPLATE_OPTIONS"
@@ -183,7 +199,8 @@ async function onSend() {
 
       <div v-if="mode === 'interests'" class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-          Interests <span class="text-red-500">*</span>
+          {{ t('email.components.sendEmailDialog.fields.interests') }}
+          <span class="text-red-500">*</span>
         </label>
         <InterestsSelect
           v-model="interestIds"
@@ -194,17 +211,18 @@ async function onSend() {
           {{ interestError }}
         </Message>
         <p class="text-xs text-surface-400">
-          The email will be sent to all members that have at least one of the selected interests.
+          {{ t('email.components.sendEmailDialog.help.interests') }}
         </p>
       </div>
 
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-          Subject <span class="text-red-500">*</span>
+          {{ t('email.components.sendEmailDialog.fields.subject') }}
+          <span class="text-red-500">*</span>
         </label>
         <InputText
           v-model="subject"
-          placeholder="Enter email subject"
+          :placeholder="t('email.components.sendEmailDialog.placeholders.subject')"
           :invalid="!!subjectError"
           fluid
           @input="subjectError = ''"
@@ -216,7 +234,8 @@ async function onSend() {
 
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-          Body <span class="text-red-500">*</span>
+          {{ t('email.components.sendEmailDialog.fields.body') }}
+          <span class="text-red-500">*</span>
         </label>
         <Editor v-model="htmlBody" editor-style="height: 260px" @text-change="bodyError = ''" />
         <Message v-if="bodyError" severity="error" size="small" variant="simple">
@@ -225,12 +244,12 @@ async function onSend() {
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-medium text-surface-700 dark:text-surface-300"
-          >Attachments</label
-        >
+        <label class="text-sm font-medium text-surface-700 dark:text-surface-300">{{
+          t('email.components.sendEmailDialog.fields.attachments')
+        }}</label>
         <div class="flex items-center gap-2">
           <Button
-            label="Add files"
+            :label="t('email.components.sendEmailDialog.actions.addFiles')"
             icon="pi pi-paperclip"
             severity="secondary"
             outlined
@@ -238,9 +257,16 @@ async function onSend() {
             @click="fileInput?.click()"
           />
           <span class="text-xs" :class="attachmentError ? 'text-red-500' : 'text-surface-400'">
-            <template v-if="attachments.length === 0">No files selected — max 5 MB total</template>
+            <template v-if="attachments.length === 0">{{
+              t('email.components.sendEmailDialog.attachments.empty')
+            }}</template>
             <template v-else>
-              {{ attachments.length }} file(s) — {{ formatSize(totalAttachmentSize) }} / 5 MB
+              {{
+                t('email.components.sendEmailDialog.attachments.summary', {
+                  count: attachments.length,
+                  size: formatSize(totalAttachmentSize),
+                })
+              }}
             </template>
           </span>
           <input ref="fileInput" type="file" multiple class="hidden" @change="onFileChange" />
@@ -259,7 +285,7 @@ async function onSend() {
             <span class="text-surface-400">({{ formatSize(file.size) }})</span>
             <button
               class="ml-1 text-surface-400 hover:text-red-500 transition-colors"
-              aria-label="Remove attachment"
+              :aria-label="t('email.components.sendEmailDialog.actions.removeAttachment')"
               @click="removeAttachment(i)"
             >
               <i class="pi pi-times text-xs"></i>
@@ -272,32 +298,42 @@ async function onSend() {
     <div v-else class="py-2 space-y-3">
       <div class="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
         <i class="pi pi-info-circle"></i>
-        <span>This is how the email will look to the recipient.</span>
+        <span>{{ t('email.components.sendEmailDialog.preview.description') }}</span>
       </div>
       <iframe
         :srcdoc="renderedHtml"
         class="w-full rounded-lg border border-surface-200 dark:border-surface-700"
         style="height: 520px"
         sandbox="allow-same-origin"
-        title="Email preview"
+        :title="t('email.components.sendEmailDialog.preview.iframeTitle')"
       ></iframe>
     </div>
 
     <template #footer>
       <div v-if="step === 'compose'" class="flex items-center justify-end gap-2">
-        <Button label="Cancel" severity="secondary" outlined @click="visible = false" />
-        <Button label="Preview" icon="pi pi-eye" severity="secondary" @click="goToPreview" />
+        <Button
+          :label="t('common.cancel')"
+          severity="secondary"
+          outlined
+          @click="visible = false"
+        />
+        <Button
+          :label="t('email.components.sendEmailDialog.actions.preview')"
+          icon="pi pi-eye"
+          severity="secondary"
+          @click="goToPreview"
+        />
       </div>
       <div v-else class="flex items-center justify-between w-full">
         <Button
-          label="Back to edit"
+          :label="t('email.components.sendEmailDialog.actions.backToEdit')"
           icon="pi pi-arrow-left"
           severity="secondary"
           outlined
           @click="step = 'compose'"
         />
         <Button
-          label="Send"
+          :label="t('email.components.sendEmailDialog.actions.send')"
           icon="pi pi-send"
           iconPos="right"
           :loading="sendLoading"

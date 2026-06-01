@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -13,6 +14,7 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 
 const props = defineProps<{ memberId: string }>()
 
+const { t } = useI18n({ useScope: 'global' })
 const toast = useToast()
 
 const emails = ref<EmailResponse[]>([])
@@ -37,7 +39,12 @@ async function fetchEmails() {
     emails.value = data.content
     totalElements.value = data.totalElements
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load emails.', life: 3000 })
+    toast.add({
+      severity: 'error',
+      summary: t('common.error'),
+      detail: t('email.components.memberEmailsCard.toasts.loadError'),
+      life: 3000,
+    })
   } finally {
     loading.value = false
   }
@@ -58,8 +65,8 @@ async function openPreview(email: EmailResponse) {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to load email content.',
+      summary: t('common.error'),
+      detail: t('email.components.memberEmailsCard.toasts.loadContentError'),
       life: 3000,
     })
     previewVisible.value = false
@@ -78,7 +85,9 @@ onMounted(fetchEmails)
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <i class="pi pi-envelope text-primary-500 dark:text-primary-400"></i>
-            <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">Emails</h2>
+            <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
+              {{ t('email.components.memberEmailsCard.title') }}
+            </h2>
             <span
               v-if="totalElements > 0"
               class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 text-xs font-semibold"
@@ -93,12 +102,12 @@ onMounted(fetchEmails)
               text
               rounded
               size="small"
-              aria-label="Refresh emails"
+              :aria-label="t('email.components.memberEmailsCard.actions.refresh')"
               :loading="loading"
               @click="fetchEmails"
             />
             <Button
-              label="Send Email"
+              :label="t('email.components.memberEmailsCard.actions.sendEmail')"
               icon="pi pi-send"
               size="small"
               @click="sendDialogVisible = true"
@@ -119,21 +128,33 @@ onMounted(fetchEmails)
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
           @page="onPage"
         >
-          <Column field="subject" header="Subject" style="width: 50%">
+          <Column
+            field="subject"
+            :header="t('email.components.memberEmailsCard.table.subject')"
+            style="width: 50%"
+          >
             <template #body="{ data }: { data: EmailResponse }">
               <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
                 data.subject
               }}</span>
             </template>
           </Column>
-          <Column field="provider" header="Provider" style="width: 15%">
+          <Column
+            field="provider"
+            :header="t('email.components.memberEmailsCard.table.provider')"
+            style="width: 15%"
+          >
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm capitalize">{{
                 data.provider
               }}</span>
             </template>
           </Column>
-          <Column field="createdAt" header="Sent At" style="width: 25%">
+          <Column
+            field="createdAt"
+            :header="t('email.components.memberEmailsCard.table.sentAt')"
+            style="width: 25%"
+          >
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{
@@ -155,7 +176,7 @@ onMounted(fetchEmails)
                   text
                   rounded
                   size="small"
-                  aria-label="View email"
+                  :aria-label="t('email.components.memberEmailsCard.actions.viewEmail')"
                   @click="openPreview(data)"
                 />
               </div>
@@ -164,7 +185,7 @@ onMounted(fetchEmails)
           <template #empty>
             <div class="flex flex-col items-center justify-center py-10 gap-2 text-surface-400">
               <i class="pi pi-envelope text-3xl"></i>
-              <p class="text-sm">No emails sent yet</p>
+              <p class="text-sm">{{ t('email.components.memberEmailsCard.empty') }}</p>
             </div>
           </template>
         </DataTable>

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AutoComplete from 'primevue/autocomplete'
 import type { CountryResponse } from '@/types/country.types'
 import { countriesService } from '@/services/countries.service'
 
 const props = defineProps<{ modelValue: number | null; invalid?: boolean }>()
 const emit = defineEmits<{ 'update:modelValue': [value: number | null] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const all = ref<CountryResponse[]>([])
 const filtered = ref<CountryResponse[]>([])
@@ -44,7 +47,7 @@ function onClear() {
     v-model="selected"
     :suggestions="filtered"
     optionLabel="name"
-    placeholder="Search country..."
+    :placeholder="t('countries.components.selector.placeholder')"
     forceSelection
     dropdown
     fluid

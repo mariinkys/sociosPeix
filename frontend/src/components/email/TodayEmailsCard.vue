@@ -1,6 +1,7 @@
 c
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -10,6 +11,7 @@ import { emailsService } from '@/services/emails.service'
 import type { EmailResponse } from '@/types/email.types'
 import EmailPreviewDialog from '@/components/email/EmailPreviewDialog.vue'
 
+const { t } = useI18n({ useScope: 'global' })
 const toast = useToast()
 
 const emails = ref<EmailResponse[]>([])
@@ -26,8 +28,8 @@ async function fetchTodayEmails() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: "Failed to load today's emails.",
+      summary: t('common.error'),
+      detail: t('email.components.todayEmailsCard.toasts.loadError'),
       life: 3000,
     })
   } finally {
@@ -44,8 +46,8 @@ async function openPreview(email: EmailResponse) {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to load email content.',
+      summary: t('common.error'),
+      detail: t('email.components.todayEmailsCard.toasts.loadContentError'),
       life: 3000,
     })
     previewVisible.value = false
@@ -65,7 +67,7 @@ onMounted(fetchTodayEmails)
           <div class="flex items-center gap-2">
             <i class="pi pi-gift text-primary-500 dark:text-primary-400" />
             <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
-              Today's Emails
+              {{ t('email.components.todayEmailsCard.title') }}
             </h2>
             <span
               v-if="emails.length > 0"
@@ -97,28 +99,46 @@ onMounted(fetchTodayEmails)
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
           size="small"
         >
-          <Column field="subject" header="Subject" style="width: 40%">
+          <Column
+            field="subject"
+            :header="t('email.components.todayEmailsCard.table.subject')"
+            style="width: 40%"
+          >
             <template #body="{ data }: { data: EmailResponse }">
               <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
                 data.subject
               }}</span>
             </template>
           </Column>
-          <Column field="provider" header="Provider" style="width: 10%">
+          <Column
+            field="provider"
+            :header="t('email.components.todayEmailsCard.table.provider')"
+            style="width: 10%"
+          >
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm capitalize">{{
                 data.provider
               }}</span>
             </template>
           </Column>
-          <Column field="recipientCount" header="Sent To" sortable style="width: 10%">
+          <Column
+            field="recipientCount"
+            :header="t('email.components.todayEmailsCard.table.sentTo')"
+            sortable
+            style="width: 10%"
+          >
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm capitalize">{{
                 data.recipientCount
               }}</span>
             </template>
           </Column>
-          <Column field="createdAt" header="Sent At" sortable style="width: 30%">
+          <Column
+            field="createdAt"
+            :header="t('email.components.todayEmailsCard.table.sentAt')"
+            sortable
+            style="width: 30%"
+          >
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{
@@ -140,7 +160,7 @@ onMounted(fetchTodayEmails)
                   text
                   rounded
                   size="small"
-                  aria-label="View email"
+                  :aria-label="t('email.components.todayEmailsCard.actions.viewEmail')"
                   @click="openPreview(data)"
                 />
               </div>
@@ -149,7 +169,7 @@ onMounted(fetchTodayEmails)
           <template #empty>
             <div class="flex flex-col items-center justify-center py-10 gap-2 text-surface-400">
               <i class="pi pi-envelope text-3xl"></i>
-              <p class="text-sm">No emails sent yet</p>
+              <p class="text-sm">{{ t('email.components.todayEmailsCard.empty') }}</p>
             </div>
           </template>
         </DataTable>

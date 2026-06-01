@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import MultiSelect from 'primevue/multiselect'
 import type { InterestResponse } from '@/types/interest.types'
 import { interestsService } from '@/services/interests.service'
 
 const props = defineProps<{ modelValue: number[]; invalid?: boolean }>()
 const emit = defineEmits<{ 'update:modelValue': [value: number[]] }>()
+
+const { t } = useI18n({ useScope: 'global' })
 
 const all = ref<InterestResponse[]>([])
 const selected = ref<InterestResponse[]>([])
@@ -37,9 +40,9 @@ function onChange(values: InterestResponse[]) {
     v-model="selected"
     :options="all"
     optionLabel="name"
-    placeholder="Select interests..."
+    :placeholder="t('interests.components.multiSelect.placeholder')"
     filter
-    filterPlaceholder="Search interests..."
+    :filterPlaceholder="t('interests.components.multiSelect.filterPlaceholder')"
     display="chip"
     :invalid="invalid"
     fluid

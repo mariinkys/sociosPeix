@@ -2,6 +2,7 @@ import { globalIgnores } from 'eslint/config'
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
 import pluginVue from 'eslint-plugin-vue'
 import pluginOxlint from 'eslint-plugin-oxlint'
+import pluginVueI18n from '@intlify/eslint-plugin-vue-i18n'
 import skipFormatting from 'eslint-config-prettier/flat'
 
 // To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
@@ -19,6 +20,28 @@ export default defineConfigWithVueTs(
 
   ...pluginVue.configs['flat/essential'],
   vueTsConfigs.recommended,
+
+  {
+    name: 'vue-i18n-rules',
+    files: ['**/*.{vue,ts,mts,tsx,js,mjs,cjs}'],
+    plugins: {
+      '@intlify/vue-i18n': pluginVueI18n,
+    },
+    rules: {
+      '@intlify/vue-i18n/no-duplicate-keys-in-locale': [
+        'error',
+        {
+          ignoreI18nBlock: false,
+        },
+      ],
+      '@intlify/vue-i18n/no-missing-keys-in-other-locales': [
+        'error',
+        {
+          ignoreLocales: [],
+        },
+      ],
+    },
+  },
 
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 

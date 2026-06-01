@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
@@ -8,6 +9,7 @@ import type { EmailProviderStatusResponse } from '@/types/email.types'
 
 defineOptions({ inheritAttrs: false })
 
+const { t } = useI18n({ useScope: 'global' })
 const toast = useToast()
 
 const status = ref<EmailProviderStatusResponse | null>(null)
@@ -37,8 +39,8 @@ async function fetchStatus() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to load email provider status.',
+      summary: t('common.error'),
+      detail: t('email.components.quotaCard.toasts.loadError'),
       life: 3000,
     })
   } finally {
@@ -60,7 +62,7 @@ onMounted(fetchStatus)
           <div class="flex items-center gap-2">
             <i class="pi pi-envelope text-primary-500 dark:text-primary-400"></i>
             <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
-              Email Quota
+              {{ t('email.components.quotaCard.title') }}
             </h2>
           </div>
           <Button
@@ -69,7 +71,7 @@ onMounted(fetchStatus)
             text
             rounded
             size="small"
-            aria-label="Refresh status"
+            :aria-label="t('email.components.quotaCard.actions.refresh')"
             :loading="loading"
             @click="fetchStatus"
           />
@@ -81,7 +83,9 @@ onMounted(fetchStatus)
 
         <template v-else-if="status">
           <div class="flex items-center gap-1.5">
-            <span class="text-xs text-surface-400">Provider</span>
+            <span class="text-xs text-surface-400">{{
+              t('email.components.quotaCard.labels.provider')
+            }}</span>
             <span
               class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-800 text-xs font-medium text-surface-700 dark:text-surface-300 capitalize"
             >
@@ -92,7 +96,12 @@ onMounted(fetchStatus)
           <div class="space-y-1.5">
             <div class="flex items-center justify-between text-xs">
               <span class="text-surface-500 dark:text-surface-400">
-                {{ status.sentToday }} / {{ status.dailyLimit }} sent today
+                {{
+                  t('email.components.quotaCard.labels.sentToday', {
+                    sent: status.sentToday,
+                    limit: status.dailyLimit,
+                  })
+                }}
               </span>
               <span :class="['font-semibold', usageTextColor]">{{ usagePercent }}%</span>
             </div>
@@ -122,13 +131,17 @@ onMounted(fetchStatus)
             ></i>
             <div>
               <p class="text-sm font-semibold text-surface-900 dark:text-surface-0">
-                <template v-if="status.remaining === 0">No emails left today</template>
+                <template v-if="status.remaining === 0">{{
+                  t('email.components.quotaCard.status.noneRemaining')
+                }}</template>
                 <template v-else>
                   <span :class="usageTextColor">{{ status.remaining }}</span>
-                  email{{ status.remaining === 1 ? '' : 's' }} remaining today
+                  {{ t('email.components.quotaCard.status.remaining') }}
                 </template>
               </p>
-              <p class="text-xs text-surface-400 mt-0.5">Resets at midnight</p>
+              <p class="text-xs text-surface-400 mt-0.5">
+                {{ t('email.components.quotaCard.status.resetsAt') }}
+              </p>
             </div>
           </div>
         </template>
