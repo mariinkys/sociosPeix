@@ -4,6 +4,8 @@ import dev.mariinkys.sociospeix.application.exception.InterestNotFoundException;
 import dev.mariinkys.sociospeix.application.port.InterestUseCase;
 import dev.mariinkys.sociospeix.domain.model.Interest;
 import dev.mariinkys.sociospeix.domain.repository.InterestRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -21,6 +23,7 @@ public class InterestService implements InterestUseCase {
 
     @Override
     @Transactional
+    @CacheEvict(value = "interests", allEntries = true)
     public Interest createInterest(String name, String description) {
         return interestRepository.save(new Interest(null, name, nullToEmpty(description)));
     }
@@ -34,12 +37,14 @@ public class InterestService implements InterestUseCase {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("interests")
     public List<Interest> getAllInterests() {
         return interestRepository.findAll();
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = "interests", allEntries = true)
     public Interest updateInterest(Integer id, String name, String description) {
         getInterestById(id); // throws if not found
         return interestRepository.save(new Interest(id, name, nullToEmpty(description)));
@@ -47,6 +52,7 @@ public class InterestService implements InterestUseCase {
 
     @Override
     @Transactional
+    @CacheEvict(value = "interests", allEntries = true)
     public void deleteInterest(Integer id) {
         getInterestById(id);
         interestRepository.deleteById(id);

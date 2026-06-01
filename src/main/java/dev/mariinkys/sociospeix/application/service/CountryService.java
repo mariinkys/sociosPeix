@@ -3,6 +3,7 @@ package dev.mariinkys.sociospeix.application.service;
 import dev.mariinkys.sociospeix.application.port.CountryUseCase;
 import dev.mariinkys.sociospeix.domain.model.Country;
 import dev.mariinkys.sociospeix.domain.repository.CountryRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -18,6 +19,7 @@ public class CountryService implements CountryUseCase {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("countries")
     public List<Country> getAllCountries() {
         return countryRepository.findAll();
     }
