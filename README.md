@@ -12,7 +12,7 @@
 ## App Overview
 
 <div align="center">
-    <img alt="Application Diagram" src="./other/AppDiagram.excalidraw.svg" width=750/>
+    <img alt="Application Diagram" src="./other/AppDiagram.excalidraw.svg" width=500/>
 </div>
 Note: I've made the diagram using Excalidraw.
 
