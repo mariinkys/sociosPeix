@@ -31,13 +31,13 @@ const resolver = ({ values }: FormResolverOptions) => {
   const password = values.password as string
 
   if (!email) {
-    errors.email = [{ message: t('auth.login.form.email.required') }]
+    errors.email = [{ message: t('common.validation.emailRequired') }]
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.email = [{ message: t('auth.login.form.email.invalid') }]
+    errors.email = [{ message: t('common.validation.invalidEmail') }]
   }
 
   if (!password) {
-    errors.password = [{ message: t('auth.login.form.password.required') }]
+    errors.password = [{ message: t('common.validation.passwordRequired') }]
   }
 
   return { errors }
@@ -55,8 +55,8 @@ async function onSubmit({ valid }: FormSubmitEvent) {
     const err = e as AxiosError<{ message: string }>
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: err.response?.data?.message ?? t('auth.login.toasts.loginError'),
+      summary: t('common.feedback.error'),
+      detail: err.response?.data?.message ?? t('auth.login.errors.loginFailed'),
       life: 3000,
     })
   } finally {
@@ -74,10 +74,10 @@ async function onSubmit({ valid }: FormSubmitEvent) {
         <div class="space-y-8 p-2">
           <div class="text-center space-y-1">
             <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-              {{ t('auth.login.page.title') }}
+              {{ t('auth.login.title') }}
             </h1>
             <p class="text-sm text-surface-500 dark:text-surface-400">
-              {{ t('auth.login.page.description') }}
+              {{ t('auth.login.description') }}
             </p>
           </div>
 
@@ -92,12 +92,12 @@ async function onSubmit({ valid }: FormSubmitEvent) {
           >
             <FormField v-slot="$field" name="email" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                {{ t('auth.login.form.email.label') }}
+                {{ t('common.fields.email') }}
               </label>
               <InputText
                 v-model="model.email"
                 type="email"
-                :placeholder="t('auth.login.form.email.placeholder')"
+                :placeholder="t('common.placeholders.enterYourEmail')"
                 autocomplete="email"
                 :invalid="$field?.invalid"
                 fluid
@@ -109,11 +109,11 @@ async function onSubmit({ valid }: FormSubmitEvent) {
 
             <FormField v-slot="$field" name="password" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                {{ t('auth.login.form.password.label') }}
+                {{ t('common.fields.password') }}
               </label>
               <Password
                 v-model="model.password"
-                :placeholder="t('auth.login.form.password.placeholder')"
+                :placeholder="t('common.placeholders.enterPassword')"
                 :feedback="false"
                 :invalid="$field?.invalid"
                 toggleMask
@@ -126,7 +126,7 @@ async function onSubmit({ valid }: FormSubmitEvent) {
 
             <Button
               type="submit"
-              :label="t('auth.login.form.submit')"
+              :label="t('auth.login.submit')"
               icon="pi pi-sign-in"
               iconPos="right"
               class="w-full"

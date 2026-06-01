@@ -25,8 +25,8 @@ async function fetchTodayBirthdays() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('members.components.todayBirthdayCard.toasts.loadError'),
+      summary: t('common.feedback.error'),
+      detail: t('members.todayBirthdayCard.errors.load'),
       life: 3000,
     })
   } finally {
@@ -50,7 +50,7 @@ onMounted(fetchTodayBirthdays)
           <div class="flex items-center gap-2">
             <i class="pi pi-gift text-primary-500 dark:text-primary-400"></i>
             <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
-              {{ t('members.components.todayBirthdayCard.title') }}
+              {{ t('members.todayBirthdayCard.title') }}
             </h2>
             <span
               v-if="members.length > 0"
@@ -66,7 +66,7 @@ onMounted(fetchTodayBirthdays)
             text
             rounded
             size="small"
-            :aria-label="t('members.components.todayBirthdayCard.actions.refresh')"
+            :aria-label="t('common.actions.refresh')"
             :loading="loading"
             @click="fetchTodayBirthdays"
           />
@@ -86,7 +86,7 @@ onMounted(fetchTodayBirthdays)
         >
           <Column
             field="fullName"
-            :header="t('members.components.todayBirthdayCard.table.member')"
+            :header="t('common.fields.member')"
             style="width: 25%"
             sortable
           >
@@ -106,7 +106,7 @@ onMounted(fetchTodayBirthdays)
 
           <Column
             field="email"
-            :header="t('members.components.todayBirthdayCard.table.email')"
+            :header="t('common.fields.email')"
             style="width: 25%"
           >
             <template #body="{ data }: { data: MemberResponse }">
@@ -116,7 +116,7 @@ onMounted(fetchTodayBirthdays)
 
           <Column
             field="phone"
-            :header="t('members.components.todayBirthdayCard.table.phone')"
+            :header="t('common.fields.phone')"
             style="width: 25%"
           >
             <template #body="{ data }: { data: MemberResponse }">
@@ -128,7 +128,7 @@ onMounted(fetchTodayBirthdays)
 
           <Column
             field="birthdate"
-            :header="t('members.components.todayBirthdayCard.table.birthday')"
+            :header="t('common.fields.birthday')"
             style="width: 25%"
           >
             <template #body="{ data }: { data: MemberResponse }">
@@ -146,7 +146,7 @@ onMounted(fetchTodayBirthdays)
           <template #empty>
             <div class="flex flex-col items-center justify-center py-10 gap-2 text-surface-400">
               <i class="pi pi-gift text-3xl"></i>
-              <p class="text-sm">{{ t('members.components.todayBirthdayCard.empty') }}</p>
+              <p class="text-sm">{{ t('members.todayBirthdayCard.empty') }}</p>
             </div>
           </template>
         </DataTable>

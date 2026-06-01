@@ -47,7 +47,7 @@ function onClear() {
     v-model="selected"
     :suggestions="filtered"
     optionLabel="name"
-    :placeholder="t('countries.components.selector.placeholder')"
+    :placeholder="t('countries.selectorPlaceholder')"
     forceSelection
     dropdown
     fluid

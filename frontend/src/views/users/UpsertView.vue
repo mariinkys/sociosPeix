@@ -53,21 +53,21 @@ const resolver = ({ values }: FormResolverOptions) => {
   const errors: Record<string, { message: string }[]> = {}
 
   if (!values.name) {
-    errors.name = [{ message: t('users.form.name.required') }]
+    errors.name = [{ message: t('users.fields.name.required') }]
   } else if (String(values.name).length > 100) {
-    errors.name = [{ message: t('users.form.name.max') }]
+    errors.name = [{ message: t('users.fields.name.max') }]
   }
 
   if (!values.email) {
-    errors.email = [{ message: t('users.form.email.required') }]
+    errors.email = [{ message: t('users.fields.email.required') }]
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(values.email))) {
-    errors.email = [{ message: t('users.form.email.invalid') }]
+    errors.email = [{ message: t('users.fields.email.invalid') }]
   }
 
   if (!isEdit.value && !values.password) {
-    errors.password = [{ message: t('users.form.password.required') }]
+    errors.password = [{ message: t('users.fields.password.required') }]
   } else if (values.password && String(values.password).length < 8) {
-    errors.password = [{ message: t('users.form.password.min') }]
+    errors.password = [{ message: t('users.fields.password.min') }]
   }
 
   return { errors }
@@ -82,16 +82,16 @@ async function onSubmit({ valid }: FormSubmitEvent) {
       await usersService.update(userId.value!, payload)
       toast.add({
         severity: 'success',
-        summary: t('common.saved'),
-        detail: t('users.toasts.updated'),
+        summary: t('common.feedback.saved'),
+        detail: t('users.messages.updated'),
         life: 3000,
       })
     } else {
       await usersService.create(model.value)
       toast.add({
         severity: 'success',
-        summary: t('common.created'),
-        detail: t('users.toasts.created'),
+        summary: t('common.feedback.created'),
+        detail: t('users.messages.created'),
         life: 3000,
       })
     }
@@ -99,8 +99,8 @@ async function onSubmit({ valid }: FormSubmitEvent) {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: isEdit.value ? t('users.toasts.updateError') : t('users.toasts.createError'),
+      summary: t('common.feedback.error'),
+      detail: isEdit.value ? t('users.messages.updateError') : t('users.messages.createError'),
       life: 3000,
     })
   } finally {
@@ -120,19 +120,19 @@ const passwordResolver = ({ values }: FormResolverOptions) => {
   const errors: Record<string, { message: string }[]> = {}
 
   if (!authStore.isAdmin && !values.currentPassword) {
-    errors.currentPassword = [{ message: t('users.passwordCard.currentPassword.required') }]
+    errors.currentPassword = [{ message: t('users.passwordCard.fields.currentPassword.required') }]
   }
 
   if (!values.newPassword) {
-    errors.newPassword = [{ message: t('users.passwordCard.newPassword.required') }]
+    errors.newPassword = [{ message: t('users.passwordCard.fields.newPassword.required') }]
   } else if (String(values.newPassword).length < 8) {
-    errors.newPassword = [{ message: t('users.passwordCard.newPassword.min') }]
+    errors.newPassword = [{ message: t('users.passwordCard.fields.newPassword.min') }]
   }
 
   if (!values.confirmPassword) {
-    errors.confirmPassword = [{ message: t('users.passwordCard.confirmPassword.required') }]
+    errors.confirmPassword = [{ message: t('users.passwordCard.fields.confirmPassword.required') }]
   } else if (values.newPassword !== values.confirmPassword) {
-    errors.confirmPassword = [{ message: t('users.passwordCard.confirmPassword.mismatch') }]
+    errors.confirmPassword = [{ message: t('users.passwordCard.fields.confirmPassword.mismatch') }]
   }
 
   return { errors }
@@ -150,13 +150,13 @@ async function onPasswordSubmit({ valid }: FormSubmitEvent) {
     await usersService.updatePassword(userId.value!, payload)
     toast.add({
       severity: 'success',
-      summary: t('users.passwordCard.updatedTitle'),
-      detail: t('users.passwordCard.updatedDetail'),
+      summary: t('users.passwordCard.successTitle'),
+      detail: t('users.passwordCard.successDetail'),
       life: 3000,
     })
     passwordModel.value = { currentPassword: '', newPassword: '', confirmPassword: '' }
   } catch {
-    passwordError.value = t('users.passwordCard.updateError')
+    passwordError.value = t('users.passwordCard.error')
   } finally {
     passwordLoading.value = false
   }
@@ -179,7 +179,7 @@ async function onRoleChange() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
+      summary: t('common.feedback.error'),
       detail: t('users.roleCard.updateError'),
       life: 3000,
     })
@@ -193,15 +193,15 @@ async function onRoleChange() {
 function confirmDelete() {
   confirm.require({
     message: t('users.deleteDialog.message'),
-    header: t('users.deleteDialog.header'),
+    header: t('users.deleteDialog.title'),
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
-      label: t('users.deleteDialog.reject'),
+      label: t('common.actions.cancel'),
       severity: 'secondary',
       outlined: true,
     },
     acceptProps: {
-      label: t('users.deleteDialog.accept'),
+      label: t('common.actions.delete'),
       severity: 'danger',
     },
     accept: async () => {
@@ -210,7 +210,7 @@ function confirmDelete() {
         await usersService.delete(userId.value!)
         toast.add({
           severity: 'success',
-          summary: t('common.deleted'),
+          summary: t('common.feedback.deleted'),
           detail: t('users.deleteDialog.success'),
           life: 3000,
         })
@@ -218,7 +218,7 @@ function confirmDelete() {
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('common.error'),
+          summary: t('common.feedback.error'),
           detail: t('users.deleteDialog.error'),
           life: 3000,
         })
@@ -239,8 +239,8 @@ onMounted(async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('users.toasts.loadError'),
+      summary: t('common.feedback.error'),
+      detail: t('users.messages.loadError'),
       life: 3000,
     })
     router.push('/users')
@@ -261,15 +261,15 @@ onMounted(async () => {
           severity="secondary"
           text
           rounded
-          :aria-label="t('users.actions.goBack')"
+          :aria-label="t('common.actions.back')"
           @click="router.push('/users')"
         />
         <div>
           <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-            {{ isEdit ? t('users.page.editTitle') : t('users.page.newTitle') }}
+            {{ isEdit ? t('users.titles.edit') : t('users.titles.create') }}
           </h1>
           <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-            {{ isEdit ? t('users.page.editDescription') : t('users.page.newDescription') }}
+            {{ isEdit ? t('users.descriptions.edit') : t('users.descriptions.create') }}
           </p>
         </div>
       </div>
@@ -282,7 +282,7 @@ onMounted(async () => {
           severity="danger"
           outlined
           :loading="deleteLoading"
-          :aria-label="t('users.actions.deleteUser')"
+          :aria-label="t('users.actions.delete')"
           @click="confirmDelete"
         />
       </div>
@@ -307,11 +307,11 @@ onMounted(async () => {
           >
             <FormField v-slot="$field" name="name" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                {{ t('users.form.name.label') }} <span class="text-red-500">*</span>
+                {{ t('users.fields.name.label') }} <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="model.name"
-                :placeholder="t('users.form.name.placeholder')"
+                :placeholder="t('users.fields.name.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -327,7 +327,7 @@ onMounted(async () => {
               <InputText
                 v-model="model.email"
                 type="email"
-                :placeholder="t('users.form.email.placeholder')"
+                :placeholder="t('users.fields.email.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -339,12 +339,12 @@ onMounted(async () => {
             <!-- Password only on create -->
             <FormField v-if="!isEdit" v-slot="$field" name="password" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                {{ t('users.form.password.label') }} <span class="text-red-500">*</span>
+                {{ t('users.fields.password.label') }} <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="model.password"
                 type="password"
-                :placeholder="t('users.form.password.placeholder')"
+                :placeholder="t('users.fields.password.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -355,14 +355,14 @@ onMounted(async () => {
 
             <div class="flex items-center justify-end gap-3 pt-2">
               <Button
-                :label="t('common.cancel')"
+                :label="t('common.actions.cancel')"
                 severity="secondary"
                 outlined
                 @click="router.push('/users')"
               />
               <Button
                 type="submit"
-                :label="isEdit ? t('common.saveChanges') : t('users.form.submitCreate')"
+                :label="isEdit ? t('common.actions.saveChanges') : t('users.actions.create')"
                 :icon="isEdit ? 'pi pi-check' : 'pi pi-plus'"
                 iconPos="right"
                 :loading="loading"
@@ -401,13 +401,13 @@ onMounted(async () => {
               class="flex flex-col gap-1.5"
             >
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                {{ t('users.passwordCard.currentPassword.label') }}
+                {{ t('users.passwordCard.fields.currentPassword.label') }}
                 <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="passwordModel.currentPassword"
                 type="password"
-                :placeholder="t('users.passwordCard.currentPassword.placeholder')"
+                :placeholder="t('users.passwordCard.fields.currentPassword.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -418,12 +418,12 @@ onMounted(async () => {
 
             <FormField v-slot="$field" name="newPassword" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                {{ t('users.passwordCard.newPassword.label') }} <span class="text-red-500">*</span>
+                {{ t('users.passwordCard.fields.newPassword.label') }} <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="passwordModel.newPassword"
                 type="password"
-                :placeholder="t('users.passwordCard.newPassword.placeholder')"
+                :placeholder="t('users.passwordCard.fields.newPassword.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -434,13 +434,13 @@ onMounted(async () => {
 
             <FormField v-slot="$field" name="confirmPassword" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                {{ t('users.passwordCard.confirmPassword.label') }}
+                {{ t('users.passwordCard.fields.confirmPassword.label') }}
                 <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="passwordModel.confirmPassword"
                 type="password"
-                :placeholder="t('users.passwordCard.confirmPassword.placeholder')"
+                :placeholder="t('users.passwordCard.fields.confirmPassword.placeholder')"
                 :invalid="$field?.invalid"
                 fluid
               />
@@ -495,7 +495,7 @@ onMounted(async () => {
                 class="flex-1"
               />
               <Button
-                :label="t('common.apply')"
+                :label="t('common.actions.apply')"
                 icon="pi pi-check"
                 :loading="roleLoading"
                 :disabled="!roleChanged"

@@ -47,8 +47,8 @@ async function fetchUsers() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('users.list.toasts.loadError'),
+      summary: t('common.feedback.error'),
+      detail: t('users.messages.loadListError'),
       life: 3000,
     })
   } finally {
@@ -92,10 +92,10 @@ onMounted(fetchUsers)
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-          {{ t('users.list.page.title') }}
+          {{ t('users.titles.list') }}
         </h1>
         <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-          {{ t('users.list.page.totalUsers', { total: totalElements }) }}
+          {{ t('users.list.total', { total: totalElements }) }}
         </p>
       </div>
 
@@ -103,13 +103,13 @@ onMounted(fetchUsers)
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
-            :placeholder="t('users.list.filters.searchPlaceholder')"
+            :placeholder="t('common.placeholders.searchUsers')"
             class="pl-9 w-full sm:w-56"
             @input="onSearch"
           />
         </div>
         <Button
-          :label="t('users.list.actions.newUser')"
+          :label="t('users.actions.createNew')"
           icon="pi pi-plus"
           class="shrink-0"
           @click="router.push('/users/new')"
@@ -134,7 +134,7 @@ onMounted(fetchUsers)
       @page="onPage"
       @sort="onSort"
     >
-      <Column field="name" :header="t('users.list.table.name')" style="width: 30%" sortable>
+      <Column field="name" :header="t('common.fields.name')" style="width: 30%" sortable>
         <template #body="{ data }: { data: UserResponse }">
           <div class="flex items-center gap-3">
             <div
@@ -147,13 +147,13 @@ onMounted(fetchUsers)
         </template>
       </Column>
 
-      <Column field="email" :header="t('users.list.table.email')" style="width: 30%" sortable>
+      <Column field="email" :header="t('common.fields.email')" style="width: 30%" sortable>
         <template #body="{ data }: { data: UserResponse }">
           <span class="text-surface-600 dark:text-surface-400">{{ data.email }}</span>
         </template>
       </Column>
 
-      <Column field="role" :header="t('users.list.table.role')" style="width: 20%">
+      <Column field="role" :header="t('common.fields.role')" style="width: 20%">
         <template #body="{ data }: { data: UserResponse }">
           <Tag :value="data.role" :severity="data.role === 'ADMIN' ? 'info' : 'success'" />
         </template>
@@ -161,7 +161,7 @@ onMounted(fetchUsers)
 
       <Column
         field="createdAt"
-        :header="t('users.list.table.createdAt')"
+        :header="t('common.fields.createdAt')"
         style="width: 20%"
         sortable
       >

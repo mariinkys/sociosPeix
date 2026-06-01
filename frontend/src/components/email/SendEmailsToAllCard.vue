@@ -23,15 +23,15 @@ const dialogVisible = ref(false)
           <div class="flex items-center gap-2">
             <i class="pi pi-globe text-primary-500 dark:text-primary-400"></i>
             <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
-              {{ t('email.components.sendEmailsToAllCard.title') }}
+              {{ t('email.titles.sendToAll') }}
             </h2>
           </div>
           <p class="text-sm text-surface-500 dark:text-surface-400">
-            {{ t('email.components.sendEmailsToAllCard.description') }}
+            {{ t('email.descriptions.sendToAll') }}
           </p>
         </div>
         <Button
-          :label="t('email.components.sendEmailsToAllCard.actions.compose')"
+          :label="t('common.actions.composeEmail')"
           icon="pi pi-send"
           size="small"
           fluid

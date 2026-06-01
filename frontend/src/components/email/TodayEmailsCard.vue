@@ -28,8 +28,8 @@ async function fetchTodayEmails() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('email.components.todayEmailsCard.toasts.loadError'),
+      summary: t('common.feedback.error'),
+      detail: t('email.todayEmailsCard.errors.load'),
       life: 3000,
     })
   } finally {
@@ -46,8 +46,8 @@ async function openPreview(email: EmailResponse) {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('email.components.todayEmailsCard.toasts.loadContentError'),
+      summary: t('common.feedback.error'),
+      detail: t('email.todayEmailsCard.errors.loadContent'),
       life: 3000,
     })
     previewVisible.value = false
@@ -67,7 +67,7 @@ onMounted(fetchTodayEmails)
           <div class="flex items-center gap-2">
             <i class="pi pi-gift text-primary-500 dark:text-primary-400" />
             <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
-              {{ t('email.components.todayEmailsCard.title') }}
+              {{ t('email.titles.todayEmails') }}
             </h2>
             <span
               v-if="emails.length > 0"
@@ -101,7 +101,7 @@ onMounted(fetchTodayEmails)
         >
           <Column
             field="subject"
-            :header="t('email.components.todayEmailsCard.table.subject')"
+            :header="t('common.fields.subject')"
             style="width: 40%"
           >
             <template #body="{ data }: { data: EmailResponse }">
@@ -112,7 +112,7 @@ onMounted(fetchTodayEmails)
           </Column>
           <Column
             field="provider"
-            :header="t('email.components.todayEmailsCard.table.provider')"
+            :header="t('common.fields.provider')"
             style="width: 10%"
           >
             <template #body="{ data }: { data: EmailResponse }">
@@ -123,7 +123,7 @@ onMounted(fetchTodayEmails)
           </Column>
           <Column
             field="recipientCount"
-            :header="t('email.components.todayEmailsCard.table.sentTo')"
+            :header="t('common.fields.sentTo')"
             sortable
             style="width: 10%"
           >
@@ -135,7 +135,7 @@ onMounted(fetchTodayEmails)
           </Column>
           <Column
             field="createdAt"
-            :header="t('email.components.todayEmailsCard.table.sentAt')"
+            :header="t('common.fields.sentAt')"
             sortable
             style="width: 30%"
           >
@@ -160,7 +160,7 @@ onMounted(fetchTodayEmails)
                   text
                   rounded
                   size="small"
-                  :aria-label="t('email.components.todayEmailsCard.actions.viewEmail')"
+                  :aria-label="t('email.todayEmailsCard.viewEmail')"
                   @click="openPreview(data)"
                 />
               </div>
@@ -169,7 +169,7 @@ onMounted(fetchTodayEmails)
           <template #empty>
             <div class="flex flex-col items-center justify-center py-10 gap-2 text-surface-400">
               <i class="pi pi-envelope text-3xl"></i>
-              <p class="text-sm">{{ t('email.components.todayEmailsCard.empty') }}</p>
+              <p class="text-sm">{{ t('email.todayEmailsCard.empty') }}</p>
             </div>
           </template>
         </DataTable>

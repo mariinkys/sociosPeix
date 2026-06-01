@@ -59,8 +59,8 @@ async function fetchMembers() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('members.list.toasts.loadError'),
+      summary: t('common.feedback.error'),
+      detail: t('members.messages.loadListError'),
       life: 3000,
     })
   } finally {
@@ -92,15 +92,15 @@ function confirmDelete(event: Event, member: MemberResponse) {
   event.stopPropagation()
   confirm.require({
     message: t('members.deleteDialog.message', { name: member.fullName }),
-    header: t('members.deleteDialog.header'),
+    header: t('members.deleteDialog.title'),
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
-      label: t('members.deleteDialog.reject'),
+      label: t('common.actions.cancel'),
       severity: 'secondary',
       outlined: true,
     },
     acceptProps: {
-      label: t('members.deleteDialog.accept'),
+      label: t('common.actions.delete'),
       severity: 'danger',
     },
     accept: async () => {
@@ -108,7 +108,7 @@ function confirmDelete(event: Event, member: MemberResponse) {
         await membersService.delete(member.id)
         toast.add({
           severity: 'success',
-          summary: t('common.deleted'),
+          summary: t('common.feedback.deleted'),
           detail: t('members.deleteDialog.success', { name: member.fullName }),
           life: 3000,
         })
@@ -116,7 +116,7 @@ function confirmDelete(event: Event, member: MemberResponse) {
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('common.error'),
+          summary: t('common.feedback.error'),
           detail: t('members.deleteDialog.error'),
           life: 3000,
         })
@@ -148,8 +148,8 @@ async function onExport() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('members.list.toasts.exportError'),
+      summary: t('common.feedback.error'),
+      detail: t('members.list.exportError'),
       life: 3000,
     })
   } finally {
@@ -170,10 +170,10 @@ onMounted(async () => {
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-          {{ t('members.list.page.title') }}
+          {{ t('members.titles.list') }}
         </h1>
         <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-          {{ t('members.list.page.totalMembers', { total: totalElements }) }}
+          {{ t('members.list.total', { total: totalElements }) }}
         </p>
       </div>
 
@@ -181,7 +181,7 @@ onMounted(async () => {
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
-            :placeholder="t('members.list.filters.searchPlaceholder')"
+            :placeholder="t('members.filters.searchPlaceholder')"
             class="pl-9 w-full sm:w-48"
             @input="onSearch"
           />
@@ -191,16 +191,16 @@ onMounted(async () => {
           v-model="selectedInterests"
           :options="allInterests"
           optionLabel="name"
-          :placeholder="t('members.list.filters.interestsPlaceholder')"
+          :placeholder="t('members.filters.interestsPlaceholder')"
           display="chip"
           filter
-          :filterPlaceholder="t('members.list.filters.interestsSearchPlaceholder')"
+          :filterPlaceholder="t('members.filters.interestsSearchPlaceholder')"
           class="w-full sm:w-56"
           @update:modelValue="onInterestFilter"
         />
 
         <Button
-          :label="t('members.list.actions.export')"
+          :label="t('common.actions.export')"
           icon="pi pi-download"
           severity="secondary"
           outlined
@@ -210,7 +210,7 @@ onMounted(async () => {
           @click="onExport"
         />
         <Button
-          :label="t('members.list.actions.newMember')"
+          :label="t('members.actions.createNew')"
           icon="pi pi-plus"
           class="shrink-0"
           @click="router.push('/members/new')"
@@ -235,7 +235,7 @@ onMounted(async () => {
       @page="onPage"
       @sort="onSort"
     >
-      <Column field="name" :header="t('members.list.table.name')" style="width: 30%" sortable>
+      <Column field="name" :header="t('common.fields.name')" style="width: 30%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <div class="flex items-center gap-3">
             <div
@@ -250,13 +250,13 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column field="email" :header="t('members.list.table.email')" style="width: 20%" sortable>
+      <Column field="email" :header="t('common.fields.email')" style="width: 20%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span class="text-surface-600 dark:text-surface-400">{{ data.email }}</span>
         </template>
       </Column>
 
-      <Column field="phone" :header="t('members.list.table.phone')" style="width: 20%" sortable>
+      <Column field="phone" :header="t('common.fields.phone')" style="width: 20%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span class="text-surface-600 dark:text-surface-400">{{ data.phone }}</span>
         </template>
@@ -264,7 +264,7 @@ onMounted(async () => {
 
       <Column
         field="birthdate"
-        :header="t('members.list.table.birthdate')"
+        :header="t('common.fields.birthdate')"
         style="width: 10%"
         sortable
       >
@@ -283,7 +283,7 @@ onMounted(async () => {
 
       <Column
         field="createdAt"
-        :header="t('members.list.table.createdAt')"
+        :header="t('common.fields.createdAt')"
         style="width: 10%"
         sortable
       >
@@ -309,7 +309,7 @@ onMounted(async () => {
               text
               rounded
               size="small"
-              :aria-label="t('members.actions.deleteMember')"
+              :aria-label="t('members.actions.delete')"
               @click="confirmDelete($event, data)"
             />
           </div>

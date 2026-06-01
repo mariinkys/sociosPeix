@@ -17,7 +17,7 @@ const visible = defineModel<boolean>('visible', { required: true })
 <template>
   <Dialog
     v-model:visible="visible"
-    :header="email?.subject ?? t('email.components.previewDialog.fallbackTitle')"
+    :header="email?.subject ?? t('email.titles.previewFallback')"
     :style="{ width: '720px' }"
     :breakpoints="{ '768px': '95vw' }"
     modal
@@ -31,7 +31,7 @@ const visible = defineModel<boolean>('visible', { required: true })
       <div class="grid grid-cols-2 gap-3 text-sm">
         <div class="flex flex-col gap-0.5">
           <span class="text-xs font-medium text-surface-400 uppercase tracking-wide">{{
-            t('email.components.previewDialog.fields.sentAt')
+            t('common.fields.sentAt')
           }}</span>
           <span class="text-surface-700 dark:text-surface-300">
             {{
@@ -45,7 +45,7 @@ const visible = defineModel<boolean>('visible', { required: true })
         </div>
         <div class="flex flex-col gap-0.5">
           <span class="text-xs font-medium text-surface-400 uppercase tracking-wide">{{
-            t('email.components.previewDialog.fields.provider')
+            t('common.fields.provider')
           }}</span>
           <span class="text-surface-700 dark:text-surface-300 capitalize">{{
             email.provider
@@ -58,7 +58,7 @@ const visible = defineModel<boolean>('visible', { required: true })
       <div class="flex flex-col gap-2">
         <div class="flex items-center justify-between">
           <span class="text-xs font-medium text-surface-400 uppercase tracking-wide">{{
-            t('email.components.previewDialog.fields.recipients')
+            t('common.fields.recipients')
           }}</span>
           <span
             class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 text-xs font-semibold"
@@ -82,7 +82,7 @@ const visible = defineModel<boolean>('visible', { required: true })
 
       <div class="flex flex-col gap-1.5">
         <span class="text-xs font-medium text-surface-400 uppercase tracking-wide">{{
-          t('email.components.previewDialog.fields.body')
+          t('common.fields.body')
         }}</span>
         <iframe
           :srcdoc="wrapEmailBody(email.body ?? '')"
@@ -96,7 +96,7 @@ const visible = defineModel<boolean>('visible', { required: true })
 
     <template #footer>
       <Button
-        :label="t('email.components.previewDialog.actions.close')"
+        :label="t('common.actions.close')"
         severity="secondary"
         outlined
         @click="visible = false"

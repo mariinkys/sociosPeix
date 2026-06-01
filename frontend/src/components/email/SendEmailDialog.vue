@@ -51,12 +51,12 @@ const renderedHtml = computed(() => wrapEmailBody(applyTemplate(htmlBody.value, 
 
 const dialogTitle = computed(() =>
   step.value === 'preview'
-    ? t('email.components.sendEmailDialog.titles.preview', { subject: subject.value })
+    ? t('email.sendEmailDialog.titles.preview', { subject: subject.value })
     : props.mode === 'interests'
-      ? t('email.components.sendEmailDialog.titles.byInterest')
+      ? t('email.sendEmailDialog.titles.byInterest')
       : props.mode === 'all'
-        ? t('email.components.sendEmailDialog.titles.toAll')
-        : t('email.components.sendEmailDialog.titles.default'),
+        ? t('email.sendEmailDialog.titles.toAll')
+        : t('email.sendEmailDialog.titles.default'),
 )
 
 function reset() {
@@ -78,15 +78,15 @@ function validate(): boolean {
   interestError.value = ''
   let valid = true
   if (!subject.value.trim()) {
-    subjectError.value = t('email.components.sendEmailDialog.validation.subjectRequired')
+    subjectError.value = t('email.sendEmailDialog.validation.subjectRequired')
     valid = false
   }
   if (!htmlBody.value.replace(/<[^>]*>/g, '').trim()) {
-    bodyError.value = t('email.components.sendEmailDialog.validation.bodyRequired')
+    bodyError.value = t('email.sendEmailDialog.validation.bodyRequired')
     valid = false
   }
   if (props.mode === 'interests' && interestIds.value.length === 0) {
-    t('email.components.sendEmailDialog.validation.interestsRequired')
+    t('email.sendEmailDialog.validation.interestsRequired')
     valid = false
   }
   if (attachmentError.value) valid = false
@@ -103,12 +103,9 @@ function onFileChange(event: Event) {
   const combined = [...attachments.value, ...Array.from(input.files)]
   const total = combined.reduce((sum, f) => sum + f.size, 0)
   if (total > MAX_ATTACHMENT_BYTES) {
-    attachmentError.value = t(
-      'email.components.sendEmailDialog.validation.attachmentLimitExceeded',
-      {
-        size: formatSize(total),
-      },
-    )
+    attachmentError.value = t('email.sendEmailDialog.validation.attachmentLimitExceeded', {
+      size: formatSize(total),
+    })
     input.value = ''
     return
   }
@@ -144,8 +141,8 @@ async function onSend() {
     }
     toast.add({
       severity: 'success',
-      summary: t('email.components.sendEmailDialog.toasts.sentTitle'),
-      detail: t('email.components.sendEmailDialog.toasts.sentDetail'),
+      summary: t('common.feedback.sent'),
+      detail: t('email.sendEmailDialog.messages.sentDetail'),
       life: 3000,
     })
     visible.value = false
@@ -153,8 +150,8 @@ async function onSend() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('email.components.sendEmailDialog.toasts.sendError'),
+      summary: t('common.feedback.error'),
+      detail: t('email.sendEmailDialog.messages.sendError'),
       life: 3000,
     })
   } finally {
@@ -176,7 +173,7 @@ async function onSend() {
     <div v-if="step === 'compose'" class="space-y-5 py-2">
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">{{
-          t('email.components.sendEmailDialog.fields.template')
+          t('common.fields.template')
         }}</label>
         <div class="flex gap-2">
           <button
@@ -199,7 +196,7 @@ async function onSend() {
 
       <div v-if="mode === 'interests'" class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-          {{ t('email.components.sendEmailDialog.fields.interests') }}
+          {{ t('common.fields.interests') }}
           <span class="text-red-500">*</span>
         </label>
         <InterestsSelect
@@ -211,18 +208,18 @@ async function onSend() {
           {{ interestError }}
         </Message>
         <p class="text-xs text-surface-400">
-          {{ t('email.components.sendEmailDialog.help.interests') }}
+          {{ t('email.sendEmailDialog.help.interests') }}
         </p>
       </div>
 
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-          {{ t('email.components.sendEmailDialog.fields.subject') }}
+          {{ t('common.fields.subject') }}
           <span class="text-red-500">*</span>
         </label>
         <InputText
           v-model="subject"
-          :placeholder="t('email.components.sendEmailDialog.placeholders.subject')"
+          :placeholder="t('common.placeholders.enterEmailSubject')"
           :invalid="!!subjectError"
           fluid
           @input="subjectError = ''"
@@ -234,7 +231,7 @@ async function onSend() {
 
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-          {{ t('email.components.sendEmailDialog.fields.body') }}
+          {{ t('common.fields.body') }}
           <span class="text-red-500">*</span>
         </label>
         <Editor v-model="htmlBody" editor-style="height: 260px" @text-change="bodyError = ''" />
@@ -245,11 +242,11 @@ async function onSend() {
 
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">{{
-          t('email.components.sendEmailDialog.fields.attachments')
+          t('common.fields.attachments')
         }}</label>
         <div class="flex items-center gap-2">
           <Button
-            :label="t('email.components.sendEmailDialog.actions.addFiles')"
+            :label="t('common.actions.addFiles')"
             icon="pi pi-paperclip"
             severity="secondary"
             outlined
@@ -258,11 +255,11 @@ async function onSend() {
           />
           <span class="text-xs" :class="attachmentError ? 'text-red-500' : 'text-surface-400'">
             <template v-if="attachments.length === 0">{{
-              t('email.components.sendEmailDialog.attachments.empty')
+              t('email.sendEmailDialog.attachments.empty')
             }}</template>
             <template v-else>
               {{
-                t('email.components.sendEmailDialog.attachments.summary', {
+                t('email.sendEmailDialog.attachments.summary', {
                   count: attachments.length,
                   size: formatSize(totalAttachmentSize),
                 })
@@ -285,7 +282,7 @@ async function onSend() {
             <span class="text-surface-400">({{ formatSize(file.size) }})</span>
             <button
               class="ml-1 text-surface-400 hover:text-red-500 transition-colors"
-              :aria-label="t('email.components.sendEmailDialog.actions.removeAttachment')"
+              :aria-label="t('common.actions.removeAttachment')"
               @click="removeAttachment(i)"
             >
               <i class="pi pi-times text-xs"></i>
@@ -298,27 +295,27 @@ async function onSend() {
     <div v-else class="py-2 space-y-3">
       <div class="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
         <i class="pi pi-info-circle"></i>
-        <span>{{ t('email.components.sendEmailDialog.preview.description') }}</span>
+        <span>{{ t('email.descriptions.preview') }}</span>
       </div>
       <iframe
         :srcdoc="renderedHtml"
         class="w-full rounded-lg border border-surface-200 dark:border-surface-700"
         style="height: 520px"
         sandbox="allow-same-origin"
-        :title="t('email.components.sendEmailDialog.preview.iframeTitle')"
+        :title="t('email.sendEmailDialog.preview.iframeTitle')"
       ></iframe>
     </div>
 
     <template #footer>
       <div v-if="step === 'compose'" class="flex items-center justify-end gap-2">
         <Button
-          :label="t('common.cancel')"
+          :label="t('common.actions.cancel')"
           severity="secondary"
           outlined
           @click="visible = false"
         />
         <Button
-          :label="t('email.components.sendEmailDialog.actions.preview')"
+          :label="t('common.actions.preview')"
           icon="pi pi-eye"
           severity="secondary"
           @click="goToPreview"
@@ -326,14 +323,14 @@ async function onSend() {
       </div>
       <div v-else class="flex items-center justify-between w-full">
         <Button
-          :label="t('email.components.sendEmailDialog.actions.backToEdit')"
+          :label="t('email.sendEmailDialog.actions.backToEdit')"
           icon="pi pi-arrow-left"
           severity="secondary"
           outlined
           @click="step = 'compose'"
         />
         <Button
-          :label="t('email.components.sendEmailDialog.actions.send')"
+          :label="t('common.actions.send')"
           icon="pi pi-send"
           iconPos="right"
           :loading="sendLoading"

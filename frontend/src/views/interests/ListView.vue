@@ -37,8 +37,8 @@ async function fetchInterests() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('interests.list.toasts.loadError'),
+      summary: t('common.feedback.error'),
+      detail: t('interests.messages.loadListError'),
       life: 3000,
     })
   } finally {
@@ -55,20 +55,20 @@ function confirmDelete(event: Event, interest: InterestResponse) {
   event.stopPropagation()
   confirm.require({
     message: t('interests.deleteDialog.message', { name: interest.name }),
-    header: t('interests.deleteDialog.header'),
+    header: t('interests.deleteDialog.title'),
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
-      label: t('interests.deleteDialog.reject'),
+      label: t('common.actions.cancel'),
       severity: 'secondary',
       outlined: true,
     },
-    acceptProps: { label: t('interests.deleteDialog.accept'), severity: 'danger' },
+    acceptProps: { label: t('common.actions.delete'), severity: 'danger' },
     accept: async () => {
       try {
         await interestsService.delete(interest.id)
         toast.add({
           severity: 'success',
-          summary: t('common.deleted'),
+          summary: t('common.feedback.deleted'),
           detail: t('interests.deleteDialog.success', { name: interest.name }),
           life: 3000,
         })
@@ -76,7 +76,7 @@ function confirmDelete(event: Event, interest: InterestResponse) {
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('common.error'),
+          summary: t('common.feedback.error'),
           detail: t('interests.deleteDialog.error'),
           life: 3000,
         })
@@ -95,10 +95,10 @@ onMounted(fetchInterests)
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-          {{ t('interests.list.page.title') }}
+          {{ t('interests.titles.list') }}
         </h1>
         <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-          {{ t('interests.list.page.count', filtered.length) }}
+          {{ t('interests.list.count', filtered.length) }}
         </p>
       </div>
 
@@ -106,12 +106,12 @@ onMounted(fetchInterests)
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
-            :placeholder="t('interests.list.filters.searchPlaceholder')"
+            :placeholder="t('common.placeholders.searchInterests')"
             class="pl-9 w-full sm:w-56"
           />
         </div>
         <Button
-          :label="t('interests.list.actions.newInterest')"
+          :label="t('interests.actions.createNew')"
           icon="pi pi-plus"
           class="shrink-0"
           @click="router.push('/interests/new')"
@@ -132,7 +132,7 @@ onMounted(fetchInterests)
       class="border border-surface-200 dark:border-surface-700 rounded-xl overflow-hidden"
       @row-click="onRowClick"
     >
-      <Column field="name" :header="t('interests.list.table.name')" style="width: 30%" sortable>
+      <Column field="name" :header="t('common.fields.name')" style="width: 30%" sortable>
         <template #body="{ data }: { data: InterestResponse }">
           <span class="font-medium text-surface-900 dark:text-surface-0">{{ data.name }}</span>
         </template>
@@ -140,7 +140,7 @@ onMounted(fetchInterests)
 
       <Column
         field="description"
-        :header="t('interests.list.table.description')"
+        :header="t('common.fields.description')"
         style="width: 60%"
       >
         <template #body="{ data }: { data: InterestResponse }">
@@ -159,7 +159,7 @@ onMounted(fetchInterests)
               text
               rounded
               size="small"
-              :aria-label="t('interests.actions.deleteInterest')"
+              :aria-label="t('interests.actions.delete')"
               @click="confirmDelete($event, data)"
             />
           </div>

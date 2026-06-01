@@ -80,7 +80,7 @@ const isActive = (path: string) => route.path === path
                   : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
               ]"
             >
-              {{ t('navigation.nav.users') }}
+              {{ t('navigation.items.users') }}
             </RouterLink>
           </template>
 
@@ -93,7 +93,7 @@ const isActive = (path: string) => route.path === path
                 : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
             ]"
           >
-            {{ t('navigation.nav.members') }}
+            {{ t('navigation.items.members') }}
           </RouterLink>
 
           <RouterLink
@@ -105,7 +105,7 @@ const isActive = (path: string) => route.path === path
                 : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
             ]"
           >
-            {{ t('navigation.nav.interests') }}
+            {{ t('navigation.items.interests') }}
           </RouterLink>
 
           <RouterLink
@@ -117,7 +117,7 @@ const isActive = (path: string) => route.path === path
                 : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
             ]"
           >
-            {{ t('navigation.nav.tools') }}
+            {{ t('navigation.items.tools') }}
           </RouterLink>
         </nav>
 
@@ -141,7 +141,7 @@ const isActive = (path: string) => route.path === path
         <!-- Logout, desktop only -->
         <div class="hidden md:flex items-center" v-if="auth.isAuthenticated">
           <Button
-            v-tooltip.bottom="t('navigation.actions.signOut')"
+            v-tooltip.bottom="t('common.actions.signOut')"
             icon="pi pi-sign-out"
             severity="secondary"
             text
@@ -155,8 +155,8 @@ const isActive = (path: string) => route.path === path
           :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'"
           :aria-label="
             isDark
-              ? t('navigation.actions.switchToLightMode')
-              : t('navigation.actions.switchToDarkMode')
+              ? t('common.theme.switchToLightMode')
+              : t('common.theme.switchToDarkMode')
           "
           severity="secondary"
           text
@@ -175,7 +175,7 @@ const isActive = (path: string) => route.path === path
             text
             rounded
             size="small"
-            :aria-label="t('navigation.actions.toggleMenu')"
+            :aria-label="t('common.theme.toggleMenu')"
             @click="menuOpen = !menuOpen"
           />
         </div>
@@ -207,7 +207,7 @@ const isActive = (path: string) => route.path === path
             @click="menuOpen = false"
           >
             <i class="pi pi-users mr-2 text-xs"></i>
-            {{ t('navigation.nav.users') }}
+            {{ t('navigation.items.users') }}
           </RouterLink>
         </template>
 
@@ -222,7 +222,7 @@ const isActive = (path: string) => route.path === path
           @click="menuOpen = false"
         >
           <i class="pi pi-users mr-2 text-xs"></i>
-          {{ t('navigation.nav.members') }}
+          {{ t('navigation.items.members') }}
         </RouterLink>
 
         <RouterLink
@@ -236,7 +236,7 @@ const isActive = (path: string) => route.path === path
           @click="menuOpen = false"
         >
           <i class="pi pi-tag mr-2 text-xs"></i>
-          {{ t('navigation.nav.interests') }}
+          {{ t('navigation.items.interests') }}
         </RouterLink>
 
         <RouterLink
@@ -250,7 +250,7 @@ const isActive = (path: string) => route.path === path
           @click="menuOpen = false"
         >
           <i class="pi pi-wrench mr-2 text-xs"></i>
-          {{ t('navigation.nav.tools') }}
+          {{ t('navigation.items.tools') }}
         </RouterLink>
 
         <div
@@ -260,7 +260,7 @@ const isActive = (path: string) => route.path === path
             {{ auth.user?.email }}
           </span>
           <Button
-            :label="t('navigation.actions.signOut')"
+            :label="t('common.actions.signOut')"
             icon="pi pi-sign-out"
             severity="secondary"
             text

@@ -1,516 +1,514 @@
-//en.ts
 export default {
   common: {
-    cancel: 'Cancel',
-    saveChanges: 'Save Changes',
-    apply: 'Apply',
-    error: 'Error',
-    saved: 'Saved',
-    created: 'Created',
-    deleted: 'Deleted',
+    actions: {
+      cancel: 'Cancel',
+      close: 'Close',
+      apply: 'Apply',
+      saveChanges: 'Save Changes',
+      refresh: 'Refresh',
+      back: 'Go back',
+      create: 'Create',
+      delete: 'Delete',
+      export: 'Export',
+      send: 'Send',
+      preview: 'Preview',
+      addFiles: 'Add files',
+      removeAttachment: 'Remove attachment',
+      composeEmail: 'Compose Email',
+      signOut: 'Sign out',
+    },
+
+    feedback: {
+      error: 'Error',
+      saved: 'Saved',
+      created: 'Created',
+      deleted: 'Deleted',
+      sent: 'Sent',
+    },
+
+    fields: {
+      name: 'Name',
+      surname: 'Surname',
+      secondSurname: 'Second Surname',
+      email: 'Email',
+      password: 'Password',
+      currentPassword: 'Current Password',
+      newPassword: 'New Password',
+      confirmPassword: 'Confirm New Password',
+      description: 'Description',
+      phone: 'Phone',
+      birthdate: 'Birthdate',
+      gender: 'Gender',
+      country: 'Country',
+      notes: 'Notes',
+      interests: 'Interests',
+      role: 'Role',
+      subject: 'Subject',
+      body: 'Body',
+      provider: 'Provider',
+      recipients: 'Recipients',
+      template: 'Template',
+      attachments: 'Attachments',
+      member: 'Member',
+      birthday: 'Birthday',
+      sentAt: 'Sent At',
+      sentTo: 'Sent To',
+      createdAt: 'Created At',
+    },
+
+    placeholders: {
+      enterName: 'Enter name',
+      enterSurname: 'Enter surname',
+      enterSecondSurname: 'Enter second surname',
+      enterEmail: 'Enter email',
+      enterYourEmail: 'Enter your email',
+      enterPassword: 'Enter password',
+      enterCurrentPassword: 'Enter current password',
+      enterNewPassword: 'Enter new password',
+      repeatNewPassword: 'Repeat new password',
+      enterPhone: 'Enter phone',
+      enterDescription: 'Enter a description',
+      enterInterestName: 'Enter interest name',
+      enterEmailSubject: 'Enter email subject',
+      additionalNotes: 'Any additional notes',
+      search: 'Search...',
+      searchUsers: 'Search users...',
+      searchMembers: 'Search members...',
+      searchInterests: 'Search interests...',
+      searchGender: 'Search gender...',
+      searchCountry: 'Search country...',
+      filterByInterest: 'Filter by interest...',
+      selectInterests: 'Select interests...',
+    },
+
+    validation: {
+      required: 'This field is required',
+      emailRequired: 'Email is required',
+      passwordRequired: 'Password is required',
+      invalidEmail: 'Must be a valid email',
+      emailInvalid: 'Email must be valid',
+      nameRequired: 'Name is required',
+      surnameRequired: 'Surname is required',
+      currentPasswordRequired: 'Current password is required',
+      newPasswordRequired: 'New password is required',
+      confirmNewPasswordRequired: 'Please confirm the new password',
+      interestsRequired: 'Select at least one interest',
+      passwordsMismatch: 'Passwords do not match',
+      max100: 'Must not exceed 100 characters',
+      min8: 'Must be at least 8 characters',
+    },
+
+    states: {
+      emptyValue: '—',
+      noResults: 'No results found',
+      noEmailsSentYet: 'No emails sent yet',
+      resetsAtMidnight: 'Resets at midnight',
+    },
+
+    theme: {
+      switchToLightMode: 'Switch to light mode',
+      switchToDarkMode: 'Switch to dark mode',
+      toggleMenu: 'Toggle menu',
+    },
   },
+
+  home: {
+    title: 'Dashboard',
+    description: 'Welcome back',
+  },
+
+  tools: {
+    title: 'Tools',
+    description: 'Various tools and utilities',
+  },
+
+  navigation: {
+    items: {
+      users: 'Users',
+      members: 'Members',
+      interests: 'Interests',
+      tools: 'Tools',
+    },
+  },
+
+  auth: {
+    login: {
+      title: 'Sign in',
+      description: 'Welcome back — please enter your details',
+      submit: 'Sign in',
+      errors: {
+        loginFailed: 'Login failed',
+      },
+    },
+  },
+
   users: {
     roles: {
       USER: 'User',
       ADMIN: 'Admin',
     },
+
+    titles: {
+      list: 'Users',
+      create: 'New User',
+      edit: 'Edit User',
+    },
+
+    descriptions: {
+      create: 'Fill in the details to create a new user',
+      edit: "Update the user's details below",
+    },
+
     actions: {
-      goBack: 'Go back',
-      deleteUser: 'Delete user',
+      create: 'Create User',
+      createNew: 'New User',
+      delete: 'Delete user',
     },
-    page: {
-      editTitle: 'Edit User',
-      newTitle: 'New User',
-      editDescription: "Update the user's details below",
-      newDescription: 'Fill in the details to create a new user',
+
+    list: {
+      total: '{total} total users',
+      empty: 'No users found',
     },
-    form: {
+
+    fields: {
       name: {
-        label: 'Name',
-        placeholder: 'Enter name',
-        required: 'Name is required',
+        label: '@:common.fields.name',
+        placeholder: '@:common.placeholders.enterName',
+        required: '@:common.validation.nameRequired',
         max: 'Name must not exceed 100 characters',
       },
       email: {
-        label: 'Email',
-        placeholder: 'Enter email',
-        required: 'Email is required',
-        invalid: 'Email must be valid',
+        label: '@:common.fields.email',
+        placeholder: '@:common.placeholders.enterEmail',
+        required: '@:common.validation.emailRequired',
+        invalid: '@:common.validation.emailInvalid',
       },
       password: {
-        label: 'Password',
-        placeholder: 'Enter password',
-        required: 'Password is required',
+        label: '@:common.fields.password',
+        placeholder: '@:common.placeholders.enterPassword',
+        required: '@:common.validation.passwordRequired',
         min: 'Password must be at least 8 characters',
       },
-      submitCreate: 'Create User',
     },
+
     passwordCard: {
       title: 'Change Password',
-      currentPassword: {
-        label: 'Current Password',
-        placeholder: 'Enter current password',
-        required: 'Current password is required',
-      },
-      newPassword: {
-        label: 'New Password',
-        placeholder: 'Enter new password',
-        required: 'New password is required',
-        min: 'Password must be at least 8 characters',
-      },
-      confirmPassword: {
-        label: 'Confirm New Password',
-        placeholder: 'Repeat new password',
-        required: 'Please confirm the new password',
-        mismatch: 'Passwords do not match',
-      },
       submit: 'Update Password',
-      updatedTitle: 'Password updated',
-      updatedDetail: 'Password changed successfully.',
-      updateError: 'Failed to update password. Check your current password and try again.',
+      fields: {
+        currentPassword: {
+          label: '@:common.fields.currentPassword',
+          placeholder: '@:common.placeholders.enterCurrentPassword',
+          required: '@:common.validation.currentPasswordRequired',
+        },
+        newPassword: {
+          label: '@:common.fields.newPassword',
+          placeholder: '@:common.placeholders.enterNewPassword',
+          required: '@:common.validation.newPasswordRequired',
+          min: 'Password must be at least 8 characters',
+        },
+        confirmPassword: {
+          label: '@:common.fields.confirmPassword',
+          placeholder: '@:common.placeholders.repeatNewPassword',
+          required: '@:common.validation.confirmNewPasswordRequired',
+          mismatch: '@:common.validation.passwordsMismatch',
+        },
+      },
+      successTitle: 'Password updated',
+      successDetail: 'Password changed successfully.',
+      error: 'Failed to update password. Check your current password and try again.',
     },
+
     roleCard: {
-      title: 'Role',
+      title: '@:common.fields.role',
       description: 'Changing this will immediately affect what the user can access.',
       updatedTitle: 'Role updated',
       updatedDetail: 'Role changed to {role}',
       updateError: 'Failed to update role',
     },
+
     deleteDialog: {
-      header: 'Delete User',
+      title: 'Delete User',
       message: 'Are you sure you want to delete this user? This action cannot be undone.',
-      accept: 'Delete',
-      reject: 'Cancel',
       success: 'User deleted successfully.',
       error: 'Failed to delete user. Please try again.',
     },
-    toasts: {
+
+    messages: {
       updated: 'User updated successfully',
       created: 'User created successfully',
       updateError: 'Failed to update user',
       createError: 'Failed to create user',
       loadError: 'Failed to load user',
-    },
-    list: {
-      page: {
-        title: 'Users',
-        totalUsers: '{total} total users',
-      },
-      filters: {
-        searchPlaceholder: 'Search users...',
-      },
-      actions: {
-        newUser: 'New User',
-      },
-      table: {
-        name: 'Name',
-        email: 'Email',
-        role: 'Role',
-        createdAt: 'Created At',
-      },
-      empty: 'No users found',
-      toasts: {
-        loadError: 'Failed to load users. Please try again.',
-      },
+      loadListError: 'Failed to load users. Please try again.',
     },
   },
-  tools: {
-    page: {
-      title: 'Tools',
-      description: 'Various tools and utilities',
-    },
-  },
-  home: {
-    page: {
-      title: 'Dashboard',
-      description: 'Welcome back',
-    },
-  },
+
   members: {
-    components: {
-      todayBirthdayCard: {
-        title: "Today's Birthdays",
-        actions: {
-          refresh: 'Refresh',
-        },
-        table: {
-          member: 'Member',
-          email: 'Email',
-          phone: 'Phone',
-          birthday: 'Birthday',
-          emptyPhone: '—',
-        },
-        empty: 'No birthdays today',
-        toasts: {
-          loadError: "Failed to load today's birthdays.",
-        },
-      },
+    titles: {
+      list: 'Members',
+      create: 'New Member',
+      edit: 'Edit Member',
     },
+
+    descriptions: {
+      create: 'Fill in the details to create a new member',
+      edit: "Update the member's details below",
+    },
+
     actions: {
-      deleteMember: 'Delete member',
-      goBack: 'Go back',
+      create: 'Create Member',
+      createNew: 'New Member',
+      delete: 'Delete member',
     },
-    page: {
-      editTitle: 'Edit Member',
-      newTitle: 'New Member',
-      editDescription: "Update the member's details below",
-      newDescription: 'Fill in the details to create a new member',
-    },
+
     sections: {
       personalDetails: 'Personal Details',
       contact: 'Contact',
       notes: 'Notes',
       interests: 'Interests',
     },
-    form: {
+
+    list: {
+      total: '{total} total members',
+      empty: 'No members found',
+      exportError: 'Failed to export members.',
+    },
+
+    filters: {
+      searchPlaceholder: '@:common.placeholders.searchMembers',
+      interestsPlaceholder: '@:common.placeholders.filterByInterest',
+      interestsSearchPlaceholder: '@:common.placeholders.search',
+    },
+
+    fields: {
       name: {
-        label: 'Name',
-        placeholder: 'Enter name',
-        required: 'Name is required',
+        label: '@:common.fields.name',
+        placeholder: '@:common.placeholders.enterName',
+        required: '@:common.validation.nameRequired',
         max: 'Name must not exceed 100 characters',
       },
       surname: {
-        label: 'Surname',
-        placeholder: 'Enter surname',
-        required: 'Surname is required',
+        label: '@:common.fields.surname',
+        placeholder: '@:common.placeholders.enterSurname',
+        required: '@:common.validation.surnameRequired',
         max: 'Surname must not exceed 100 characters',
       },
       secondSurname: {
-        label: 'Second Surname',
-        placeholder: 'Enter second surname',
+        label: '@:common.fields.secondSurname',
+        placeholder: '@:common.placeholders.enterSecondSurname',
         max: 'Second surname must not exceed 100 characters',
       },
       email: {
-        label: 'Email',
-        placeholder: 'Enter email',
-        required: 'Email is required',
-        invalid: 'Email must be valid',
+        label: '@:common.fields.email',
+        placeholder: '@:common.placeholders.enterEmail',
+        required: '@:common.validation.emailRequired',
+        invalid: '@:common.validation.emailInvalid',
         editWarning:
           'Changing the email will hide previously sent emails, as they are matched by email address.',
       },
       birthdate: {
-        label: 'Birthdate',
+        label: '@:common.fields.birthdate',
       },
       gender: {
-        label: 'Gender',
+        label: '@:common.fields.gender',
       },
       phone: {
-        label: 'Phone',
-        placeholder: 'Enter phone',
+        label: '@:common.fields.phone',
+        placeholder: '@:common.placeholders.enterPhone',
         max: 'Phone must not exceed 30 characters',
       },
       country: {
-        label: 'Country',
+        label: '@:common.fields.country',
       },
       notes: {
-        label: 'Notes',
-        placeholder: 'Any additional notes',
+        label: '@:common.fields.notes',
+        placeholder: '@:common.placeholders.additionalNotes',
       },
       interests: {
-        label: 'Interests',
+        label: '@:common.fields.interests',
         help: 'Select one or more interests for this member',
       },
-      submitCreate: 'Create Member',
     },
-    list: {
-      page: {
-        title: 'Members',
-        totalMembers: '{total} total members',
-      },
-      filters: {
-        searchPlaceholder: 'Search members...',
-        interestsPlaceholder: 'Filter by interest...',
-        interestsSearchPlaceholder: 'Search...',
-      },
-      actions: {
-        export: 'Export',
-        newMember: 'New Member',
-      },
-      table: {
-        name: 'Name',
-        email: 'Email',
-        phone: 'Phone',
-        birthdate: 'Birthdate',
-        createdAt: 'Created At',
-      },
-      empty: 'No members found',
-      toasts: {
-        loadError: 'Failed to load members. Please try again.',
-        exportError: 'Failed to export members.',
+
+    todayBirthdayCard: {
+      title: "Today's Birthdays",
+      empty: 'No birthdays today',
+      errors: {
+        load: "Failed to load today's birthdays.",
       },
     },
+
     deleteDialog: {
-      header: 'Delete Member',
+      title: 'Delete Member',
       message: 'Are you sure you want to delete {name}? This action cannot be undone.',
       messageGeneric: 'Are you sure you want to delete this member? This action cannot be undone.',
-      accept: 'Delete',
-      reject: 'Cancel',
       success: '{name} has been deleted.',
       deletedSuccess: 'Member deleted successfully.',
       error: 'Failed to delete member. Please try again.',
     },
-    toasts: {
+
+    messages: {
       updated: 'Member updated successfully',
       created: 'Member created successfully',
       updateError: 'Failed to update member',
       createError: 'Failed to create member',
       loadError: 'Failed to load member',
+      loadListError: 'Failed to load members. Please try again.',
     },
   },
+
   interests: {
-    components: {
-      multiSelect: {
-        placeholder: 'Select interests...',
-        filterPlaceholder: 'Search interests...',
-      },
+    titles: {
+      list: 'Interests',
+      create: 'New Interest',
+      edit: 'Edit Interest',
     },
+
+    descriptions: {
+      create: 'Fill in the details to create a new interest',
+      edit: "Update the interest's details below",
+    },
+
     actions: {
-      goBack: 'Go back',
-      deleteInterest: 'Delete interest',
+      create: 'Create Interest',
+      createNew: 'New Interest',
+      delete: 'Delete interest',
     },
-    page: {
-      editTitle: 'Edit Interest',
-      newTitle: 'New Interest',
-      editDescription: "Update the interest's details below",
-      newDescription: 'Fill in the details to create a new interest',
+
+    list: {
+      count: 'No interests | {count} interest | {count} interests',
+      empty: 'No interests found',
     },
-    form: {
+
+    fields: {
       name: {
-        label: 'Name',
-        placeholder: 'Enter interest name',
-        required: 'Name is required',
+        label: '@:common.fields.name',
+        placeholder: '@:common.placeholders.enterInterestName',
+        required: '@:common.validation.nameRequired',
         max: 'Name must not exceed 100 characters',
       },
       description: {
-        label: 'Description',
-        placeholder: 'Enter a description',
-      },
-      submitCreate: 'Create Interest',
-    },
-    list: {
-      page: {
-        title: 'Interests',
-        count: 'No interests | {count} interest | {count} interests',
-      },
-      filters: {
-        searchPlaceholder: 'Search interests...',
-      },
-      actions: {
-        newInterest: 'New Interest',
-      },
-      table: {
-        name: 'Name',
-        description: 'Description',
-        emptyDescription: '—',
-      },
-      empty: 'No interests found',
-      toasts: {
-        loadError: 'Failed to load interests. Please try again.',
+        label: '@:common.fields.description',
+        placeholder: '@:common.placeholders.enterDescription',
       },
     },
+
+    multiSelect: {
+      placeholder: '@:common.placeholders.selectInterests',
+      filterPlaceholder: '@:common.placeholders.searchInterests',
+    },
+
     deleteDialog: {
-      header: 'Delete Interest',
+      title: 'Delete Interest',
       message: 'Are you sure you want to delete "{name}"? This action cannot be undone.',
       messageGeneric:
         'Are you sure you want to delete this interest? This action cannot be undone.',
-      accept: 'Delete',
-      reject: 'Cancel',
       success: '"{name}" has been deleted.',
       deletedSuccess: 'Interest deleted successfully.',
       error: 'Failed to delete interest. Please try again.',
     },
-    toasts: {
+
+    messages: {
       updated: 'Interest updated successfully',
       created: 'Interest created successfully',
       updateError: 'Failed to update interest',
       createError: 'Failed to create interest',
       loadError: 'Failed to load interest',
+      loadListError: 'Failed to load interests. Please try again.',
     },
   },
-  auth: {
-    login: {
-      page: {
-        title: 'Sign in',
-        description: 'Welcome back — please enter your details',
-      },
-      form: {
-        email: {
-          label: 'Email',
-          placeholder: 'Enter your email',
-          required: 'Email is required',
-          invalid: 'Must be a valid email',
-        },
-        password: {
-          label: 'Password',
-          placeholder: 'Enter your password',
-          required: 'Password is required',
-        },
-        submit: 'Sign in',
-      },
-      toasts: {
-        loginError: 'Login failed',
-      },
-    },
-  },
-  navigation: {
-    nav: {
-      users: 'Users',
-      members: 'Members',
-      interests: 'Interests',
-      tools: 'Tools',
-    },
-    actions: {
-      signOut: 'Sign out',
-      switchToLightMode: 'Switch to light mode',
-      switchToDarkMode: 'Switch to dark mode',
-      toggleMenu: 'Toggle menu',
-    },
-  },
+
   email: {
-    components: {
-      memberEmailsCard: {
-        title: 'Emails',
-        actions: {
-          refresh: 'Refresh emails',
-          sendEmail: 'Send Email',
-          viewEmail: 'View email',
-        },
-        table: {
-          subject: 'Subject',
-          provider: 'Provider',
-          sentAt: 'Sent At',
-        },
-        empty: 'No emails sent yet',
-        toasts: {
-          loadError: 'Failed to load emails.',
-          loadContentError: 'Failed to load email content.',
-        },
-      },
-      todayEmailsCard: {
-        title: "Today's Emails",
-        actions: {
-          refresh: 'Refresh',
-          viewEmail: 'View email',
-        },
-        table: {
-          subject: 'Subject',
-          provider: 'Provider',
-          sentTo: 'Sent To',
-          sentAt: 'Sent At',
-        },
-        empty: 'No emails sent yet',
-        toasts: {
-          loadError: "Failed to load today's emails.",
-          loadContentError: 'Failed to load email content.',
-        },
-      },
-      sendEmailsToAllCard: {
-        title: 'Email All Members',
-        description: 'Send an email to every member in the database.',
-        actions: {
-          compose: 'Compose Email',
-        },
-      },
-      sendEmailDialog: {
-        titles: {
-          preview: 'Preview — {subject}',
-          byInterest: 'Send Email by Interest',
-          toAll: 'Send Email to All Members',
-          default: 'Send Email',
-        },
-        fields: {
-          template: 'Template',
-          interests: 'Interests',
-          subject: 'Subject',
-          body: 'Body',
-          attachments: 'Attachments',
-        },
-        placeholders: {
-          subject: 'Enter email subject',
-        },
-        help: {
-          interests:
-            'The email will be sent to all members that have at least one of the selected interests.',
-        },
-        attachments: {
-          empty: 'No files selected — max 5 MB total',
-          summary: '{count} file(s) — {size} / 5 MB',
-        },
-        actions: {
-          addFiles: 'Add files',
-          removeAttachment: 'Remove attachment',
-          preview: 'Preview',
-          backToEdit: 'Back to edit',
-          send: 'Send',
-        },
-        preview: {
-          description: 'This is how the email will look to the recipient.',
-          iframeTitle: 'Email preview',
-        },
-        validation: {
-          subjectRequired: 'Subject is required',
-          bodyRequired: 'Body is required',
-          interestsRequired: 'Select at least one interest',
-          attachmentLimitExceeded: 'Total size exceeds the 5 MB limit ({size} selected)',
-        },
-        toasts: {
-          sentTitle: 'Sent',
-          sentDetail: 'Email sent successfully.',
-          sendError: 'Failed to send email.',
-        },
-      },
-      sendEmailByInterestCard: {
-        title: 'Email by Interest',
-        description: 'Send an email to all members that share one or more interests.',
-        actions: {
-          compose: 'Compose Email',
-        },
-      },
-      quotaCard: {
-        title: 'Email Quota',
-        actions: {
-          refresh: 'Refresh status',
-        },
-        labels: {
-          provider: 'Provider',
-          sentToday: '{sent} / {limit} sent today',
-        },
-        status: {
-          noneRemaining: 'No emails left today',
-          remaining: 'emails remaining today',
-          resetsAt: 'Resets at midnight',
-        },
-        toasts: {
-          loadError: 'Failed to load email provider status.',
-        },
-      },
-      previewDialog: {
-        fallbackTitle: 'Email',
-        fields: {
-          sentAt: 'Sent At',
-          provider: 'Provider',
-          recipients: 'Recipients',
-          body: 'Body',
-        },
-        iframeTitle: 'Email body preview',
-        actions: {
-          close: 'Close',
-        },
+    titles: {
+      memberEmails: 'Emails',
+      todayEmails: "Today's Emails",
+      sendToAll: 'Email All Members',
+      sendByInterest: 'Email by Interest',
+      quota: 'Email Quota',
+      previewFallback: 'Email',
+    },
+
+    descriptions: {
+      sendToAll: 'Send an email to every member in the database.',
+      sendByInterest: 'Send an email to all members that share one or more interests.',
+      preview: 'This is how the email will look to the recipient.',
+    },
+
+    memberEmailsCard: {
+      refresh: 'Refresh emails',
+      sendEmail: 'Send Email',
+      viewEmail: 'View email',
+      empty: '@:common.states.noEmailsSentYet',
+      errors: {
+        load: 'Failed to load emails.',
+        loadContent: 'Failed to load email content.',
       },
     },
+
+    todayEmailsCard: {
+      refresh: '@:common.actions.refresh',
+      viewEmail: 'View email',
+      empty: '@:common.states.noEmailsSentYet',
+      errors: {
+        load: "Failed to load today's emails.",
+        loadContent: 'Failed to load email content.',
+      },
+    },
+
+    sendEmailDialog: {
+      titles: {
+        preview: 'Preview — {subject}',
+        byInterest: 'Send Email by Interest',
+        toAll: 'Send Email to All Members',
+        default: 'Send Email',
+      },
+      help: {
+        interests:
+          'The email will be sent to all members that have at least one of the selected interests.',
+      },
+      attachments: {
+        empty: 'No files selected — max 5 MB total',
+        summary: '{count} file(s) — {size} / 5 MB',
+      },
+      actions: {
+        backToEdit: 'Back to edit',
+      },
+      preview: {
+        iframeTitle: 'Email preview',
+      },
+      validation: {
+        subjectRequired: 'Subject is required',
+        bodyRequired: 'Body is required',
+        interestsRequired: '@:common.validation.interestsRequired',
+        attachmentLimitExceeded: 'Total size exceeds the 5 MB limit ({size} selected)',
+      },
+      messages: {
+        sentDetail: 'Email sent successfully.',
+        sendError: 'Failed to send email.',
+      },
+    },
+
+    quotaCard: {
+      refresh: 'Refresh Status',
+      sentToday: '{sent} / {limit} sent today',
+      noRemaining: 'No Emails Left Today',
+      remaining: 'Emails Remaining Today',
+      resetsAt: '@:common.states.resetsAtMidnight',
+      errors: {
+        load: 'Failed to load email provider status.',
+      },
+    },
+
+    previewDialog: {
+      iframeTitle: 'Email Body Preview',
+    },
   },
+
   genders: {
-    components: {
-      selector: {
-        placeholder: 'Search gender...',
-      },
-    },
+    selectorPlaceholder: '@:common.placeholders.searchGender',
   },
+
   countries: {
-    components: {
-      selector: {
-        placeholder: 'Search country...',
-      },
-    },
+    selectorPlaceholder: '@:common.placeholders.searchCountry',
   },
 }

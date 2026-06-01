@@ -39,9 +39,9 @@ const resolver = ({ values }: FormResolverOptions) => {
   const errors: Record<string, { message: string }[]> = {}
 
   if (!values.name) {
-    errors.name = [{ message: t('interests.form.name.required') }]
+    errors.name = [{ message: t('interests.fields.name.required') }]
   } else if (String(values.name).length > 100) {
-    errors.name = [{ message: t('interests.form.name.max') }]
+    errors.name = [{ message: t('interests.fields.name.max') }]
   }
 
   return { errors }
@@ -56,16 +56,16 @@ async function onSubmit({ valid }: FormSubmitEvent) {
       await interestsService.update(interestId.value!, model.value)
       toast.add({
         severity: 'success',
-        summary: t('common.saved'),
-        detail: t('interests.toasts.updated'),
+        summary: t('common.feedback.saved'),
+        detail: t('interests.messages.updated'),
         life: 3000,
       })
     } else {
       await interestsService.create(model.value)
       toast.add({
         severity: 'success',
-        summary: t('common.created'),
-        detail: t('interests.toasts.created'),
+        summary: t('common.feedback.created'),
+        detail: t('interests.messages.created'),
         life: 3000,
       })
     }
@@ -74,7 +74,7 @@ async function onSubmit({ valid }: FormSubmitEvent) {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: isEdit.value ? t('interests.toasts.updateError') : t('interests.toasts.createError'),
+      detail: isEdit.value ? t('interests.messages.updateError') : t('interests.messages.createError'),
       life: 3000,
     })
   } finally {
@@ -85,15 +85,15 @@ async function onSubmit({ valid }: FormSubmitEvent) {
 function confirmDelete() {
   confirm.require({
     message: t('interests.deleteDialog.messageGeneric'),
-    header: t('interests.deleteDialog.header'),
+    header: t('interests.deleteDialog.title'),
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
-      label: t('interests.deleteDialog.reject'),
+      label: t('common.actions.cancel'),
       severity: 'secondary',
       outlined: true,
     },
     acceptProps: {
-      label: t('interests.deleteDialog.accept'),
+      label: t('common.actions.delete'),
       severity: 'danger',
     },
     accept: async () => {
@@ -102,7 +102,7 @@ function confirmDelete() {
         await interestsService.delete(interestId.value!)
         toast.add({
           severity: 'success',
-          summary: t('common.deleted'),
+          summary: t('common.feedback.deleted'),
           detail: t('interests.deleteDialog.deletedSuccess'),
           life: 3000,
         })
@@ -110,7 +110,7 @@ function confirmDelete() {
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('common.error'),
+          summary: t('common.feedback.error'),
           detail: t('interests.deleteDialog.error'),
           life: 3000,
         })
@@ -132,8 +132,8 @@ onMounted(async () => {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('interests.toasts.loadError'),
+      summary: t('common.feedback.error'),
+      detail: t('interests.messages.loadError'),
       life: 3000,
     })
     router.push('/interests')
@@ -152,15 +152,15 @@ onMounted(async () => {
           severity="secondary"
           text
           rounded
-          :aria-label="t('interests.actions.goBack')"
+          :aria-label="t('common.actions.back')"
           @click="router.push('/interests')"
         />
         <div>
           <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-            {{ isEdit ? t('interests.page.editTitle') : t('interests.page.newTitle') }}
+            {{ isEdit ? t('interests.titles.edit') : t('interests.titles.create') }}
           </h1>
           <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-            {{ isEdit ? t('interests.page.editDescription') : t('interests.page.newDescription') }}
+            {{ isEdit ? t('interests.descriptions.edit') : t('interests.descriptions.create') }}
           </p>
         </div>
       </div>
@@ -172,7 +172,7 @@ onMounted(async () => {
           severity="danger"
           outlined
           :loading="deleteLoading"
-          :aria-label="t('interests.actions.deleteInterest')"
+          :aria-label="t('interests.actions.delete')"
           @click="confirmDelete"
         />
       </div>
@@ -197,11 +197,11 @@ onMounted(async () => {
 
           <FormField v-slot="$field" name="name" class="flex flex-col gap-1.5">
             <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-              {{ t('interests.form.name.label') }} <span class="text-red-500">*</span>
+              {{ t('interests.fields.name.label') }} <span class="text-red-500">*</span>
             </label>
             <InputText
               v-model="model.name"
-              :placeholder="t('interests.form.name.placeholder')"
+              :placeholder="t('interests.fields.name.placeholder')"
               :invalid="$field?.invalid"
               fluid
             />
@@ -212,11 +212,11 @@ onMounted(async () => {
 
           <FormField v-slot="$field" name="description" class="flex flex-col gap-1.5">
             <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-              {{ t('interests.form.description.label') }}
+              {{ t('interests.fields.description.label') }}
             </label>
             <Textarea
               v-model="model.description"
-              :placeholder="t('interests.form.description.placeholder')"
+              :placeholder="t('interests.fields.description.placeholder')"
               :invalid="$field?.invalid"
               rows="4"
               fluid
@@ -228,14 +228,14 @@ onMounted(async () => {
 
           <div class="flex items-center justify-end gap-3 pt-2">
             <Button
-              :label="t('common.cancel')"
+              :label="t('common.actions.cancel')"
               severity="secondary"
               outlined
               @click="router.push('/interests')"
             />
             <Button
               type="submit"
-              :label="isEdit ? t('common.saveChanges') : t('interests.form.submitCreate')"
+              :label="isEdit ? t('common.actions.saveChanges') : t('interests.actions.create')"
               :icon="isEdit ? 'pi pi-check' : 'pi pi-plus'"
               iconPos="right"
               :loading="loading"

@@ -65,8 +65,8 @@ async function fetchMember() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('members.toasts.loadError'),
+      summary: t('common.feedback.error'),
+      detail: t('members.messages.loadError'),
       life: 3000,
     })
     router.push('/members')
@@ -79,29 +79,29 @@ const resolver = ({ values }: FormResolverOptions) => {
   const errors: Record<string, { message: string }[]> = {}
 
   if (!values.name) {
-    errors.name = [{ message: t('members.form.name.required') }]
+    errors.name = [{ message: t('members.fields.name.required') }]
   } else if (String(values.name).length > 100) {
-    errors.name = [{ message: t('members.form.name.max') }]
+    errors.name = [{ message: t('members.fields.name.max') }]
   }
 
   if (!values.surname) {
-    errors.surname = [{ message: t('members.form.surname.required') }]
+    errors.surname = [{ message: t('members.fields.surname.required') }]
   } else if (String(values.surname).length > 100) {
-    errors.surname = [{ message: t('members.form.surname.max') }]
+    errors.surname = [{ message: t('members.fields.surname.max') }]
   }
 
   if (values.secondSurname && String(values.secondSurname).length > 100) {
-    errors.secondSurname = [{ message: t('members.form.secondSurname.max') }]
+    errors.secondSurname = [{ message: t('members.fields.secondSurname.max') }]
   }
 
   if (!values.email) {
-    errors.email = [{ message: t('members.form.email.required') }]
+    errors.email = [{ message: t('members.fields.email.required') }]
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(values.email))) {
-    errors.email = [{ message: t('members.form.email.invalid') }]
+    errors.email = [{ message: t('members.fields.email.invalid') }]
   }
 
   if (values.phone && String(values.phone).length > 30) {
-    errors.phone = [{ message: t('members.form.phone.max') }]
+    errors.phone = [{ message: t('members.fields.phone.max') }]
   }
 
   return { errors }
@@ -116,16 +116,16 @@ async function onSubmit({ valid }: FormSubmitEvent) {
       await membersService.update(memberId.value!, model.value as MemberUpdatePayload)
       toast.add({
         severity: 'success',
-        summary: t('common.saved'),
-        detail: t('members.toasts.updated'),
+        summary: t('common.feedback.saved'),
+        detail: t('members.messages.updated'),
         life: 3000,
       })
     } else {
       await membersService.create(model.value)
       toast.add({
         severity: 'success',
-        summary: t('common.created'),
-        detail: t('members.toasts.created'),
+        summary: t('common.feedback.created'),
+        detail: t('members.messages.created'),
         life: 3000,
       })
     }
@@ -133,8 +133,8 @@ async function onSubmit({ valid }: FormSubmitEvent) {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: isEdit.value ? t('members.toasts.updateError') : t('members.toasts.createError'),
+      summary: t('common.feedback.error'),
+      detail: isEdit.value ? t('members.messages.updateError') : t('members.messages.createError'),
       life: 3000,
     })
   } finally {
@@ -145,15 +145,15 @@ async function onSubmit({ valid }: FormSubmitEvent) {
 function confirmDelete() {
   confirm.require({
     message: t('members.deleteDialog.messageGeneric'),
-    header: t('members.deleteDialog.header'),
+    header: t('members.deleteDialog.title'),
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
-      label: t('members.deleteDialog.reject'),
+      label: t('common.actions.cancel'),
       severity: 'secondary',
       outlined: true,
     },
     acceptProps: {
-      label: t('members.deleteDialog.accept'),
+      label: t('common.actions.delete'),
       severity: 'danger',
     },
     accept: async () => {
@@ -162,7 +162,7 @@ function confirmDelete() {
         await membersService.delete(memberId.value!)
         toast.add({
           severity: 'success',
-          summary: t('common.deleted'),
+          summary: t('common.feedback.deleted'),
           detail: t('members.deleteDialog.deletedSuccess'),
           life: 3000,
         })
@@ -170,7 +170,7 @@ function confirmDelete() {
       } catch {
         toast.add({
           severity: 'error',
-          summary: t('common.error'),
+          summary: t('common.feedback.error'),
           detail: t('members.deleteDialog.error'),
           life: 3000,
         })
@@ -212,28 +212,28 @@ onMounted(async () => {
             text
             rounded
             @click="router.push('/members')"
-            :aria-label="t('members.actions.goBack')"
+            :aria-label="t('common.actions.back')"
           />
           <div>
             <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
-              {{ isEdit ? t('members.page.editTitle') : t('members.page.newTitle') }}
+              {{ isEdit ? t('members.titles.edit') : t('members.titles.create') }}
             </h1>
             <p class="text-sm text-surface-500 dark:text-surface-400 mt-0.5">
-              {{ isEdit ? t('members.page.editDescription') : t('members.page.newDescription') }}
+              {{ isEdit ? t('members.descriptions.edit') : t('members.descriptions.create') }}
             </p>
           </div>
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
           <Button
-            :label="t('common.cancel')"
+            :label="t('common.actions.cancel')"
             severity="secondary"
             outlined
             @click="router.push('/members')"
           />
           <Button
             type="submit"
-            :label="isEdit ? t('common.saveChanges') : t('members.form.submitCreate')"
+            :label="isEdit ? t('common.actions.saveChanges') : t('members.actions.create')"
             :icon="isEdit ? 'pi pi-check' : 'pi pi-user-plus'"
             iconPos="right"
             :loading="loading"
@@ -245,7 +245,7 @@ onMounted(async () => {
             severity="danger"
             outlined
             :loading="deleteLoading"
-            :aria-label="t('members.actions.deleteMember')"
+            :aria-label="t('members.actions.delete')"
             @click="confirmDelete"
           />
         </div>
@@ -267,11 +267,11 @@ onMounted(async () => {
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField v-slot="$field" name="name" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      {{ t('members.form.name.label') }} <span class="text-red-500">*</span>
+                      {{ t('members.fields.name.label') }} <span class="text-red-500">*</span>
                     </label>
                     <InputText
                       v-model="model.name"
-                      :placeholder="t('members.form.name.placeholder')"
+                      :placeholder="t('members.fields.name.placeholder')"
                       :invalid="$field?.invalid"
                       fluid
                     />
@@ -282,11 +282,11 @@ onMounted(async () => {
 
                   <FormField v-slot="$field" name="surname" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      {{ t('members.form.surname.label') }} <span class="text-red-500">*</span>
+                      {{ t('members.fields.surname.label') }} <span class="text-red-500">*</span>
                     </label>
                     <InputText
                       v-model="model.surname"
-                      :placeholder="t('members.form.surname.placeholder')"
+                      :placeholder="t('members.fields.surname.placeholder')"
                       :invalid="$field?.invalid"
                       fluid
                     />
@@ -298,11 +298,11 @@ onMounted(async () => {
 
                 <FormField v-slot="$field" name="secondSurname" class="flex flex-col gap-1.5">
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                    {{ t('members.form.secondSurname.label') }}
+                    {{ t('members.fields.secondSurname.label') }}
                   </label>
                   <InputText
                     v-model="model.secondSurname"
-                    :placeholder="t('members.form.secondSurname.placeholder')"
+                    :placeholder="t('members.fields.secondSurname.placeholder')"
                     :invalid="$field?.invalid"
                     fluid
                   />
@@ -314,7 +314,7 @@ onMounted(async () => {
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField v-slot="$field" name="birthdate" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      {{ t('members.form.birthdate.label') }}
+                      {{ t('members.fields.birthdate.label') }}
                     </label>
                     <InputText
                       v-model="model.birthdate"
@@ -329,7 +329,7 @@ onMounted(async () => {
 
                   <FormField v-slot="$field" name="genderId" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      {{ t('members.form.gender.label') }}
+                      {{ t('members.fields.gender.label') }}
                     </label>
                     <GenderSelect v-model="model.genderId" :invalid="$field?.invalid" />
                     <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
@@ -352,18 +352,18 @@ onMounted(async () => {
                   <FormField v-slot="$field" name="email" class="flex flex-col gap-1.5">
                     <div class="flex items-center justify-between w-full">
                       <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                        {{ t('members.form.email.label') }} <span class="text-red-500">*</span>
+                        {{ t('members.fields.email.label') }} <span class="text-red-500">*</span>
                       </label>
                       <i
                         v-if="isEdit"
-                        v-tooltip.top="t('members.form.email.editWarning')"
+                        v-tooltip.top="t('members.fields.email.editWarning')"
                         class="pi pi-exclamation-triangle text-amber-500 text-xs cursor-default"
                       ></i>
                     </div>
                     <InputText
                       v-model="model.email"
                       type="email"
-                      :placeholder="t('members.form.email.placeholder')"
+                      :placeholder="t('members.fields.email.placeholder')"
                       autocomplete="email"
                       :invalid="$field?.invalid"
                       fluid
@@ -375,12 +375,12 @@ onMounted(async () => {
 
                   <FormField v-slot="$field" name="phone" class="flex flex-col gap-1.5">
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                      {{ t('members.form.phone.label') }}
+                      {{ t('members.fields.phone.label') }}
                     </label>
                     <InputText
                       v-model="model.phone"
                       type="tel"
-                      :placeholder="t('members.form.phone.placeholder')"
+                      :placeholder="t('members.fields.phone.placeholder')"
                       :invalid="$field?.invalid"
                       fluid
                     />
@@ -392,7 +392,7 @@ onMounted(async () => {
 
                 <FormField v-slot="$field" name="countryId" class="flex flex-col gap-1.5">
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                    {{ t('members.form.country.label') }}
+                    {{ t('members.fields.country.label') }}
                   </label>
                   <CountrySelect v-model="model.countryId" :invalid="$field?.invalid" />
                   <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
@@ -412,11 +412,11 @@ onMounted(async () => {
 
                 <FormField v-slot="$field" name="notes" class="flex flex-col gap-1.5">
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                    {{ t('members.form.notes.label') }}
+                    {{ t('members.fields.notes.label') }}
                   </label>
                   <Textarea
                     v-model="model.notes"
-                    :placeholder="t('members.form.notes.placeholder')"
+                    :placeholder="t('members.fields.notes.placeholder')"
                     :invalid="$field?.invalid"
                     rows="4"
                     fluid
@@ -442,11 +442,11 @@ onMounted(async () => {
                 </h2>
                 <div class="flex flex-col gap-1.5">
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                    {{ t('members.form.interests.label') }}
+                    {{ t('members.fields.interests.label') }}
                   </label>
                   <InterestsSelect v-model="model.interestIds" />
                   <p class="text-xs text-surface-400 dark:text-surface-500">
-                    {{ t('members.form.interests.help') }}
+                    {{ t('members.fields.interests.help') }}
                   </p>
                 </div>
               </div>

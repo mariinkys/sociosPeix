@@ -41,8 +41,8 @@ async function fetchEmails() {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('email.components.memberEmailsCard.toasts.loadError'),
+      summary: t('common.feedback.error'),
+      detail: t('email.memberEmailsCard.errors.load'),
       life: 3000,
     })
   } finally {
@@ -65,8 +65,8 @@ async function openPreview(email: EmailResponse) {
   } catch {
     toast.add({
       severity: 'error',
-      summary: t('common.error'),
-      detail: t('email.components.memberEmailsCard.toasts.loadContentError'),
+      summary: t('common.feedback.error'),
+      detail: t('email.memberEmailsCard.errors.loadContent'),
       life: 3000,
     })
     previewVisible.value = false
@@ -86,7 +86,7 @@ onMounted(fetchEmails)
           <div class="flex items-center gap-2">
             <i class="pi pi-envelope text-primary-500 dark:text-primary-400"></i>
             <h2 class="text-base font-semibold text-surface-900 dark:text-surface-0">
-              {{ t('email.components.memberEmailsCard.title') }}
+              {{ t('email.titles.memberEmails') }}
             </h2>
             <span
               v-if="totalElements > 0"
@@ -102,12 +102,12 @@ onMounted(fetchEmails)
               text
               rounded
               size="small"
-              :aria-label="t('email.components.memberEmailsCard.actions.refresh')"
+              :aria-label="t('email.memberEmailsCard.refresh')"
               :loading="loading"
               @click="fetchEmails"
             />
             <Button
-              :label="t('email.components.memberEmailsCard.actions.sendEmail')"
+              :label="t('email.memberEmailsCard.sendEmail')"
               icon="pi pi-send"
               size="small"
               @click="sendDialogVisible = true"
@@ -130,7 +130,7 @@ onMounted(fetchEmails)
         >
           <Column
             field="subject"
-            :header="t('email.components.memberEmailsCard.table.subject')"
+            :header="t('common.fields.subject')"
             style="width: 50%"
           >
             <template #body="{ data }: { data: EmailResponse }">
@@ -141,7 +141,7 @@ onMounted(fetchEmails)
           </Column>
           <Column
             field="provider"
-            :header="t('email.components.memberEmailsCard.table.provider')"
+            :header="t('common.fields.provider')"
             style="width: 15%"
           >
             <template #body="{ data }: { data: EmailResponse }">
@@ -152,7 +152,7 @@ onMounted(fetchEmails)
           </Column>
           <Column
             field="createdAt"
-            :header="t('email.components.memberEmailsCard.table.sentAt')"
+            :header="t('common.fields.sentAt')"
             style="width: 25%"
           >
             <template #body="{ data }: { data: EmailResponse }">
@@ -176,7 +176,7 @@ onMounted(fetchEmails)
                   text
                   rounded
                   size="small"
-                  :aria-label="t('email.components.memberEmailsCard.actions.viewEmail')"
+                  :aria-label="t('email.memberEmailsCard.viewEmail')"
                   @click="openPreview(data)"
                 />
               </div>
@@ -185,7 +185,7 @@ onMounted(fetchEmails)
           <template #empty>
             <div class="flex flex-col items-center justify-center py-10 gap-2 text-surface-400">
               <i class="pi pi-envelope text-3xl"></i>
-              <p class="text-sm">{{ t('email.components.memberEmailsCard.empty') }}</p>
+              <p class="text-sm">{{ t('email.memberEmailsCard.empty') }}</p>
             </div>
           </template>
         </DataTable>

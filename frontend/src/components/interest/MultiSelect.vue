@@ -40,9 +40,9 @@ function onChange(values: InterestResponse[]) {
     v-model="selected"
     :options="all"
     optionLabel="name"
-    :placeholder="t('interests.components.multiSelect.placeholder')"
+    :placeholder="t('interests.multiSelect.placeholder')"
     filter
-    :filterPlaceholder="t('interests.components.multiSelect.filterPlaceholder')"
+    :filterPlaceholder="t('interests.multiSelect.filterPlaceholder')"
     display="chip"
     :invalid="invalid"
     fluid
