@@ -9,6 +9,13 @@
 
 </div>
 
+## App Overview
+
+<div align="center">
+    <img alt="Application Diagram" src="./other/AppDiagram.excalidraw.svg" width=750/>
+</div>
+Note: I've made the diagram using Excalidraw.
+
 ## About me
 
 Check out my [other projects](https://github.com/mariinkys)
