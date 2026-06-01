@@ -16,7 +16,7 @@ import { usersService } from '@/services/users.service'
 import type { UserResponse } from '@/types/user.types'
 import { useRouter } from 'vue-router'
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const toast = useToast()
 const router = useRouter()
 
@@ -159,16 +159,11 @@ onMounted(fetchUsers)
         </template>
       </Column>
 
-      <Column
-        field="createdAt"
-        :header="t('common.fields.createdAt')"
-        style="width: 20%"
-        sortable
-      >
+      <Column field="createdAt" :header="t('common.fields.createdAt')" style="width: 20%" sortable>
         <template #body="{ data }: { data: UserResponse }">
           <span class="text-surface-500 dark:text-surface-400 text-sm">
             {{
-              new Date(data.createdAt).toLocaleDateString('es-ES', {
+              new Date(data.createdAt).toLocaleDateString(locale, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',

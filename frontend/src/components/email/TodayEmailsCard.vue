@@ -11,7 +11,7 @@ import { emailsService } from '@/services/emails.service'
 import type { EmailResponse } from '@/types/email.types'
 import EmailPreviewDialog from '@/components/email/EmailPreviewDialog.vue'
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const toast = useToast()
 
 const emails = ref<EmailResponse[]>([])
@@ -99,22 +99,14 @@ onMounted(fetchTodayEmails)
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
           size="small"
         >
-          <Column
-            field="subject"
-            :header="t('common.fields.subject')"
-            style="width: 40%"
-          >
+          <Column field="subject" :header="t('common.fields.subject')" style="width: 40%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
                 data.subject
               }}</span>
             </template>
           </Column>
-          <Column
-            field="provider"
-            :header="t('common.fields.provider')"
-            style="width: 10%"
-          >
+          <Column field="provider" :header="t('common.fields.provider')" style="width: 10%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm capitalize">{{
                 data.provider
@@ -133,16 +125,11 @@ onMounted(fetchTodayEmails)
               }}</span>
             </template>
           </Column>
-          <Column
-            field="createdAt"
-            :header="t('common.fields.sentAt')"
-            sortable
-            style="width: 30%"
-          >
+          <Column field="createdAt" :header="t('common.fields.sentAt')" sortable style="width: 30%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{
-                  new Date(data.createdAt).toLocaleDateString('es-ES', {
+                  new Date(data.createdAt).toLocaleDateString(locale, {
                     day: 'numeric',
                     month: 'short',
                     year: 'numeric',

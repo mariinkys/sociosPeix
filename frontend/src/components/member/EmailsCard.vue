@@ -14,7 +14,7 @@ import type { DataTablePageEvent } from 'primevue/datatable'
 
 const props = defineProps<{ memberId: string }>()
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const toast = useToast()
 
 const emails = ref<EmailResponse[]>([])
@@ -128,37 +128,25 @@ onMounted(fetchEmails)
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
           @page="onPage"
         >
-          <Column
-            field="subject"
-            :header="t('common.fields.subject')"
-            style="width: 50%"
-          >
+          <Column field="subject" :header="t('common.fields.subject')" style="width: 50%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
                 data.subject
               }}</span>
             </template>
           </Column>
-          <Column
-            field="provider"
-            :header="t('common.fields.provider')"
-            style="width: 15%"
-          >
+          <Column field="provider" :header="t('common.fields.provider')" style="width: 15%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm capitalize">{{
                 data.provider
               }}</span>
             </template>
           </Column>
-          <Column
-            field="createdAt"
-            :header="t('common.fields.sentAt')"
-            style="width: 25%"
-          >
+          <Column field="createdAt" :header="t('common.fields.sentAt')" style="width: 25%">
             <template #body="{ data }: { data: EmailResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{
-                  new Date(data.createdAt).toLocaleDateString('es-ES', {
+                  new Date(data.createdAt).toLocaleDateString(locale, {
                     day: 'numeric',
                     month: 'short',
                     year: 'numeric',

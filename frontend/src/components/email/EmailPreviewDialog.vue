@@ -10,7 +10,7 @@ defineProps<{
   loading: boolean
 }>()
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const visible = defineModel<boolean>('visible', { required: true })
 </script>
 
@@ -35,7 +35,7 @@ const visible = defineModel<boolean>('visible', { required: true })
           }}</span>
           <span class="text-surface-700 dark:text-surface-300">
             {{
-              new Date(email.createdAt).toLocaleDateString('es-ES', {
+              new Date(email.createdAt).toLocaleDateString(locale, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',

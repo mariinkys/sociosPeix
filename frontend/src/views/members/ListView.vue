@@ -20,7 +20,7 @@ import type { MemberParams, MemberResponse } from '@/types/member.types'
 import type { InterestResponse } from '@/types/interest.types'
 import { useRouter } from 'vue-router'
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
@@ -262,16 +262,11 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column
-        field="birthdate"
-        :header="t('common.fields.birthdate')"
-        style="width: 10%"
-        sortable
-      >
+      <Column field="birthdate" :header="t('common.fields.birthdate')" style="width: 15%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span v-if="data.birthdate" class="text-surface-500 dark:text-surface-400 text-sm">
             {{
-              new Date(data.birthdate).toLocaleDateString('es-ES', {
+              new Date(data.birthdate).toLocaleDateString(locale, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
@@ -281,16 +276,11 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column
-        field="createdAt"
-        :header="t('common.fields.createdAt')"
-        style="width: 10%"
-        sortable
-      >
+      <Column field="createdAt" :header="t('common.fields.createdAt')" style="width: 10%" sortable>
         <template #body="{ data }: { data: MemberResponse }">
           <span v-if="data.createdAt" class="text-surface-500 dark:text-surface-400 text-sm">
             {{
-              new Date(data.createdAt).toLocaleDateString('es-ES', {
+              new Date(data.createdAt).toLocaleDateString(locale, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
@@ -300,7 +290,7 @@ onMounted(async () => {
         </template>
       </Column>
 
-      <Column style="width: 10%">
+      <Column style="width: 5%">
         <template #body="{ data }: { data: MemberResponse }">
           <div class="flex justify-end">
             <Button

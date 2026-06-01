@@ -11,7 +11,7 @@ import { membersService } from '@/services/members.service'
 import type { MemberResponse } from '@/types/member.types'
 import { useRouter } from 'vue-router'
 
-const { t } = useI18n({ useScope: 'global' })
+const { t, locale } = useI18n({ useScope: 'global' })
 const toast = useToast()
 const router = useRouter()
 
@@ -84,12 +84,7 @@ onMounted(fetchTodayBirthdays)
           row-hover
           @row-click="onRowClick"
         >
-          <Column
-            field="fullName"
-            :header="t('common.fields.member')"
-            style="width: 25%"
-            sortable
-          >
+          <Column field="fullName" :header="t('common.fields.member')" style="width: 25%" sortable>
             <template #body="{ data }: { data: MemberResponse }">
               <div class="flex items-center gap-2">
                 <div
@@ -104,21 +99,13 @@ onMounted(fetchTodayBirthdays)
             </template>
           </Column>
 
-          <Column
-            field="email"
-            :header="t('common.fields.email')"
-            style="width: 25%"
-          >
+          <Column field="email" :header="t('common.fields.email')" style="width: 25%">
             <template #body="{ data }: { data: MemberResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">{{ data.email }}</span>
             </template>
           </Column>
 
-          <Column
-            field="phone"
-            :header="t('common.fields.phone')"
-            style="width: 25%"
-          >
+          <Column field="phone" :header="t('common.fields.phone')" style="width: 25%">
             <template #body="{ data }: { data: MemberResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{ data.phone ?? '—' }}
@@ -126,15 +113,11 @@ onMounted(fetchTodayBirthdays)
             </template>
           </Column>
 
-          <Column
-            field="birthdate"
-            :header="t('common.fields.birthday')"
-            style="width: 25%"
-          >
+          <Column field="birthdate" :header="t('common.fields.birthday')" style="width: 25%">
             <template #body="{ data }: { data: MemberResponse }">
               <span class="text-surface-500 dark:text-surface-400 text-sm">
                 {{
-                  new Date(data.birthdate).toLocaleDateString('es-ES', {
+                  new Date(data.birthdate).toLocaleDateString(locale, {
                     day: 'numeric',
                     month: 'long',
                   })
