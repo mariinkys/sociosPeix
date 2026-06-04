@@ -135,7 +135,7 @@ export default {
     login: {
       title: 'Iniciar Sesión',
       description: 'Bienvenido de nuevo — Introduce tus Datos',
-      submit: 'Iniciar Cesión',
+      submit: 'Iniciar Sesión',
       errors: {
         loginFailed: 'Error al iniciar sesión',
       },
