@@ -75,7 +75,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         // Fetch full entities with all associations for just this page
         List<Member> members = pageIds.isEmpty()
                 ? List.of()
-                : jpaRepository.findAllByIdWithDetails(pageIds)
+                : jpaRepository.findAllByIdWithDetails(pageIds, pageable.getSort())
                 .stream()
                 .map(mapper::toDomain)
                 .toList();

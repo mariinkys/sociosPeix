@@ -1,6 +1,7 @@
 package dev.mariinkys.sociospeix.infrastructure.persistence.repository;
 
 import dev.mariinkys.sociospeix.infrastructure.persistence.entity.MemberJpaEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,7 +33,6 @@ public interface MemberJpaRepository extends JpaRepository<MemberJpaEntity, UUID
         (SELECT COUNT(DISTINCT i.id) FROM MemberJpaEntity m2
          JOIN m2.interests i
          WHERE m2.id = m.id AND i.id IN :interestIds) = :interestCount)
-    ORDER BY m.surname ASC
     """)
     List<UUID> findPageIds(@Param("search") String search,
                            @Param("interestIds") List<Integer> interestIds,
@@ -45,9 +45,8 @@ public interface MemberJpaRepository extends JpaRepository<MemberJpaEntity, UUID
     LEFT JOIN FETCH m.gender
     LEFT JOIN FETCH m.country
     WHERE m.id IN :ids
-    ORDER BY m.surname ASC
     """)
-    List<MemberJpaEntity> findAllByIdWithDetails(@Param("ids") List<UUID> ids);
+    List<MemberJpaEntity> findAllByIdWithDetails(@Param("ids") List<UUID> ids, Sort sort);
 
     // Count query for pagination total
     @Query("""
@@ -102,7 +101,6 @@ public interface MemberJpaRepository extends JpaRepository<MemberJpaEntity, UUID
             (SELECT COUNT(DISTINCT i.id) FROM MemberJpaEntity m2
              JOIN m2.interests i
              WHERE m2.id = m.id AND i.id IN :interestIds) = :interestCount)
-        ORDER BY m.surname ASC
         """)
     List<MemberJpaEntity> findAllForExport(@Param("search") String search,
                                            @Param("interestIds") List<Integer> interestIds,
