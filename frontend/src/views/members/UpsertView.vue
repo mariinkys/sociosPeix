@@ -113,23 +113,27 @@ async function onSubmit({ valid }: FormSubmitEvent) {
   loading.value = true
   try {
     if (isEdit.value) {
-      await membersService.update(memberId.value!, model.value as MemberUpdatePayload)
+      const response = await membersService.update(
+        memberId.value!,
+        model.value as MemberUpdatePayload,
+      )
       toast.add({
         severity: 'success',
         summary: t('common.feedback.saved'),
         detail: t('members.messages.updated'),
         life: 3000,
       })
+      router.push('/members/' + response.id + '/edit')
     } else {
-      await membersService.create(model.value)
+      const response = await membersService.create(model.value)
       toast.add({
         severity: 'success',
         summary: t('common.feedback.created'),
         detail: t('members.messages.created'),
         life: 3000,
       })
+      router.push('/members/' + response.id + '/edit')
     }
-    router.push('/members')
   } catch {
     toast.add({
       severity: 'error',
