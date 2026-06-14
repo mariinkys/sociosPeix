@@ -38,7 +38,7 @@ let debounceTimer: ReturnType<typeof setTimeout>
 const page = ref(0)
 const size = ref(10)
 const sortBy = ref('createdAt')
-const sortDir = ref<'asc' | 'desc'>('desc')
+const sortDir = ref<'asc' | 'desc'>('asc')
 
 async function fetchMembers() {
   loading.value = true
