@@ -154,9 +154,7 @@ const isActive = (path: string) => route.path === path
         <Button
           :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'"
           :aria-label="
-            isDark
-              ? t('common.theme.switchToLightMode')
-              : t('common.theme.switchToDarkMode')
+            isDark ? t('common.theme.switchToLightMode') : t('common.theme.switchToDarkMode')
           "
           severity="secondary"
           text
@@ -256,9 +254,11 @@ const isActive = (path: string) => route.path === path
         <div
           class="pt-2 mt-2 border-t border-surface-100 dark:border-surface-800 flex items-center justify-between"
         >
-          <span class="text-xs text-surface-400 dark:text-surface-500 truncate max-w-[200px]">
-            {{ auth.user?.email }}
-          </span>
+          <RouterLink :to="`/users/${auth.user?.id}/edit`">
+            <span class="text-xs text-surface-400 dark:text-surface-500 truncate max-w-[200px]">
+              {{ auth.user?.email }}
+            </span>
+          </RouterLink>
           <Button
             :label="t('common.actions.signOut')"
             icon="pi pi-sign-out"
