@@ -16,6 +16,7 @@ export default {
       removeAttachment: 'Remove attachment',
       composeEmail: 'Compose Email',
       signOut: 'Sign out',
+      help: 'Help',
     },
 
     feedback: {
@@ -515,5 +516,37 @@ export default {
 
   countries: {
     selectorPlaceholder: '@:common.placeholders.searchCountry',
+  },
+
+  tours: {
+    common: {
+      next: 'Next',
+      previous: 'Previous',
+      done: 'Done',
+      close: 'Close',
+      progress: '{current} of {total}',
+    },
+
+    tools: {
+      quota: {
+        title: 'Email Quota',
+        description:
+          "Shows how many emails you've sent and how many you have left in the current period.",
+      },
+      sendByInterest: {
+        title: 'Send by Interest',
+        description: 'Email only the members subscribed to a specific interest group.',
+      },
+      sendToAll: {
+        title: 'Send to Everyone',
+        description:
+          'Broadcast an email to every member at once. Use with care, this reaches your whole list.',
+      },
+      versionChip: {
+        title: 'App Version',
+        description:
+          "Shows the version of the app you're currently using, as well as the server version.",
+      },
+    },
   },
 }

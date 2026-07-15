@@ -20,13 +20,13 @@ const { t } = useI18n({ useScope: 'global' })
     </div>
 
     <div class="flex flex-wrap gap-6 items-stretch">
-      <EmailQuotaCard class="flex-1 min-w-72" />
-      <SendEmailByInterestCard class="flex-1 min-w-72" />
-      <SendEmailToAllCard class="flex-1 min-w-72" />
+      <EmailQuotaCard data-tour="tools-quota" class="flex-1 min-w-72" />
+      <SendEmailByInterestCard data-tour="tools-send-interest" class="flex-1 min-w-72" />
+      <SendEmailToAllCard data-tour="tools-send-all" class="flex-1 min-w-72" />
     </div>
 
     <div class="absolute bottom-6 left-1/2 -translate-x-1/2">
-      <VersionChip />
+      <VersionChip data-tour="tools-version-chip" />
     </div>
   </div>
 </template>

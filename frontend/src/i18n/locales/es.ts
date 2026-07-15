@@ -16,6 +16,7 @@ export default {
       removeAttachment: 'Quitar archivo adjunto',
       composeEmail: 'Redactar correo',
       signOut: 'Cerrar sesión',
+      help: 'Ayuda',
     },
 
     feedback: {
@@ -517,5 +518,37 @@ export default {
 
   countries: {
     selectorPlaceholder: '@:common.placeholders.searchCountry',
+  },
+
+  tours: {
+    common: {
+      next: 'Siguiente',
+      previous: 'Anterior',
+      done: 'Finalizar',
+      close: 'Cerrar',
+      progress: '{current} de {total}',
+    },
+
+    tools: {
+      quota: {
+        title: 'Cuota de Correos',
+        description:
+          'Muestra cuántos correos has enviado y cuántos te quedan en el periodo actual.',
+      },
+      sendByInterest: {
+        title: 'Enviar por Interés',
+        description: 'Envía un correo solo a los socios suscritos a un grupo de interés concreto.',
+      },
+      sendToAll: {
+        title: 'Enviar a Todos',
+        description:
+          'Envía un correo a todos los socios a la vez. Úsalo con cuidado: llega a toda la lista.',
+      },
+      versionChip: {
+        title: 'Versión de la Aplicación',
+        description:
+          'Muestra la versión de la aplicación que estás usando, así como la versión del servidor.',
+      },
+    },
   },
 }
