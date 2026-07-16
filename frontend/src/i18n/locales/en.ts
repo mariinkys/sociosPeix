@@ -559,5 +559,28 @@ export default {
         description: 'Shows the emails that have been sent out today.',
       },
     },
+
+    members: {
+      search: {
+        title: 'Search members',
+        description: 'Filter the list by name, email, or phone as you type.',
+      },
+      interestFilter: {
+        title: 'Filter by interest',
+        description: 'Narrow the list down to members subscribed to one or more interest groups.',
+      },
+      export: {
+        title: 'Export',
+        description: 'Download the current filtered list as a file.',
+      },
+      add: {
+        title: 'Add a member',
+        description: 'Create a new member record.',
+      },
+      table: {
+        title: 'Members list',
+        description: 'Click a row to edit that member, or use the trash icon to delete one.',
+      },
+    },
   },
 }

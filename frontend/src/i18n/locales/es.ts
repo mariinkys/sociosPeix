@@ -561,5 +561,29 @@ export default {
         description: 'Muestra los correos que se han enviado hoy.',
       },
     },
+
+    members: {
+      search: {
+        title: 'Buscar socios',
+        description: 'Filtra la lista por nombre, correo o teléfono mientras escribes.',
+      },
+      interestFilter: {
+        title: 'Filtrar por interés',
+        description: 'Muestra solo los socios suscritos a uno o varios grupos de interés.',
+      },
+      export: {
+        title: 'Exportar',
+        description: 'Descarga la lista filtrada actual como archivo.',
+      },
+      add: {
+        title: 'Añadir socio',
+        description: 'Crea un nuevo registro de socio.',
+      },
+      table: {
+        title: 'Lista de socios',
+        description:
+          'Haz clic en una fila para editar ese socio, o usa el icono de papelera para eliminarlo.',
+      },
+    },
   },
 }
