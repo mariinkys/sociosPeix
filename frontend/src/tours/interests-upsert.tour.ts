@@ -1,47 +1,31 @@
 import type { DriveStep } from 'driver.js'
 import type { ComposerTranslation } from 'vue-i18n'
-import type { RouteLocationNormalizedLoaded } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 
-export function interestsUpsertTour(
-  t: ComposerTranslation,
-  mode: 'new' | 'edit',
-  route?: RouteLocationNormalizedLoaded,
-): DriveStep[] {
-  const steps: DriveStep[] = [
+export function interestsUpsertTour(t: ComposerTranslation): DriveStep[] {
+  return [
     {
-      element: '[data-tour="user-email"]',
+      element: '[data-tour="interest-form"]',
       popover: {
-        title: t('tours.interests.upsert.email.title'),
-        description: t('tours.interests.upsert.email.description'),
+        title: t('tours.interests.upsert.form.title'),
+        description: t('tours.interests.upsert.form.description'),
         side: 'bottom',
       },
     },
     {
-      element: '[data-tour="user-role"]',
+      element: '[data-tour="interest-save"]',
       popover: {
-        title: t('tours.interests.upsert.role.title'),
-        description: t('tours.interests.upsert.role.description'),
+        title: t('tours.interests.upsert.save.title'),
+        description: t('tours.interests.upsert.save.description'),
+        side: 'top',
+      },
+    },
+    {
+      element: '[data-tour="interest-delete"]',
+      popover: {
+        title: t('tours.interests.upsert.delete.title'),
+        description: t('tours.interests.upsert.delete.description'),
         side: 'bottom',
       },
     },
   ]
-
-  if (mode === 'edit') {
-    const auth = useAuthStore()
-    const isSelf = auth.user?.id === route?.params.id
-
-    steps.push({
-      element: '[data-tour="user-save"]',
-      popover: {
-        title: t('tours.interests.upsert.save.title'),
-        description: isSelf
-          ? t('tours.interests.upsert.save.descriptionSelf')
-          : t('tours.interests.upsert.save.description'),
-        side: 'top',
-      },
-    })
-  }
-
-  return steps
 }

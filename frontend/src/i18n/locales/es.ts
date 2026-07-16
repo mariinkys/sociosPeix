@@ -677,6 +677,22 @@ export default {
             'Haz clic en una fila para editar ese interés, o usa el icono de papelera para eliminarlo.',
         },
       },
+
+      upsert: {
+        form: {
+          title: 'Datos del interés',
+          description: 'Indica un nombre para el interés y, opcionalmente, una breve descripción.',
+        },
+        save: {
+          title: 'Guardar',
+          description: 'Guarda el interés. El nombre es obligatorio.',
+        },
+        delete: {
+          title: 'Eliminar interés',
+          description:
+            'Elimina este interés de forma permanente. Los socios suscritos a él perderán esa asociación. Esta acción no se puede deshacer.',
+        },
+      },
     },
   },
 }

@@ -671,6 +671,22 @@ export default {
           description: 'Click a row to edit that interest, or use the trash icon to delete one.',
         },
       },
+
+      upsert: {
+        form: {
+          title: 'Interest details',
+          description: 'Give the interest a name and, optionally, a short description.',
+        },
+        save: {
+          title: 'Save',
+          description: 'Save the interest. A name is required.',
+        },
+        delete: {
+          title: 'Delete interest',
+          description:
+            "Permanently remove this interest. Members subscribed to it will lose that association. This action can't be undone.",
+        },
+      },
     },
   },
 }

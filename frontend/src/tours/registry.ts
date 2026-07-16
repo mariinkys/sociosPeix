@@ -17,10 +17,8 @@ export const tourRegistry: Record<string, TourLoader> = {
   'Update Member': async (t) => (await import('./members-upsert.tour')).membersUpsertTour(t),
 
   Interests: async (t) => (await import('./interests-list.tour.ts')).interestsListTour(t),
-  'New Interest': async (t) =>
-    (await import('./interests-upsert.tour.ts')).interestsUpsertTour(t, 'new'),
-  'Update Interest': async (t) =>
-    (await import('./interests-upsert.tour.ts')).interestsUpsertTour(t, 'edit'),
+  'New Interest': async (t) => (await import('./interests-upsert.tour')).interestsUpsertTour(t),
+  'Update Interest': async (t) => (await import('./interests-upsert.tour')).interestsUpsertTour(t),
 
   Tools: async (t) => (await import('./tools.tour.ts')).toolsTour(t),
   Home: async (t) => (await import('./home.tour.ts')).homeTour(t),
