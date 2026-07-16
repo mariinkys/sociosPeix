@@ -581,6 +581,34 @@ export default {
         title: 'Members list',
         description: 'Click a row to edit that member, or use the trash icon to delete one.',
       },
+
+      upsert: {
+        personalDetails: {
+          title: 'Datos personales',
+          description: 'Introduce el nombre, apellidos, fecha de nacimiento y género del socio.',
+        },
+        contact: {
+          title: 'Información de contacto',
+          description: 'Añade el correo, el teléfono y el país para contactar con este socio.',
+        },
+        interests: {
+          title: 'Intereses',
+          description:
+            'Asigna uno o varios grupos de interés para que este socio reciba correos relevantes.',
+        },
+        emailsHistory: {
+          title: 'Historial de correos',
+          description: 'Muestra todos los correos que ha recibido este socio hasta ahora.',
+        },
+        save: {
+          title: 'Guardar',
+          description: 'Guarda el socio. Los campos obligatorios deben estar rellenados primero.',
+        },
+        delete: {
+          title: 'Eliminar socio',
+          description: 'Elimina este socio de forma permanente. Esta acción no se puede deshacer.',
+        },
+      },
     },
   },
 }
