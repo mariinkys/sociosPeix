@@ -550,5 +550,16 @@ export default {
           'Muestra la versión de la aplicación que estás usando, así como la versión del servidor.',
       },
     },
+
+    home: {
+      birthdays: {
+        title: 'Cumpleaños de hoy',
+        description: 'Muestra los socios que cumplen años hoy.',
+      },
+      emailsToday: {
+        title: 'Correos enviados hoy',
+        description: 'Muestra los correos que se han enviado hoy.',
+      },
+    },
   },
 }

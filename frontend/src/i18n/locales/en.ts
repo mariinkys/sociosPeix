@@ -548,5 +548,16 @@ export default {
           "Shows the version of the app you're currently using, as well as the server version.",
       },
     },
+
+    home: {
+      birthdays: {
+        title: "Today's birthdays",
+        description: 'Shows the members who have their birthday today.',
+      },
+      emailsToday: {
+        title: 'Emails sent today',
+        description: 'Shows the emails that have been sent out today.',
+      },
+    },
   },
 }

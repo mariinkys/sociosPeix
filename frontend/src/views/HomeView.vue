@@ -17,8 +17,8 @@ const { t } = useI18n({ useScope: 'global' })
       </p>
     </div>
 
-    <TodayBirthdayCard />
+    <TodayBirthdayCard data-tour="home-birthdays" />
 
-    <TodayEmailsCard />
+    <TodayEmailsCard data-tour="home-emails-today" />
   </div>
 </template>

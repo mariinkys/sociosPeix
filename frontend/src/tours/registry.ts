@@ -25,4 +25,5 @@ export const tourRegistry: Record<string, TourLoader> = {
     (await import('./interests-upsert.tour.ts')).interestsUpsertTour(t, 'edit'),
 
   Tools: async (t) => (await import('./tools.tour.ts')).toolsTour(t),
+  Home: async (t) => (await import('./home.tour.ts')).homeTour(t),
 }
