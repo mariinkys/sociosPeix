@@ -9,10 +9,10 @@ export type TourLoader = (
 
 export const tourRegistry: Record<string, TourLoader> = {
   Users: async (t) => (await import('./users-list.tour.ts')).usersListTour(t),
-  'New User': async (t) => (await import('./users-upsert.tour.ts')).usersUpsertTour(t, 'new'),
-  'Update User': async (t, route) =>
-    (await import('./users-upsert.tour.ts')).usersUpsertTour(t, 'edit', route),
+  'New User': async (t) => (await import('./users-upsert.tour')).usersUpsertTour(t),
+  'Update User': async (t) => (await import('./users-upsert.tour')).usersUpsertTour(t),
 
+  Members: async (t) => (await import('./members-list.tour.ts')).membersListTour(t),
   'New Member': async (t) => (await import('./members-upsert.tour')).membersUpsertTour(t),
   'Update Member': async (t) => (await import('./members-upsert.tour')).membersUpsertTour(t),
 

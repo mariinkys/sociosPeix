@@ -627,6 +627,33 @@ export default {
             'Click a row to edit that user. The tag shows their role — admin or regular user.',
         },
       },
+
+      upsert: {
+        form: {
+          title: 'User details',
+          description: "Enter the user's name and email address.",
+        },
+        passwordField: {
+          title: 'Set a password',
+          description: "Choose an initial password for this user's account.",
+        },
+        save: {
+          title: 'Save',
+          description: 'Save this user. Required fields must be filled in first.',
+        },
+        passwordCard: {
+          title: 'Change password',
+          description: 'Set a new password for this account.',
+        },
+        roleCard: {
+          title: 'Role',
+          description: 'Promote this user to admin, or revert them to a regular user.',
+        },
+        delete: {
+          title: 'Delete user',
+          description: "Permanently remove this user's account. This action can't be undone.",
+        },
+      },
     },
   },
 }

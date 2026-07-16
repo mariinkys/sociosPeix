@@ -630,6 +630,35 @@ export default {
             'Haz clic en una fila para editar ese usuario. La etiqueta indica su rol: administrador o usuario normal.',
         },
       },
+
+      upsert: {
+        form: {
+          title: 'Datos del usuario',
+          description: 'Introduce el nombre y el correo electrónico del usuario.',
+        },
+        passwordField: {
+          title: 'Establecer contraseña',
+          description: 'Elige una contraseña inicial para la cuenta de este usuario.',
+        },
+        save: {
+          title: 'Guardar',
+          description:
+            'Guarda este usuario. Los campos obligatorios deben estar rellenados primero.',
+        },
+        passwordCard: {
+          title: 'Cambiar contraseña',
+          description: 'Establece una nueva contraseña para esta cuenta.',
+        },
+        roleCard: {
+          title: 'Rol',
+          description: 'Asciende a este usuario a administrador, o vuélvelo a usuario normal.',
+        },
+        delete: {
+          title: 'Eliminar usuario',
+          description:
+            'Elimina de forma permanente la cuenta de este usuario. Esta acción no se puede deshacer.',
+        },
+      },
     },
   },
 }
