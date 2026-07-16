@@ -4,6 +4,14 @@ import type { ComposerTranslation } from 'vue-i18n'
 export function interestsListTour(t: ComposerTranslation): DriveStep[] {
   return [
     {
+      element: '[data-tour="interests-search"]',
+      popover: {
+        title: t('tours.interests.list.search.title'),
+        description: t('tours.interests.list.search.description'),
+        side: 'bottom',
+      },
+    },
+    {
       element: '[data-tour="interests-add"]',
       popover: {
         title: t('tours.interests.list.add.title'),

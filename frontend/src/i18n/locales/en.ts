@@ -655,5 +655,22 @@ export default {
         },
       },
     },
+
+    interests: {
+      list: {
+        search: {
+          title: 'Search interests',
+          description: 'Filter the list by name or description as you type.',
+        },
+        add: {
+          title: 'Add an interest',
+          description: 'Create a new interest group members can subscribe to.',
+        },
+        table: {
+          title: 'Interests list',
+          description: 'Click a row to edit that interest, or use the trash icon to delete one.',
+        },
+      },
+    },
   },
 }

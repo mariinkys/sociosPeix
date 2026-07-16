@@ -660,5 +660,23 @@ export default {
         },
       },
     },
+
+    interests: {
+      list: {
+        search: {
+          title: 'Buscar intereses',
+          description: 'Filtra la lista por nombre o descripción mientras escribes.',
+        },
+        add: {
+          title: 'Añadir interés',
+          description: 'Crea un nuevo grupo de interés al que los socios puedan suscribirse.',
+        },
+        table: {
+          title: 'Lista de intereses',
+          description:
+            'Haz clic en una fila para editar ese interés, o usa el icono de papelera para eliminarlo.',
+        },
+      },
+    },
   },
 }
