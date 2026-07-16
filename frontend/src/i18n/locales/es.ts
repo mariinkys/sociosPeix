@@ -613,5 +613,23 @@ export default {
         },
       },
     },
+
+    users: {
+      list: {
+        search: {
+          title: 'Buscar usuarios',
+          description: 'Filtra la lista por nombre o correo mientras escribes.',
+        },
+        add: {
+          title: 'Añadir usuario',
+          description: 'Crea una nueva cuenta de usuario.',
+        },
+        table: {
+          title: 'Lista de usuarios',
+          description:
+            'Haz clic en una fila para editar ese usuario. La etiqueta indica su rol: administrador o usuario normal.',
+        },
+      },
+    },
   },
 }

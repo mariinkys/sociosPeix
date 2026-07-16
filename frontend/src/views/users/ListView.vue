@@ -103,6 +103,7 @@ onMounted(fetchUsers)
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
+            data-tour="users-search"
             :placeholder="t('common.placeholders.searchUsers')"
             class="pl-9 w-full sm:w-56"
             @input="onSearch"
@@ -110,6 +111,7 @@ onMounted(fetchUsers)
         </div>
         <Button
           :label="t('users.actions.createNew')"
+          data-tour="users-add"
           icon="pi pi-plus"
           class="shrink-0"
           @click="router.push('/users/new')"
@@ -123,6 +125,7 @@ onMounted(fetchUsers)
       :rows="size"
       :totalRecords="totalElements"
       :rowsPerPageOptions="[5, 10, 25, 50]"
+      data-tour="users-table"
       lazy
       paginator
       removableSort

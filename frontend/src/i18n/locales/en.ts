@@ -610,5 +610,23 @@ export default {
         },
       },
     },
+
+    users: {
+      list: {
+        search: {
+          title: 'Search users',
+          description: 'Filter the list by name or email as you type.',
+        },
+        add: {
+          title: 'Add a user',
+          description: 'Create a new user account.',
+        },
+        table: {
+          title: 'Users list',
+          description:
+            'Click a row to edit that user. The tag shows their role — admin or regular user.',
+        },
+      },
+    },
   },
 }
