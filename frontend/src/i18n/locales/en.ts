@@ -16,6 +16,7 @@ export default {
       removeAttachment: 'Remove attachment',
       composeEmail: 'Compose Email',
       signOut: 'Sign out',
+      help: 'Help',
     },
 
     feedback: {
@@ -515,5 +516,177 @@ export default {
 
   countries: {
     selectorPlaceholder: '@:common.placeholders.searchCountry',
+  },
+
+  tours: {
+    common: {
+      next: 'Next',
+      previous: 'Previous',
+      done: 'Done',
+      close: 'Close',
+      progress: '{current} of {total}',
+    },
+
+    tools: {
+      quota: {
+        title: 'Email Quota',
+        description:
+          "Shows how many emails you've sent and how many you have left in the current period.",
+      },
+      sendByInterest: {
+        title: 'Send by Interest',
+        description: 'Email only the members subscribed to a specific interest group.',
+      },
+      sendToAll: {
+        title: 'Send to Everyone',
+        description:
+          'Broadcast an email to every member at once. Use with care, this reaches your whole list.',
+      },
+      versionChip: {
+        title: 'App Version',
+        description:
+          "Shows the version of the app you're currently using, as well as the server version.",
+      },
+    },
+
+    home: {
+      birthdays: {
+        title: "Today's birthdays",
+        description: 'Shows the members who have their birthday today.',
+      },
+      emailsToday: {
+        title: 'Emails sent today',
+        description: 'Shows the emails that have been sent out today.',
+      },
+    },
+
+    members: {
+      search: {
+        title: 'Search members',
+        description: 'Filter the list by name, email, or phone as you type.',
+      },
+      interestFilter: {
+        title: 'Filter by interest',
+        description: 'Narrow the list down to members subscribed to one or more interest groups.',
+      },
+      export: {
+        title: 'Export',
+        description: 'Download the current filtered list as a file.',
+      },
+      add: {
+        title: 'Add a member',
+        description: 'Create a new member record.',
+      },
+      table: {
+        title: 'Members list',
+        description: 'Click a row to edit that member, or use the trash icon to delete one.',
+      },
+
+      upsert: {
+        personalDetails: {
+          title: 'Datos personales',
+          description: 'Introduce el nombre, apellidos, fecha de nacimiento y género del socio.',
+        },
+        contact: {
+          title: 'Información de contacto',
+          description: 'Añade el correo, el teléfono y el país para contactar con este socio.',
+        },
+        interests: {
+          title: 'Intereses',
+          description:
+            'Asigna uno o varios grupos de interés para que este socio reciba correos relevantes.',
+        },
+        emailsHistory: {
+          title: 'Historial de correos',
+          description: 'Muestra todos los correos que ha recibido este socio hasta ahora.',
+        },
+        save: {
+          title: 'Guardar',
+          description: 'Guarda el socio. Los campos obligatorios deben estar rellenados primero.',
+        },
+        delete: {
+          title: 'Eliminar socio',
+          description: 'Elimina este socio de forma permanente. Esta acción no se puede deshacer.',
+        },
+      },
+    },
+
+    users: {
+      list: {
+        search: {
+          title: 'Search users',
+          description: 'Filter the list by name or email as you type.',
+        },
+        add: {
+          title: 'Add a user',
+          description: 'Create a new user account.',
+        },
+        table: {
+          title: 'Users list',
+          description:
+            'Click a row to edit that user. The tag shows their role — admin or regular user.',
+        },
+      },
+
+      upsert: {
+        form: {
+          title: 'User details',
+          description: "Enter the user's name and email address.",
+        },
+        passwordField: {
+          title: 'Set a password',
+          description: "Choose an initial password for this user's account.",
+        },
+        save: {
+          title: 'Save',
+          description: 'Save this user. Required fields must be filled in first.',
+        },
+        passwordCard: {
+          title: 'Change password',
+          description: 'Set a new password for this account.',
+        },
+        roleCard: {
+          title: 'Role',
+          description: 'Promote this user to admin, or revert them to a regular user.',
+        },
+        delete: {
+          title: 'Delete user',
+          description: "Permanently remove this user's account. This action can't be undone.",
+        },
+      },
+    },
+
+    interests: {
+      list: {
+        search: {
+          title: 'Search interests',
+          description: 'Filter the list by name or description as you type.',
+        },
+        add: {
+          title: 'Add an interest',
+          description: 'Create a new interest group members can subscribe to.',
+        },
+        table: {
+          title: 'Interests list',
+          description: 'Click a row to edit that interest, or use the trash icon to delete one.',
+        },
+      },
+
+      upsert: {
+        form: {
+          title: 'Interest details',
+          description: 'Give the interest a name and, optionally, a short description.',
+        },
+        save: {
+          title: 'Save',
+          description: 'Save the interest. A name is required.',
+        },
+        delete: {
+          title: 'Delete interest',
+          description:
+            "Permanently remove this interest. Members subscribed to it will lose that association. This action can't be undone.",
+        },
+      },
+    },
   },
 }

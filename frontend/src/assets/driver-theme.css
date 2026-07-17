@@ -1,0 +1,89 @@
+.driver-popover {
+  background: var(--p-surface-0);
+  color: var(--p-surface-900);
+  border: 1px solid var(--p-surface-200);
+  border-radius: var(--p-content-border-radius, 12px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  font-family: inherit;
+  padding: 1rem;
+}
+
+.driver-popover-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--p-surface-900);
+}
+
+.driver-popover-description {
+  font-size: 0.85rem;
+  color: var(--p-surface-500);
+  line-height: 1.5;
+}
+
+.driver-popover-close-btn {
+  color: var(--p-surface-400);
+}
+.driver-popover-close-btn:hover {
+  color: var(--p-surface-700);
+}
+
+.driver-popover-footer {
+  border-top: 1px solid var(--p-surface-200);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.driver-popover-progress-text {
+  color: var(--p-surface-400);
+  font-size: 0.75rem;
+}
+
+.driver-popover-footer button {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--p-content-border-radius, 8px);
+  border: 1px solid transparent;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.driver-popover-next-btn {
+  background: var(--p-primary-color);
+  color: var(--p-primary-contrast-color);
+}
+.driver-popover-next-btn:hover {
+  background: var(--p-primary-hover-color, var(--p-primary-color));
+}
+
+.driver-popover-prev-btn {
+  background: transparent;
+  color: var(--p-surface-600);
+  border-color: var(--p-surface-300);
+}
+.driver-popover-prev-btn:hover {
+  background: var(--p-surface-100);
+}
+
+/* Arrow color must match the popover background per side */
+.driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: var(--p-surface-0); }
+.driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: var(--p-surface-0); }
+.driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: var(--p-surface-0); }
+.driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: var(--p-surface-0); }
+
+/* Dark mode — mirrors the .my-app-dark class your theme toggle applies to <html> */
+.my-app-dark .driver-popover {
+  background: var(--p-surface-900);
+  color: var(--p-surface-0);
+  border-color: var(--p-surface-700);
+}
+.my-app-dark .driver-popover-title { color: var(--p-surface-0); }
+.my-app-dark .driver-popover-description { color: var(--p-surface-400); }
+.my-app-dark .driver-popover-footer { border-top-color: var(--p-surface-700); }
+.my-app-dark .driver-popover-prev-btn { color: var(--p-surface-300); border-color: var(--p-surface-600); }
+.my-app-dark .driver-popover-prev-btn:hover { background: var(--p-surface-800); }
+
+.my-app-dark .driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: var(--p-surface-900); }
+.my-app-dark .driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: var(--p-surface-900); }
+.my-app-dark .driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: var(--p-surface-900); }
+.my-app-dark .driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: var(--p-surface-900); }

@@ -106,12 +106,14 @@ onMounted(fetchInterests)
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
+            data-tour="interests-search"
             :placeholder="t('common.placeholders.searchInterests')"
             class="pl-9 w-full sm:w-56"
           />
         </div>
         <Button
           :label="t('interests.actions.createNew')"
+          data-tour="interests-add"
           icon="pi pi-plus"
           class="shrink-0"
           @click="router.push('/interests/new')"
@@ -124,6 +126,7 @@ onMounted(fetchInterests)
       :loading="loading"
       :rows="10"
       :rowsPerPageOptions="[5, 10, 25, 50]"
+      data-tour="interests-table"
       paginator
       removableSort
       row-hover
@@ -138,11 +141,7 @@ onMounted(fetchInterests)
         </template>
       </Column>
 
-      <Column
-        field="description"
-        :header="t('common.fields.description')"
-        style="width: 60%"
-      >
+      <Column field="description" :header="t('common.fields.description')" style="width: 60%">
         <template #body="{ data }: { data: InterestResponse }">
           <span class="text-surface-500 dark:text-surface-400 text-sm">
             {{ data.description ?? '—' }}

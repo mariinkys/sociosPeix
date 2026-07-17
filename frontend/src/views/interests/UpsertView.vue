@@ -74,7 +74,9 @@ async function onSubmit({ valid }: FormSubmitEvent) {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: isEdit.value ? t('interests.messages.updateError') : t('interests.messages.createError'),
+      detail: isEdit.value
+        ? t('interests.messages.updateError')
+        : t('interests.messages.createError'),
       life: 3000,
     })
   } finally {
@@ -168,6 +170,7 @@ onMounted(async () => {
       <div class="flex items-center gap-2 shrink-0">
         <Button
           v-if="isEdit"
+          data-tour="interest-delete"
           icon="pi pi-trash"
           severity="danger"
           outlined
@@ -182,7 +185,11 @@ onMounted(async () => {
       <i class="pi pi-spinner pi-spin text-2xl text-surface-400"></i>
     </div>
 
-    <Card v-else class="border border-surface-200 dark:border-surface-700 shadow-sm">
+    <Card
+      v-else
+      class="border border-surface-200 dark:border-surface-700 shadow-sm"
+      data-tour="interest-form"
+    >
       <template #content>
         <Form
           v-slot="$form"
@@ -235,6 +242,7 @@ onMounted(async () => {
             />
             <Button
               type="submit"
+              data-tour="interest-save"
               :label="isEdit ? t('common.actions.saveChanges') : t('interests.actions.create')"
               :icon="isEdit ? 'pi pi-check' : 'pi pi-plus'"
               iconPos="right"

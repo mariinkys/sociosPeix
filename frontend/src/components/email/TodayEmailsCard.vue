@@ -60,7 +60,7 @@ onMounted(fetchTodayEmails)
 </script>
 
 <template>
-  <Card class="border border-surface-200 dark:border-surface-700 shadow-sm">
+  <Card v-bind="$attrs" class="border border-surface-200 dark:border-surface-700 shadow-sm">
     <template #content>
       <div class="space-y-4">
         <div class="flex items-center justify-between">

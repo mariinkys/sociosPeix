@@ -237,6 +237,7 @@ onMounted(async () => {
           />
           <Button
             type="submit"
+            data-tour="member-save"
             :label="isEdit ? t('common.actions.saveChanges') : t('members.actions.create')"
             :icon="isEdit ? 'pi pi-check' : 'pi pi-user-plus'"
             iconPos="right"
@@ -245,6 +246,7 @@ onMounted(async () => {
           />
           <Button
             v-if="isEdit"
+            data-tour="member-delete"
             icon="pi pi-trash"
             severity="danger"
             outlined
@@ -261,7 +263,7 @@ onMounted(async () => {
         <Card class="lg:col-span-2 border border-surface-200 dark:border-surface-700 shadow-sm">
           <template #content>
             <div class="p-2 space-y-6">
-              <div class="space-y-4">
+              <div class="space-y-4" data-tour="member-personal-details">
                 <h2
                   class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
                 >
@@ -345,7 +347,7 @@ onMounted(async () => {
 
               <div class="border-t border-surface-100 dark:border-surface-800" />
 
-              <div class="space-y-4">
+              <div class="space-y-4" data-tour="member-contact">
                 <h2
                   class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
                 >
@@ -436,7 +438,10 @@ onMounted(async () => {
 
         <!-- Right Side -->
         <div class="lg:col-span-1 space-y-6">
-          <Card class="border border-surface-200 dark:border-surface-700 shadow-sm">
+          <Card
+            class="border border-surface-200 dark:border-surface-700 shadow-sm"
+            data-tour="member-interests"
+          >
             <template #content>
               <div class="p-2 space-y-4">
                 <h2
@@ -457,7 +462,11 @@ onMounted(async () => {
             </template>
           </Card>
 
-          <MemberEmailsCard v-if="isEdit && memberId" :memberId="memberId" />
+          <MemberEmailsCard
+            v-if="isEdit && memberId"
+            :memberId="memberId"
+            data-tour="member-emails-history"
+          />
         </div>
       </div>
     </Form>

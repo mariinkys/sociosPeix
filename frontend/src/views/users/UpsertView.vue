@@ -279,6 +279,7 @@ onMounted(async () => {
         <Button
           v-if="isEdit && authStore.isAdmin && !isSelf"
           icon="pi pi-trash"
+          data-tour="user-delete"
           severity="danger"
           outlined
           :loading="deleteLoading"
@@ -294,7 +295,10 @@ onMounted(async () => {
 
     <template v-else>
       <!-- Main form -->
-      <Card class="border border-surface-200 dark:border-surface-700 shadow-sm">
+      <Card
+        class="border border-surface-200 dark:border-surface-700 shadow-sm"
+        data-tour="user-form"
+      >
         <template #content>
           <Form
             v-slot="$form"
@@ -337,7 +341,13 @@ onMounted(async () => {
             </FormField>
 
             <!-- Password only on create -->
-            <FormField v-if="!isEdit" v-slot="$field" name="password" class="flex flex-col gap-1.5">
+            <FormField
+              v-if="!isEdit"
+              v-slot="$field"
+              name="password"
+              class="flex flex-col gap-1.5"
+              data-tour="user-password-field"
+            >
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                 {{ t('users.fields.password.label') }} <span class="text-red-500">*</span>
               </label>
@@ -362,6 +372,7 @@ onMounted(async () => {
               />
               <Button
                 type="submit"
+                data-tour="user-save"
                 :label="isEdit ? t('common.actions.saveChanges') : t('users.actions.create')"
                 :icon="isEdit ? 'pi pi-check' : 'pi pi-plus'"
                 iconPos="right"
@@ -374,7 +385,11 @@ onMounted(async () => {
       </Card>
 
       <!-- Password card, edit mode only -->
-      <Card v-if="isEdit" class="border border-surface-200 dark:border-surface-700 shadow-sm">
+      <Card
+        v-if="isEdit"
+        class="border border-surface-200 dark:border-surface-700 shadow-sm"
+        data-tour="user-password-card"
+      >
         <template #content>
           <Form
             :initialValues="passwordModel"
@@ -418,7 +433,8 @@ onMounted(async () => {
 
             <FormField v-slot="$field" name="newPassword" class="flex flex-col gap-1.5">
               <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
-                {{ t('users.passwordCard.fields.newPassword.label') }} <span class="text-red-500">*</span>
+                {{ t('users.passwordCard.fields.newPassword.label') }}
+                <span class="text-red-500">*</span>
               </label>
               <InputText
                 v-model="passwordModel.newPassword"
@@ -470,6 +486,7 @@ onMounted(async () => {
       <Card
         v-if="isEdit && authStore.isAdmin && !isSelf"
         class="border border-surface-200 dark:border-surface-700 shadow-sm"
+        data-tour="user-role-card"
       >
         <template #content>
           <div class="p-2 space-y-4">

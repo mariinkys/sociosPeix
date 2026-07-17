@@ -181,6 +181,7 @@ onMounted(async () => {
         <div class="relative flex-1 sm:flex-none">
           <InputText
             v-model="search"
+            data-tour="members-search"
             :placeholder="t('members.filters.searchPlaceholder')"
             class="pl-9 w-full sm:w-48"
             @input="onSearch"
@@ -189,6 +190,7 @@ onMounted(async () => {
 
         <MultiSelect
           v-model="selectedInterests"
+          data-tour="members-interest-filter"
           :options="allInterests"
           optionLabel="name"
           :placeholder="t('members.filters.interestsPlaceholder')"
@@ -201,6 +203,7 @@ onMounted(async () => {
 
         <Button
           :label="t('common.actions.export')"
+          data-tour="members-export"
           icon="pi pi-download"
           severity="secondary"
           outlined
@@ -211,6 +214,7 @@ onMounted(async () => {
         />
         <Button
           :label="t('members.actions.createNew')"
+          data-tour="members-add"
           icon="pi pi-plus"
           class="shrink-0"
           @click="router.push('/members/new')"
@@ -224,6 +228,7 @@ onMounted(async () => {
       :rows="size"
       :totalRecords="totalElements"
       :rowsPerPageOptions="[5, 10, 25, 50]"
+      data-tour="members-table"
       lazy
       paginator
       removableSort

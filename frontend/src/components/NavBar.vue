@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth'
 import Button from 'primevue/button'
 import VersionChip from '@/components/VersionChip.vue'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+import HelpButton from '@/components/HelpButton.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 const router = useRouter()
@@ -131,7 +132,7 @@ const isActive = (path: string) => route.path === path
         <!-- User email, desktop only -->
         <span
           v-if="auth.isAuthenticated"
-          class="hidden md:inline text-xs text-surface-400 dark:text-surface-500 mr-2 max-w-[180px] truncate"
+          class="hidden md:inline text-xs text-surface-400 dark:text-surface-500 mr-2 max-w-45 truncate"
         >
           <RouterLink :to="`/users/${auth.user?.id}/edit`">
             {{ auth.user?.email }}
@@ -150,6 +151,8 @@ const isActive = (path: string) => route.path === path
             @click="logout"
           />
         </div>
+
+        <HelpButton />
 
         <Button
           :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'"
@@ -255,7 +258,7 @@ const isActive = (path: string) => route.path === path
           class="pt-2 mt-2 border-t border-surface-100 dark:border-surface-800 flex items-center justify-between"
         >
           <RouterLink :to="`/users/${auth.user?.id}/edit`">
-            <span class="text-xs text-surface-400 dark:text-surface-500 truncate max-w-[200px]">
+            <span class="text-xs text-surface-400 dark:text-surface-500 truncate max-w-50">
               {{ auth.user?.email }}
             </span>
           </RouterLink>

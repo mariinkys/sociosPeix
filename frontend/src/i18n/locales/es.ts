@@ -16,6 +16,7 @@ export default {
       removeAttachment: 'Quitar archivo adjunto',
       composeEmail: 'Redactar correo',
       signOut: 'Cerrar sesión',
+      help: 'Ayuda',
     },
 
     feedback: {
@@ -517,5 +518,181 @@ export default {
 
   countries: {
     selectorPlaceholder: '@:common.placeholders.searchCountry',
+  },
+
+  tours: {
+    common: {
+      next: 'Siguiente',
+      previous: 'Anterior',
+      done: 'Finalizar',
+      close: 'Cerrar',
+      progress: '{current} de {total}',
+    },
+
+    tools: {
+      quota: {
+        title: 'Cuota de Correos',
+        description:
+          'Muestra cuántos correos has enviado y cuántos te quedan en el periodo actual.',
+      },
+      sendByInterest: {
+        title: 'Enviar por Interés',
+        description: 'Envía un correo solo a los socios suscritos a un grupo de interés concreto.',
+      },
+      sendToAll: {
+        title: 'Enviar a Todos',
+        description:
+          'Envía un correo a todos los socios a la vez. Úsalo con cuidado: llega a toda la lista.',
+      },
+      versionChip: {
+        title: 'Versión de la Aplicación',
+        description:
+          'Muestra la versión de la aplicación que estás usando, así como la versión del servidor.',
+      },
+    },
+
+    home: {
+      birthdays: {
+        title: 'Cumpleaños de hoy',
+        description: 'Muestra los socios que cumplen años hoy.',
+      },
+      emailsToday: {
+        title: 'Correos enviados hoy',
+        description: 'Muestra los correos que se han enviado hoy.',
+      },
+    },
+
+    members: {
+      search: {
+        title: 'Buscar socios',
+        description: 'Filtra la lista por nombre, correo o teléfono mientras escribes.',
+      },
+      interestFilter: {
+        title: 'Filtrar por interés',
+        description: 'Muestra solo los socios suscritos a uno o varios grupos de interés.',
+      },
+      export: {
+        title: 'Exportar',
+        description: 'Descarga la lista filtrada actual como archivo.',
+      },
+      add: {
+        title: 'Añadir socio',
+        description: 'Crea un nuevo registro de socio.',
+      },
+      table: {
+        title: 'Lista de socios',
+        description:
+          'Haz clic en una fila para editar ese socio, o usa el icono de papelera para eliminarlo.',
+      },
+
+      upsert: {
+        personalDetails: {
+          title: 'Datos personales',
+          description: 'Introduce el nombre, apellidos, fecha de nacimiento y género del socio.',
+        },
+        contact: {
+          title: 'Información de contacto',
+          description: 'Añade el correo, el teléfono y el país para contactar con este socio.',
+        },
+        interests: {
+          title: 'Intereses',
+          description:
+            'Asigna uno o varios grupos de interés para que este socio reciba correos relevantes.',
+        },
+        emailsHistory: {
+          title: 'Historial de correos',
+          description: 'Muestra todos los correos que ha recibido este socio hasta ahora.',
+        },
+        save: {
+          title: 'Guardar',
+          description: 'Guarda el socio. Los campos obligatorios deben estar rellenados primero.',
+        },
+        delete: {
+          title: 'Eliminar socio',
+          description: 'Elimina este socio de forma permanente. Esta acción no se puede deshacer.',
+        },
+      },
+    },
+
+    users: {
+      list: {
+        search: {
+          title: 'Buscar usuarios',
+          description: 'Filtra la lista por nombre o correo mientras escribes.',
+        },
+        add: {
+          title: 'Añadir usuario',
+          description: 'Crea una nueva cuenta de usuario.',
+        },
+        table: {
+          title: 'Lista de usuarios',
+          description:
+            'Haz clic en una fila para editar ese usuario. La etiqueta indica su rol: administrador o usuario normal.',
+        },
+      },
+
+      upsert: {
+        form: {
+          title: 'Datos del usuario',
+          description: 'Introduce el nombre y el correo electrónico del usuario.',
+        },
+        passwordField: {
+          title: 'Establecer contraseña',
+          description: 'Elige una contraseña inicial para la cuenta de este usuario.',
+        },
+        save: {
+          title: 'Guardar',
+          description:
+            'Guarda este usuario. Los campos obligatorios deben estar rellenados primero.',
+        },
+        passwordCard: {
+          title: 'Cambiar contraseña',
+          description: 'Establece una nueva contraseña para esta cuenta.',
+        },
+        roleCard: {
+          title: 'Rol',
+          description: 'Asciende a este usuario a administrador, o vuélvelo a usuario normal.',
+        },
+        delete: {
+          title: 'Eliminar usuario',
+          description:
+            'Elimina de forma permanente la cuenta de este usuario. Esta acción no se puede deshacer.',
+        },
+      },
+    },
+
+    interests: {
+      list: {
+        search: {
+          title: 'Buscar intereses',
+          description: 'Filtra la lista por nombre o descripción mientras escribes.',
+        },
+        add: {
+          title: 'Añadir interés',
+          description: 'Crea un nuevo grupo de interés al que los socios puedan suscribirse.',
+        },
+        table: {
+          title: 'Lista de intereses',
+          description:
+            'Haz clic en una fila para editar ese interés, o usa el icono de papelera para eliminarlo.',
+        },
+      },
+
+      upsert: {
+        form: {
+          title: 'Datos del interés',
+          description: 'Indica un nombre para el interés y, opcionalmente, una breve descripción.',
+        },
+        save: {
+          title: 'Guardar',
+          description: 'Guarda el interés. El nombre es obligatorio.',
+        },
+        delete: {
+          title: 'Eliminar interés',
+          description:
+            'Elimina este interés de forma permanente. Los socios suscritos a él perderán esa asociación. Esta acción no se puede deshacer.',
+        },
+      },
+    },
   },
 }
