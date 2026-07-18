@@ -453,6 +453,15 @@ export default {
   },
 
   email: {
+    common: {
+      showingTransactional: 'Mostrando todo',
+      hidingTransactional: 'Ocultando emails del sistema',
+    },
+
+    category: {
+      transactional: 'Sistema',
+    },
+
     titles: {
       memberEmails: 'Correos',
       todayEmails: 'Correos de Hoy',

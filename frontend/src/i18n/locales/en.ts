@@ -449,6 +449,15 @@ export default {
   },
 
   email: {
+    common: {
+      showingTransactional: 'Showing all',
+      hidingTransactional: 'Hiding system emails',
+    },
+
+    category: {
+      transactional: 'System',
+    },
+
     titles: {
       memberEmails: 'Emails',
       todayEmails: "Today's Emails",
