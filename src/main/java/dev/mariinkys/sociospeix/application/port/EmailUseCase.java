@@ -1,5 +1,6 @@
 package dev.mariinkys.sociospeix.application.port;
 
+import dev.mariinkys.sociospeix.application.service.EmailProviderInfo;
 import dev.mariinkys.sociospeix.application.service.EmailProviderStatus;
 import dev.mariinkys.sociospeix.domain.model.Email;
 import dev.mariinkys.sociospeix.domain.model.EmailAttachment;
@@ -22,4 +23,6 @@ public interface EmailUseCase {
     Email getEmailById(UUID id);
     EmailProviderStatus getProviderStatus();
     Email sendTransactional(String recipientEmail, String subject, String htmlBody);
+    List<EmailProviderInfo> listAvailableProviders();
+    void setActiveProvider(String providerName);
 }

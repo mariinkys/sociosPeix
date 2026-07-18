@@ -3,17 +3,30 @@ import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
+import Select from 'primevue/select'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
 import { emailsService } from '@/services/emails.service'
-import type { EmailProviderStatusResponse } from '@/types/email.types'
+import type { EmailProviderInfo, EmailProviderStatusResponse } from '@/types/email.types'
 
 defineOptions({ inheritAttrs: false })
 
 const { t } = useI18n({ useScope: 'global' })
 const toast = useToast()
+const confirm = useConfirm()
+const { isAdmin } = storeToRefs(useAuthStore())
 
 const status = ref<EmailProviderStatusResponse | null>(null)
 const loading = ref(false)
+
+const providers = ref<EmailProviderInfo[]>([])
+const providersLoading = ref(false)
+const switching = ref(false)
+// mirrors status.provider for the Select's v-model; kept separate so a
+// declined confirmation can revert the dropdown without touching `status`
+const selectedProvider = ref<string | null>(null)
 
 const usagePercent = computed(() => {
   if (!status.value) return 0
@@ -36,6 +49,7 @@ async function fetchStatus() {
   loading.value = true
   try {
     status.value = await emailsService.getProviderStatus()
+    selectedProvider.value = status.value.provider
   } catch {
     toast.add({
       severity: 'error',
@@ -48,7 +62,70 @@ async function fetchStatus() {
   }
 }
 
-onMounted(fetchStatus)
+async function fetchProviders() {
+  providersLoading.value = true
+  try {
+    providers.value = await emailsService.listProviders()
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: t('common.feedback.error'),
+      detail: t('email.quotaCard.errors.loadProviders'),
+      life: 3000,
+    })
+  } finally {
+    providersLoading.value = false
+  }
+}
+
+function onProviderPicked(newProvider: string) {
+  const current = status.value?.provider ?? null
+  if (!newProvider || newProvider === current) return
+
+  confirm.require({
+    header: t('email.quotaCard.switchConfirm.header'),
+    message: t('email.quotaCard.switchConfirm.message', { provider: newProvider }),
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: t('common.actions.confirm'),
+    rejectLabel: t('common.actions.cancel'),
+    acceptProps: { severity: 'warn' },
+    accept: () => applyProviderChange(newProvider),
+    reject: () => {
+      selectedProvider.value = current // revert the dropdown
+    },
+  })
+}
+
+async function applyProviderChange(newProvider: string) {
+  switching.value = true
+  try {
+    await emailsService.setActiveProvider(newProvider)
+    toast.add({
+      severity: 'success',
+      summary: t('common.feedback.success'),
+      detail: t('email.quotaCard.switchSuccess', { provider: newProvider }),
+      life: 3000,
+    })
+    await fetchStatus() // refresh quota numbers for the newly active provider
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: t('common.feedback.error'),
+      detail: t('email.quotaCard.errors.switchFailed'),
+      life: 3000,
+    })
+    selectedProvider.value = status.value?.provider ?? null // revert on failure too
+  } finally {
+    switching.value = false
+  }
+}
+
+onMounted(async () => {
+  await fetchStatus()
+  if (isAdmin.value) {
+    await fetchProviders()
+  }
+})
 </script>
 
 <template>
@@ -83,10 +160,25 @@ onMounted(fetchStatus)
 
         <template v-else-if="status">
           <div class="flex items-center gap-1.5">
-            <span class="text-xs text-surface-400">{{
-              t('common.fields.provider')
-            }}</span>
+            <span class="text-xs text-surface-400">{{ t('common.fields.provider') }}</span>
+
+            <!-- Admins -->
+            <Select
+              v-if="isAdmin"
+              v-model="selectedProvider"
+              :options="providers"
+              optionLabel="name"
+              optionValue="name"
+              :loading="providersLoading || switching"
+              :disabled="switching"
+              size="small"
+              class="text-xs w-full"
+              @update:modelValue="onProviderPicked"
+            />
+
+            <!-- Non-admins -->
             <span
+              v-else
               class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-100 dark:bg-surface-800 text-xs font-medium text-surface-700 dark:text-surface-300 capitalize"
             >
               {{ status.provider }}

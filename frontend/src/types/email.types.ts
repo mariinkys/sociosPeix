@@ -28,3 +28,8 @@ export interface SendEmailToInterestsPayload {
   htmlBody: string
   interestIds: number[]
 }
+
+export interface EmailProviderInfo {
+  name: string
+  dailyLimit: number
+}
