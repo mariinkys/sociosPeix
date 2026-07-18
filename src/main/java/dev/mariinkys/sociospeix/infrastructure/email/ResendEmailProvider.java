@@ -19,18 +19,25 @@ public class ResendEmailProvider implements EmailPort {
     private final Resend resend;
     private final String from;
     private final int dailyLimit;
+    private final boolean configured;
 
     public ResendEmailProvider(EmailProperties properties) {
         var config = properties.forProvider("resend");
-        this.resend = new Resend(config.getApiKey());
+        this.configured = config.isConfigured();
         this.from = properties.getFrom();
         this.dailyLimit = config.getDailyLimit();
+
+        this.resend = configured ? new Resend(config.getApiKey()) : null;
     }
 
     @Override
     public void send(String subject, String htmlBody,
                      List<String> recipientEmails,
                      List<EmailAttachment> attachments) {
+
+        if (!configured) {
+            throw new EmailSendException("Resend provider is not configured (missing API key)");
+        }
 
         var resendAttachments = attachments.stream()
                 .map(a -> {
@@ -66,4 +73,7 @@ public class ResendEmailProvider implements EmailPort {
 
     @Override
     public int getDailyLimit() { return dailyLimit; }
+
+    @Override
+    public boolean isConfigured() { return configured; }
 }

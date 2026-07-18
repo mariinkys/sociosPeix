@@ -6,6 +6,7 @@ import Button from 'primevue/button'
 import Select from 'primevue/select'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
+import ConfirmDialog from 'primevue/confirmdialog'
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { emailsService } from '@/services/emails.service'
@@ -86,7 +87,7 @@ function onProviderPicked(newProvider: string) {
     header: t('email.quotaCard.switchConfirm.header'),
     message: t('email.quotaCard.switchConfirm.message', { provider: newProvider }),
     icon: 'pi pi-exclamation-triangle',
-    acceptLabel: t('common.actions.confirm'),
+    acceptLabel: t('common.actions.apply'),
     rejectLabel: t('common.actions.cancel'),
     acceptProps: { severity: 'warn' },
     accept: () => applyProviderChange(newProvider),
@@ -129,6 +130,8 @@ onMounted(async () => {
 </script>
 
 <template>
+  <ConfirmDialog />
+
   <Card
     v-bind="$attrs"
     class="border border-surface-200 dark:border-surface-700 shadow-sm max-w-sm h-full"

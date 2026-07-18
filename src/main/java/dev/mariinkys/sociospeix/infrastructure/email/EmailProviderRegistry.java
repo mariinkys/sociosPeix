@@ -18,6 +18,7 @@ public class EmailProviderRegistry {
     // asking for a single EmailPort once more than one @Component exists.
     public EmailProviderRegistry(List<EmailPort> providers) {
         this.providersByName = providers.stream()
+                .filter(EmailPort::isConfigured)
                 .collect(Collectors.toMap(EmailPort::getProviderName, Function.identity()));
     }
 

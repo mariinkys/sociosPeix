@@ -29,5 +29,9 @@ public class EmailProperties {
         public void setApiKey(String apiKey) { this.apiKey = apiKey; }
         public int getDailyLimit() { return dailyLimit; }
         public void setDailyLimit(int dailyLimit) { this.dailyLimit = dailyLimit; }
+
+        public boolean isConfigured() {
+            return apiKey != null && !apiKey.isBlank() && apiKey.length() > 5;
+        }
     }
 }
