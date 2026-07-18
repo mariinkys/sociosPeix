@@ -596,6 +596,10 @@ export default {
         title: 'Emails sent today',
         description: 'Shows the emails that have been sent out today.',
       },
+      emailsTodayTransactionalButton: {
+        title: 'Show/Hide system emails',
+        description: 'System emails are hidden by default (Password Reset Emails...).',
+      },
     },
 
     members: {

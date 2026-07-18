@@ -90,6 +90,7 @@ onMounted(fetchTodayEmails)
               v-model="showTransactional"
               :onLabel="t('email.common.showingTransactional')"
               :offLabel="t('email.common.hidingTransactional')"
+              data-tour="home-emails-today-transactional-button"
               onIcon="pi pi-eye"
               offIcon="pi pi-eye-slash"
               size="small"

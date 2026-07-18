@@ -600,6 +600,11 @@ export default {
         title: 'Correos enviados hoy',
         description: 'Muestra los correos que se han enviado hoy.',
       },
+      emailsTodayTransactionalButton: {
+        title: 'Muestra/Esconde correos del sistema',
+        description:
+          'Los correos del sistema estan ocultos por defecto (Correos de cambio de contraseña...).',
+      },
     },
 
     members: {
