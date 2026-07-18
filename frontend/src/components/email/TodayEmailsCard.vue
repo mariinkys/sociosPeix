@@ -7,6 +7,7 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import ToggleButton from 'primevue/togglebutton'
 import Card from 'primevue/card'
+import Tag from 'primevue/tag'
 import { useToast } from 'primevue/usetoast'
 import { emailsService } from '@/services/emails.service'
 import type { EmailResponse } from '@/types/email.types'
@@ -121,15 +122,16 @@ onMounted(fetchTodayEmails)
           <Column field="subject" :header="t('common.fields.subject')" style="width: 40%">
             <template #body="{ data }: { data: EmailResponse }">
               <div class="flex items-center gap-2">
-                <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
-                  data.subject
-                }}</span>
                 <Tag
                   v-if="data.category === 'TRANSACTIONAL'"
                   :value="t('email.category.transactional')"
                   severity="info"
                   class="text-xs"
                 />
+
+                <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
+                  data.subject
+                }}</span>
               </div>
             </template>
           </Column>

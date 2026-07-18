@@ -10,7 +10,9 @@ import dev.mariinkys.sociospeix.domain.model.Email;
 import dev.mariinkys.sociospeix.domain.model.EmailAttachment;
 import dev.mariinkys.sociospeix.domain.model.EmailCategory;
 import dev.mariinkys.sociospeix.domain.repository.EmailRepository;
+import dev.mariinkys.sociospeix.domain.repository.EmailSettingsRepository;
 import dev.mariinkys.sociospeix.domain.repository.MemberRepository;
+import dev.mariinkys.sociospeix.infrastructure.email.EmailProviderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -26,14 +28,17 @@ public class EmailService implements EmailUseCase {
 
     private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
-    private final EmailPort emailPort;
+    private final EmailProviderRegistry providerRegistry;
+    private final EmailSettingsRepository emailSettingsRepository;
     private final EmailRepository emailRepository;
     private final MemberRepository memberRepository;
 
-    public EmailService(EmailPort emailPort,
+    public EmailService(EmailProviderRegistry providerRegistry,
+                        EmailSettingsRepository emailSettingsRepository,
                         EmailRepository emailRepository,
                         MemberRepository memberRepository) {
-        this.emailPort = emailPort;
+        this.providerRegistry = providerRegistry;
+        this.emailSettingsRepository = emailSettingsRepository;
         this.emailRepository = emailRepository;
         this.memberRepository = memberRepository;
     }
@@ -117,9 +122,10 @@ public class EmailService implements EmailUseCase {
     @Override
     @Transactional(readOnly = true)
     public EmailProviderStatus getProviderStatus() {
-        int limit = emailPort.getDailyLimit();
-        int sentToday = emailRepository.countRecipientsToday(emailPort.getProviderName());
-        return new EmailProviderStatus(emailPort.getProviderName(), limit, sentToday, limit - sentToday);
+        var provider = activeProvider();
+        int limit = provider.getDailyLimit();
+        int sentToday = emailRepository.countRecipientsToday(provider.getProviderName());
+        return new EmailProviderStatus(provider.getProviderName(), limit, sentToday, limit - sentToday);
     }
 
     @Override
@@ -131,6 +137,24 @@ public class EmailService implements EmailUseCase {
         return send(subject, htmlBody, List.of(recipientEmail), List.of(), EmailCategory.TRANSACTIONAL);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<EmailProviderInfo> listAvailableProviders() {
+        return providerRegistry.getAll().stream()
+                .map(p -> new EmailProviderInfo(p.getProviderName(), p.getDailyLimit()))
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public void setActiveProvider(String providerName) {
+        if (!providerRegistry.has(providerName)) {
+            throw new EmailSendException("Unknown email provider: " + providerName);
+        }
+        emailSettingsRepository.setActiveProviderName(providerName);
+        log.info("Active email provider switched to {}", providerName);
+    }
+
     private Email send(String subject, String htmlBody,
                        List<String> recipients, List<EmailAttachment> attachments) {
         return send(subject, htmlBody, recipients, attachments, EmailCategory.CAMPAIGN);
@@ -139,12 +163,14 @@ public class EmailService implements EmailUseCase {
     private Email send(String subject, String htmlBody, List<String> recipients,
                        List<EmailAttachment> attachments, EmailCategory category) {
 
-        checkDailyLimit(recipients.size());
+        var provider = activeProvider();
+
+        checkDailyLimit(provider, recipients.size());
 
         try {
-            emailPort.send(subject, htmlBody, recipients, attachments);
+            provider.send(subject, htmlBody, recipients, attachments);
             log.info("Email sent via {} to {} recipients [{}]",
-                    emailPort.getProviderName(), recipients.size(), category);
+                    provider.getProviderName(), recipients.size(), category);
         } catch (EmailSendException e) {
             throw e;
         } catch (Exception e) {
@@ -152,22 +178,28 @@ public class EmailService implements EmailUseCase {
         }
 
         return emailRepository.save(
-                new Email(subject, htmlBody, emailPort.getProviderName(), recipients, category)
+                new Email(subject, htmlBody, provider.getProviderName(), recipients, category)
         );
     }
 
-    private void checkDailyLimit(int requested) {
-        int limit = emailPort.getDailyLimit();
-        int sentToday = emailRepository.countRecipientsToday(emailPort.getProviderName());
+    private void checkDailyLimit(EmailPort provider, int requested) {
+        int limit = provider.getDailyLimit();
+        int sentToday = emailRepository.countRecipientsToday(provider.getProviderName());
         int remaining = limit - sentToday;
 
         if (requested > remaining) {
             throw new DailyEmailLimitException(
-                    emailPort.getProviderName(), limit, sentToday, requested
+                    provider.getProviderName(), limit, sentToday, requested
             );
         }
 
         log.debug("Daily limit check passed for {}: {}/{} used, requesting {}",
-                emailPort.getProviderName(), sentToday, limit, requested);
+                provider.getProviderName(), sentToday, limit, requested);
+    }
+
+    private EmailPort activeProvider() {
+        String name = emailSettingsRepository.getActiveProviderName()
+                .orElseThrow(() -> new IllegalStateException("No active email provider configured"));
+        return providerRegistry.get(name);
     }
 }

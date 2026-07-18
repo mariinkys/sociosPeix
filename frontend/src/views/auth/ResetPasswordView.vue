@@ -178,7 +178,7 @@ async function onSubmit({ valid }: FormSubmitEvent) {
               <Password
                 v-model="model.newPassword"
                 :placeholder="t('common.placeholders.enterPassword')"
-                :feedback="true"
+                :feedback="false"
                 :invalid="$field?.invalid"
                 toggleMask
                 fluid

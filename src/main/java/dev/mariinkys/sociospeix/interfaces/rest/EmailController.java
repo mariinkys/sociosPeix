@@ -2,17 +2,15 @@ package dev.mariinkys.sociospeix.interfaces.rest;
 
 import dev.mariinkys.sociospeix.application.port.EmailUseCase;
 import dev.mariinkys.sociospeix.domain.model.EmailAttachment;
-import dev.mariinkys.sociospeix.interfaces.dto.email.EmailProviderStatusResponse;
-import dev.mariinkys.sociospeix.interfaces.dto.email.EmailResponse;
+import dev.mariinkys.sociospeix.interfaces.dto.email.*;
 import dev.mariinkys.sociospeix.interfaces.dto.PageResponse;
-import dev.mariinkys.sociospeix.interfaces.dto.email.SendEmailRequest;
-import dev.mariinkys.sociospeix.interfaces.dto.email.SendEmailToInterestsRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -109,6 +107,22 @@ public class EmailController {
         return ResponseEntity.ok(
                 EmailProviderStatusResponse.from(emailUseCase.getProviderStatus())
         );
+    }
+
+    @GetMapping("/providers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<EmailProviderInfoResponse>> listProviders() {
+        var providers = emailUseCase.listAvailableProviders().stream()
+                .map(EmailProviderInfoResponse::from)
+                .toList();
+        return ResponseEntity.ok(providers);
+    }
+
+    @PutMapping("/active-provider")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> setActiveProvider(@Valid @RequestBody SetActiveProviderRequest request) {
+        emailUseCase.setActiveProvider(request.provider());
+        return ResponseEntity.noContent().build();
     }
 
     // Converts Spring MultipartFile → domain EmailAttachment

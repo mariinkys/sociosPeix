@@ -41,3 +41,6 @@ email:
     resend:
       api-key: ${RESEND_API_KEY:re_key}
       daily-limit: 100
+    mailtrap:
+      api-key: ${MAILTRAP_API_KEY:mt_key}
+      daily-limit: 150

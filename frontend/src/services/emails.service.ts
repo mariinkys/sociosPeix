@@ -1,7 +1,7 @@
-// services/emails.service.ts
 import api from '@/api/axios'
 import type { PageResponse, PaginatedParams } from '@/types/common.types'
 import type {
+  EmailProviderInfo,
   EmailProviderStatusResponse,
   EmailResponse,
   SendEmailPayload,
@@ -75,6 +75,15 @@ class EmailsService {
   async getProviderStatus(): Promise<EmailProviderStatusResponse> {
     const { data } = await api.get<EmailProviderStatusResponse>(`api/emails/provider/status`)
     return data
+  }
+
+  async listProviders(): Promise<EmailProviderInfo[]> {
+    const { data } = await api.get<EmailProviderInfo[]>('/api/emails/providers')
+    return data
+  }
+
+  async setActiveProvider(provider: string): Promise<void> {
+    await api.put<void>('/api/emails/active-provider', { provider })
   }
 }
 

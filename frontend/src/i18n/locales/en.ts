@@ -540,6 +540,15 @@ export default {
       resetsAt: '@:common.states.resetsAtMidnight',
       errors: {
         load: 'Failed to load email provider status.',
+        loadProviders: "Couldn't load provider list",
+        switchFailed: "Couldn't switch provider",
+      },
+
+      switchSuccess: 'Switched to {provider}',
+      switchConfirm: {
+        header: 'Change email provider',
+        message:
+          'Switch the active email provider to {provider}? All emails sent from now on will use it.',
       },
     },
 

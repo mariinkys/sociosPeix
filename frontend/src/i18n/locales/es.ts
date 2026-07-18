@@ -544,6 +544,15 @@ export default {
       resetsAt: '@:common.states.resetsAtMidnight',
       errors: {
         load: 'No se pudo cargar el estado del proveedor de correo.',
+        loadProviders: 'No se ha podido cargar la lista de proveedores',
+        switchFailed: 'No se ha podido cambiar de proveedor',
+      },
+
+      switchSuccess: 'Cambiado a {provider}',
+      switchConfirm: {
+        header: 'Cambiar proveedor de correo',
+        message:
+          '¿Cambiar el proveedor activo a {provider}? Todos los correos enviados a partir de ahora lo usarán.',
       },
     },
 

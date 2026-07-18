@@ -1,8 +1,7 @@
 package dev.mariinkys.sociospeix.application.service;
 
 import dev.mariinkys.sociospeix.application.exception.DailyEmailLimitException;
-import dev.mariinkys.sociospeix.application.port.EmailPort;
-import dev.mariinkys.sociospeix.domain.model.Email;
+import dev.mariinkys.sociospeix.application.port.EmailUseCase;
 import dev.mariinkys.sociospeix.domain.model.Member;
 import dev.mariinkys.sociospeix.domain.repository.EmailRepository;
 import dev.mariinkys.sociospeix.domain.repository.MemberRepository;
@@ -22,16 +21,16 @@ public class BirthdayEmailService {
 
     private final MemberRepository memberRepository;
     private final EmailRepository emailRepository;
-    private final EmailPort emailPort;
+    private final EmailUseCase emailUseCase;
     private final BirthdayEmailTemplate template;
 
     public BirthdayEmailService(MemberRepository memberRepository,
                                 EmailRepository emailRepository,
-                                EmailPort emailPort,
+                                EmailUseCase emailUseCase,
                                 BirthdayEmailTemplate template) {
         this.memberRepository = memberRepository;
         this.emailRepository = emailRepository;
-        this.emailPort = emailPort;
+        this.emailUseCase = emailUseCase;
         this.template = template;
     }
 
@@ -87,22 +86,11 @@ public class BirthdayEmailService {
     }
 
     private void sendTo(Member member) {
-        int sentToday = emailRepository.countRecipientsToday(emailPort.getProviderName());
-        int remaining = emailPort.getDailyLimit() - sentToday;
-        if (remaining <= 0) {
-            throw new DailyEmailLimitException(
-                    emailPort.getProviderName(), emailPort.getDailyLimit(), sentToday, 1
-            );
-        }
-
         String html = template.build(member.getName());
         var attachments = List.of(template.logoAttachment());
 
-        emailPort.send(SUBJECT, html, List.of(member.getEmail()), attachments);
-
-        emailRepository.save(new Email(
-                SUBJECT, html, emailPort.getProviderName(), List.of(member.getEmail())
-        ));
+        // sendToMember resolves whichever provider is currently active and enforces its daily limit
+        emailUseCase.sendToMember(member.getId(), SUBJECT, html, attachments);
 
         log.info("Birthday email sent to member {} ({})", member.getId(), member.getEmail());
     }
