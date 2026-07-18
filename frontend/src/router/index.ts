@@ -74,6 +74,18 @@ const routes = [
     component: () => import('@/views/ToolsView.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/views/auth/ForgotPasswordView.vue'),
+    meta: { guestOnly: true },
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: () => import('@/views/auth/ResetPasswordView.vue'),
+    meta: { guestOnly: true },
+  },
 ]
 
 const router = createRouter({

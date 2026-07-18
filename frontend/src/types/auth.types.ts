@@ -16,3 +16,13 @@ export interface RegisterPayload {
   email: string
   password: string
 }
+
+export interface ForgotPasswordPayload {
+  email: string
+}
+
+export interface ResetPasswordPayload {
+  email: string
+  code: string
+  newPassword: string
+}

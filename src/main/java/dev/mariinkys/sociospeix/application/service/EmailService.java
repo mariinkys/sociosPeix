@@ -8,6 +8,7 @@ import dev.mariinkys.sociospeix.application.port.EmailPort;
 import dev.mariinkys.sociospeix.application.port.EmailUseCase;
 import dev.mariinkys.sociospeix.domain.model.Email;
 import dev.mariinkys.sociospeix.domain.model.EmailAttachment;
+import dev.mariinkys.sociospeix.domain.model.EmailCategory;
 import dev.mariinkys.sociospeix.domain.repository.EmailRepository;
 import dev.mariinkys.sociospeix.domain.repository.MemberRepository;
 import org.slf4j.Logger;
@@ -121,15 +122,29 @@ public class EmailService implements EmailUseCase {
         return new EmailProviderStatus(emailPort.getProviderName(), limit, sentToday, limit - sentToday);
     }
 
-    // sends via the provider and persists the record
+    @Override
+    @Transactional
+    public Email sendTransactional(String recipientEmail, String subject, String htmlBody) {
+        if (recipientEmail == null || recipientEmail.isBlank()) {
+            throw new EmailSendException("Recipient email is required");
+        }
+        return send(subject, htmlBody, List.of(recipientEmail), List.of(), EmailCategory.TRANSACTIONAL);
+    }
+
     private Email send(String subject, String htmlBody,
                        List<String> recipients, List<EmailAttachment> attachments) {
+        return send(subject, htmlBody, recipients, attachments, EmailCategory.CAMPAIGN);
+    }
+
+    private Email send(String subject, String htmlBody, List<String> recipients,
+                       List<EmailAttachment> attachments, EmailCategory category) {
 
         checkDailyLimit(recipients.size());
 
         try {
             emailPort.send(subject, htmlBody, recipients, attachments);
-            log.info("Email sent via {} to {} recipients", emailPort.getProviderName(), recipients.size());
+            log.info("Email sent via {} to {} recipients [{}]",
+                    emailPort.getProviderName(), recipients.size(), category);
         } catch (EmailSendException e) {
             throw e;
         } catch (Exception e) {
@@ -137,7 +152,7 @@ public class EmailService implements EmailUseCase {
         }
 
         return emailRepository.save(
-                new Email(subject, htmlBody, emailPort.getProviderName(), recipients)
+                new Email(subject, htmlBody, emailPort.getProviderName(), recipients, category)
         );
     }
 

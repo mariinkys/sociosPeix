@@ -1,6 +1,8 @@
 package dev.mariinkys.sociospeix.infrastructure.persistence.entity;
 
+import dev.mariinkys.sociospeix.domain.model.EmailCategory;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,10 @@ public class EmailJpaEntity {
     @Column(name = "email", nullable = false, length = 255)
     private List<String> recipientEmails = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private EmailCategory category;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -38,12 +44,26 @@ public class EmailJpaEntity {
 
     protected EmailJpaEntity() {}
 
+    // For creating
     public EmailJpaEntity(String subject, String body, String provider,
-                          List<String> recipientEmails) {
+                          List<String> recipientEmails, EmailCategory category) {
         this.subject = subject;
         this.body = body;
         this.provider = provider;
         this.recipientEmails = new ArrayList<>(recipientEmails);
+        this.category = category;
+    }
+
+    // For reconstructing from DB
+    public EmailJpaEntity(UUID id, String subject, String body, String provider,
+                          List<String> recipientEmails, EmailCategory category, LocalDateTime createdAt) {
+        this.id = id;
+        this.subject = subject;
+        this.body = body;
+        this.provider = provider;
+        this.recipientEmails = new ArrayList<>(recipientEmails);
+        this.category = category;
+        this.createdAt = createdAt;
     }
 
     public UUID getId() { return id; }
@@ -51,5 +71,6 @@ public class EmailJpaEntity {
     public String getBody() { return body; }
     public String getProvider() { return provider; }
     public List<String> getRecipientEmails() { return recipientEmails; }
+    public EmailCategory getCategory() { return category; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

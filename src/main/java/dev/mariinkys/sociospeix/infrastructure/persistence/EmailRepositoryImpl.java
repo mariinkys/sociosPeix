@@ -27,7 +27,7 @@ public class EmailRepositoryImpl implements EmailRepository {
     public Email save(Email email) {
         return toDomain(jpaRepository.save(
                 new EmailJpaEntity(email.getSubject(), email.getBody(),
-                        email.getProvider(), email.getRecipientEmails())
+                        email.getProvider(), email.getRecipientEmails(), email.getCategory())
         ));
     }
 
@@ -69,6 +69,6 @@ public class EmailRepositoryImpl implements EmailRepository {
 
     private Email toDomain(EmailJpaEntity e) {
         return new Email(e.getId(), e.getSubject(), e.getBody(),
-                e.getProvider(), e.getRecipientEmails(), e.getCreatedAt());
+                e.getProvider(), e.getRecipientEmails(), e.getCategory(), e.getCreatedAt());
     }
 }

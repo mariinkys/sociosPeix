@@ -25,6 +25,7 @@ export default {
       created: 'Created',
       deleted: 'Deleted',
       sent: 'Sent',
+      success: 'Success',
     },
 
     fields: {
@@ -97,6 +98,8 @@ export default {
       passwordsMismatch: 'Passwords do not match',
       max100: 'Must not exceed 100 characters',
       min8: 'Must be at least 8 characters',
+      codeRequired: 'Code is required',
+      invalidCode: 'Enter the 6-digit code',
     },
 
     states: {
@@ -140,6 +143,32 @@ export default {
       errors: {
         loginFailed: 'Login failed',
       },
+      forgotPasswordLink: 'Forgot your password?',
+    },
+    forgotPassword: {
+      title: 'Reset your password',
+      description: "Enter your email and we'll send you a code to reset your password.",
+      submit: 'Send code',
+      successMessage: 'If that email is registered, a code is on its way.',
+      backToLogin: 'Back to login',
+      errors: {
+        requestFailed: 'Something went wrong. Please try again.',
+      },
+      waitLabel: 'Wait {time} to request again',
+    },
+    resetPassword: {
+      title: 'Enter your code',
+      description: 'Check your inbox for the 6-digit code and choose a new password.',
+      codeLabel: 'Reset code',
+      codePlaceholder: '000000',
+      newPasswordLabel: 'New password',
+      submit: 'Reset password',
+      successMessage: 'Your password has been reset. You can now log in.',
+      resendCode: "Didn't get a code? Request a new one",
+      errors: {
+        resetFailed: 'That code is invalid or has expired.',
+      },
+      resendIn: 'Resend code in {time}',
     },
   },
 

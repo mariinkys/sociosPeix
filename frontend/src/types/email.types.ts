@@ -1,3 +1,5 @@
+export type EmailCategory = 'CAMPAIGN' | 'TRANSACTIONAL'
+
 export interface EmailResponse {
   id: string
   subject: string
@@ -5,6 +7,7 @@ export interface EmailResponse {
   body: string
   recipientEmails: string[]
   recipientCount: number
+  category: EmailCategory
   createdAt: string
 }
 

@@ -25,6 +25,7 @@ export default {
       created: 'Creado',
       deleted: 'Eliminado',
       sent: 'Enviado',
+      success: 'Éxito',
     },
 
     fields: {
@@ -97,6 +98,8 @@ export default {
       passwordsMismatch: 'Las contraseñas no coinciden',
       max100: 'No debe superar los 100 caracteres',
       min8: 'Debe tener al menos 8 caracteres',
+      codeRequired: 'El código es obligatorio',
+      invalidCode: 'Introduce el código de 6 dígitos',
     },
 
     states: {
@@ -140,6 +143,34 @@ export default {
       errors: {
         loginFailed: 'Error al iniciar sesión',
       },
+      forgotPasswordLink: '¿Has olvidado tu contraseña?',
+    },
+    forgotPassword: {
+      title: 'Restablece tu contraseña',
+      description:
+        'Introduce tu correo electrónico y te enviaremos un código para restablecer tu contraseña.',
+      submit: 'Enviar código',
+      successMessage: 'Si ese correo está registrado, recibirás un código en breve.',
+      backToLogin: 'Volver al inicio de sesión',
+      errors: {
+        requestFailed: 'Algo ha salido mal. Inténtalo de nuevo.',
+      },
+      waitLabel: 'Espera {time} para solicitarlo de nuevo',
+    },
+    resetPassword: {
+      title: 'Introduce tu código',
+      description:
+        'Revisa tu bandeja de entrada para ver el código de 6 dígitos y elige una nueva contraseña.',
+      codeLabel: 'Código de recuperación',
+      codePlaceholder: '000000',
+      newPasswordLabel: 'Nueva contraseña',
+      submit: 'Restablecer contraseña',
+      successMessage: 'Tu contraseña se ha restablecido. Ya puedes iniciar sesión.',
+      resendCode: '¿No has recibido el código? Solicita uno nuevo',
+      errors: {
+        resetFailed: 'Ese código no es válido o ha caducado.',
+      },
+      resendIn: 'Reenviar código en {time}',
     },
   },
 

@@ -1,13 +1,12 @@
 package dev.mariinkys.sociospeix.interfaces.rest;
 
+import dev.mariinkys.sociospeix.application.port.PasswordResetUseCase;
 import dev.mariinkys.sociospeix.application.port.UserUseCase;
 import dev.mariinkys.sociospeix.application.service.RefreshTokenService;
 import dev.mariinkys.sociospeix.domain.model.User;
 import dev.mariinkys.sociospeix.infrastructure.security.cookie.CookieService;
 import dev.mariinkys.sociospeix.infrastructure.security.jwt.JwtService;
-import dev.mariinkys.sociospeix.interfaces.dto.auth.AuthRequest;
-import dev.mariinkys.sociospeix.interfaces.dto.auth.AuthResponse;
-import dev.mariinkys.sociospeix.interfaces.dto.auth.RegisterRequest;
+import dev.mariinkys.sociospeix.interfaces.dto.auth.*;
 import dev.mariinkys.sociospeix.interfaces.dto.user.UserResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,17 +29,20 @@ public class AuthController {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final UserUseCase userUseCase;
+    private final PasswordResetUseCase passwordResetUseCase;
     private final CookieService cookieService;
 
     public AuthController(AuthenticationManager authManager,
                           JwtService jwtService,
                           RefreshTokenService refreshTokenService,
                           UserUseCase userUseCase,
+                          PasswordResetUseCase passwordResetUseCase,
                           CookieService cookieService) {
         this.authManager = authManager;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
         this.userUseCase = userUseCase;
+        this.passwordResetUseCase = passwordResetUseCase;
         this.cookieService = cookieService;
     }
 
@@ -81,6 +83,18 @@ public class AuthController {
         refreshTokenService.revokeAllForUser(userDetails.getUsername());
         response.addHeader(HttpHeaders.SET_COOKIE, cookieService.clearAccessTokenCookie().toString());
         response.addHeader(HttpHeaders.SET_COOKIE, cookieService.clearRefreshTokenCookie().toString());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        passwordResetUseCase.requestReset(request.email());
+        return ResponseEntity.accepted().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        passwordResetUseCase.resetPassword(request.email(), request.code(), request.newPassword());
         return ResponseEntity.noContent().build();
     }
 
