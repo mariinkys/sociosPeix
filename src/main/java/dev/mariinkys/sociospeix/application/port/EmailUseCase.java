@@ -21,4 +21,5 @@ public interface EmailUseCase {
     Page<Email> getAllEmailsByMember(UUID memberId, Pageable pageable);
     Email getEmailById(UUID id);
     EmailProviderStatus getProviderStatus();
+    Email sendTransactional(String recipientEmail, String subject, String htmlBody);
 }

@@ -1,10 +1,11 @@
 c
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
+import ToggleButton from 'primevue/togglebutton'
 import Card from 'primevue/card'
 import { useToast } from 'primevue/usetoast'
 import { emailsService } from '@/services/emails.service'
@@ -16,10 +17,17 @@ const toast = useToast()
 
 const emails = ref<EmailResponse[]>([])
 const loading = ref(false)
+const showTransactional = ref(false)
 
 const previewVisible = ref(false)
 const previewLoading = ref(false)
 const previewEmail = ref<(EmailResponse & { body?: string }) | null>(null)
+
+const visibleEmails = computed(() =>
+  showTransactional.value
+    ? emails.value
+    : emails.value.filter((e) => e.category !== 'TRANSACTIONAL'),
+)
 
 async function fetchTodayEmails() {
   loading.value = true
@@ -70,27 +78,38 @@ onMounted(fetchTodayEmails)
               {{ t('email.titles.todayEmails') }}
             </h2>
             <span
-              v-if="emails.length > 0"
+              v-if="visibleEmails.length > 0"
               class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 text-xs font-semibold"
             >
-              {{ emails.length }}
+              {{ visibleEmails.length }}
             </span>
           </div>
 
-          <Button
-            icon="pi pi-refresh"
-            severity="secondary"
-            text
-            rounded
-            size="small"
-            aria-label="Refresh"
-            :loading="loading"
-            @click="fetchTodayEmails"
-          />
+          <div class="flex items-center gap-1">
+            <ToggleButton
+              v-model="showTransactional"
+              :onLabel="t('email.common.showingTransactional')"
+              :offLabel="t('email.common.hidingTransactional')"
+              data-tour="home-emails-today-transactional-button"
+              onIcon="pi pi-eye"
+              offIcon="pi pi-eye-slash"
+              size="small"
+            />
+            <Button
+              icon="pi pi-refresh"
+              severity="secondary"
+              text
+              rounded
+              size="small"
+              aria-label="Refresh"
+              :loading="loading"
+              @click="fetchTodayEmails"
+            />
+          </div>
         </div>
 
         <DataTable
-          :value="emails"
+          :value="visibleEmails"
           :loading="loading"
           :rows="10"
           :rowsPerPageOptions="[5, 10, 25]"
@@ -101,9 +120,17 @@ onMounted(fetchTodayEmails)
         >
           <Column field="subject" :header="t('common.fields.subject')" style="width: 40%">
             <template #body="{ data }: { data: EmailResponse }">
-              <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
-                data.subject
-              }}</span>
+              <div class="flex items-center gap-2">
+                <span class="font-medium text-surface-900 dark:text-surface-0 text-sm">{{
+                  data.subject
+                }}</span>
+                <Tag
+                  v-if="data.category === 'TRANSACTIONAL'"
+                  :value="t('email.category.transactional')"
+                  severity="info"
+                  class="text-xs"
+                />
+              </div>
             </template>
           </Column>
           <Column field="provider" :header="t('common.fields.provider')" style="width: 10%">

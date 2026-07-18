@@ -19,5 +19,13 @@ export function homeTour(t: ComposerTranslation): DriveStep[] {
         side: 'top',
       },
     },
+    {
+      element: '[data-tour="home-emails-today-transactional-button"]',
+      popover: {
+        title: t('tours.home.emailsTodayTransactionalButton.title'),
+        description: t('tours.home.emailsTodayTransactionalButton.description'),
+        side: 'bottom',
+      },
+    },
   ]
 }
