@@ -67,7 +67,7 @@ public class PasswordResetService implements PasswordResetUseCase {
                 email, hash(code), LocalDateTime.now().plusMinutes(CODE_TTL_MINUTES)));
 
         try {
-            emailUseCase.sendTransactional(email, "Your password reset code", buildEmailHtml(code));
+            var _ = emailUseCase.sendTransactional(email, "Your password reset code", buildEmailHtml(code));
         } catch (Exception e) {
             // Log but don't leak send failures to the caller - same response either way
             log.error("Failed to send password reset email", e);
