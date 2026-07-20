@@ -12,6 +12,14 @@ export function toolsTour(t: ComposerTranslation): DriveStep[] {
       },
     },
     {
+      element: '[data-tour="tools-quota-provider-selector"]',
+      popover: {
+        title: t('tours.tools.providerSelector.title'),
+        description: t('tours.tools.providerSelector.description'),
+        side: 'right',
+      },
+    },
+    {
       element: '[data-tour="tools-send-interest"]',
       popover: {
         title: t('tours.tools.sendByInterest.title'),

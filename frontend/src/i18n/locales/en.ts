@@ -603,6 +603,11 @@ export default {
         description:
           "Shows the version of the app you're currently using, as well as the server version.",
       },
+      providerSelector: {
+        title: 'Email Provider Selector',
+        description:
+          'Select the email provider that will be used to send all emails from this app.',
+      },
     },
 
     home: {

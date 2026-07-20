@@ -169,6 +169,7 @@ onMounted(async () => {
             <Select
               v-if="isAdmin"
               v-model="selectedProvider"
+              data-tour="tools-quota-provider-selector"
               :options="providers"
               optionLabel="name"
               optionValue="name"

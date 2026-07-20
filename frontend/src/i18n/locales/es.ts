@@ -607,6 +607,11 @@ export default {
         description:
           'Muestra la versión de la aplicación que estás usando, así como la versión del servidor.',
       },
+      providerSelector: {
+        title: 'Selector de Proveedor de Emails',
+        description:
+          'Selecciona el proveedor desde el cual se mandarán todos los correos de la aplicación.',
+      },
     },
 
     home: {
