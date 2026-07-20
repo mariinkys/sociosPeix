@@ -102,6 +102,15 @@ public class EmailController {
         return ResponseEntity.status(HttpStatus.CREATED).body(EmailResponse.from(email));
     }
 
+    // Check if we don't exceed the current provider limits before a sendToInterests/sendToAll
+    @GetMapping("/provider/multi-check")
+    public ResponseEntity<MultiEmailCheckResponse> multiCheckMail(
+            @RequestParam(required = false) List<Integer> interestIds) {
+        return ResponseEntity.ok(
+                MultiEmailCheckResponse.from(emailUseCase.checkMultiSend(interestIds))
+        );
+    }
+
     @GetMapping("/provider/status")
     public ResponseEntity<EmailProviderStatusResponse> getProviderStatus() {
         return ResponseEntity.ok(

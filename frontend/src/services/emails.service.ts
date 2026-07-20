@@ -4,6 +4,7 @@ import type {
   EmailProviderInfo,
   EmailProviderStatusResponse,
   EmailResponse,
+  MultiEmailCheckResponse,
   SendEmailPayload,
   SendEmailToInterestsPayload,
 } from '@/types/email.types'
@@ -84,6 +85,13 @@ class EmailsService {
 
   async setActiveProvider(provider: string): Promise<void> {
     await api.put<void>('/api/emails/active-provider', { provider })
+  }
+
+  async checkMultiSend(interestIds?: number[]): Promise<MultiEmailCheckResponse> {
+    const { data } = await api.get<MultiEmailCheckResponse>('/api/emails/provider/multi-check', {
+      params: interestIds && interestIds.length > 0 ? { interestIds } : undefined,
+    })
+    return data
   }
 }
 

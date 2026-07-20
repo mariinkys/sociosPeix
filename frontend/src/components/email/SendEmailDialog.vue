@@ -11,6 +11,7 @@ import { emailsService } from '@/services/emails.service'
 import { applyTemplate, wrapEmailBody, getTemplateOptions } from '@/utils/emailTemplates'
 import InterestsSelect from '@/components/interest/MultiSelect.vue'
 import type { EmailTemplate } from '@/utils/emailTemplates'
+import type { MultiEmailCheckResponse } from '@/types/email.types'
 
 const props = defineProps<{
   mode: 'member' | 'interests' | 'all'
@@ -38,11 +39,23 @@ const attachments = ref<File[]>([])
 const attachmentError = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
 
+const checkLoading = ref(false)
+const checkResult = ref<MultiEmailCheckResponse | null>(null)
+const checkFailed = ref(false)
+
 const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024
 
 const totalAttachmentSize = computed(() => attachments.value.reduce((sum, f) => sum + f.size, 0))
 const templateOptions = computed(() => {
   return getTemplateOptions()
+})
+
+const needsCapacityCheck = computed(() => props.mode !== 'member')
+
+const sendDisabled = computed(() => {
+  if (!needsCapacityCheck.value) return false
+  if (checkLoading.value) return true
+  return checkResult.value?.exceedsLimit ?? false
 })
 
 function formatSize(bytes: number): string {
@@ -73,6 +86,9 @@ function reset() {
   interestError.value = ''
   attachments.value = []
   attachmentError.value = ''
+  checkLoading.value = false
+  checkResult.value = null
+  checkFailed.value = false
 }
 
 function validate(): boolean {
@@ -89,15 +105,34 @@ function validate(): boolean {
     valid = false
   }
   if (props.mode === 'interests' && interestIds.value.length === 0) {
-    t('email.sendEmailDialog.validation.interestsRequired')
+    interestError.value = t('email.sendEmailDialog.validation.interestsRequired')
     valid = false
   }
   if (attachmentError.value) valid = false
   return valid
 }
 
+async function fetchCapacityCheck() {
+  checkLoading.value = true
+  checkFailed.value = false
+  checkResult.value = null
+  try {
+    checkResult.value = await emailsService.checkMultiSend(
+      props.mode === 'interests' ? interestIds.value : undefined,
+    )
+  } catch {
+    checkFailed.value = true
+  } finally {
+    checkLoading.value = false
+  }
+}
+
 function goToPreview() {
-  if (validate()) step.value = 'preview'
+  if (!validate()) return
+  step.value = 'preview'
+  if (needsCapacityCheck.value) {
+    fetchCapacityCheck()
+  }
 }
 
 function onFileChange(event: Event) {
@@ -123,6 +158,8 @@ function removeAttachment(index: number) {
 }
 
 async function onSend() {
+  if (sendDisabled.value) return
+
   sendLoading.value = true
   try {
     if (props.mode === 'interests') {
@@ -174,6 +211,7 @@ async function onSend() {
     @hide="reset"
   >
     <div v-if="step === 'compose'" class="space-y-5 py-2">
+      <!-- unchanged compose step - template, interests, subject, body, attachments -->
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">{{
           t('common.fields.template')
@@ -300,6 +338,82 @@ async function onSend() {
         <i class="pi pi-info-circle"></i>
         <span>{{ t('email.descriptions.preview') }}</span>
       </div>
+
+      <!-- capacity check, only for 'all' / 'interests' -->
+      <div
+        v-if="needsCapacityCheck"
+        class="flex items-center gap-3 rounded-lg px-3 py-2.5"
+        :class="
+          checkResult?.exceedsLimit
+            ? 'bg-red-50 dark:bg-red-950'
+            : checkFailed
+              ? 'bg-amber-50 dark:bg-amber-950'
+              : 'bg-surface-50 dark:bg-surface-800'
+        "
+      >
+        <template v-if="checkLoading">
+          <i class="pi pi-spinner pi-spin text-lg text-surface-400"></i>
+          <span class="text-sm text-surface-500 dark:text-surface-400">
+            {{ t('email.sendEmailDialog.capacityCheck.checking') }}
+          </span>
+        </template>
+
+        <template v-else-if="checkFailed">
+          <i class="pi pi-exclamation-triangle text-lg text-amber-500"></i>
+          <div class="flex items-center justify-between flex-1">
+            <span class="text-sm text-amber-700 dark:text-amber-400">
+              {{ t('email.sendEmailDialog.capacityCheck.checkFailed') }}
+            </span>
+            <Button
+              :label="t('common.actions.retry')"
+              text
+              size="small"
+              @click="fetchCapacityCheck"
+            />
+          </div>
+        </template>
+
+        <template v-else-if="checkResult">
+          <i
+            class="pi text-lg"
+            :class="
+              checkResult.exceedsLimit
+                ? 'pi-times-circle text-red-500'
+                : 'pi-check-circle text-green-500'
+            "
+          ></i>
+          <div>
+            <p class="text-sm font-semibold text-surface-900 dark:text-surface-0">
+              <template v-if="checkResult.exceedsLimit">
+                {{
+                  t('email.sendEmailDialog.capacityCheck.exceeds', {
+                    total: checkResult.totalRecipients,
+                    remaining: checkResult.remaining,
+                  })
+                }}
+              </template>
+              <template v-else>
+                {{
+                  t('email.sendEmailDialog.capacityCheck.ok', {
+                    total: checkResult.totalRecipients,
+                    remaining: checkResult.remaining,
+                  })
+                }}
+              </template>
+            </p>
+            <p class="text-xs text-surface-400 mt-0.5">
+              {{
+                t('email.sendEmailDialog.capacityCheck.providerDetail', {
+                  provider: checkResult.provider,
+                  sent: checkResult.sentToday,
+                  limit: checkResult.dailyLimit,
+                })
+              }}
+            </p>
+          </div>
+        </template>
+      </div>
+
       <iframe
         :srcdoc="renderedHtml"
         class="w-full rounded-lg border border-surface-200 dark:border-surface-700"
@@ -337,6 +451,7 @@ async function onSend() {
           icon="pi pi-send"
           iconPos="right"
           :loading="sendLoading"
+          :disabled="sendDisabled"
           @click="onSend"
         />
       </div>

@@ -33,3 +33,12 @@ export interface EmailProviderInfo {
   name: string
   dailyLimit: number
 }
+
+export interface MultiEmailCheckResponse {
+  provider: string
+  dailyLimit: number
+  sentToday: number
+  remaining: number
+  totalRecipients: number
+  exceedsLimit: boolean
+}

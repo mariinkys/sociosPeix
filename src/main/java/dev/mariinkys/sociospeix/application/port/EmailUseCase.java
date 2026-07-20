@@ -2,6 +2,7 @@ package dev.mariinkys.sociospeix.application.port;
 
 import dev.mariinkys.sociospeix.application.service.EmailProviderInfo;
 import dev.mariinkys.sociospeix.application.service.EmailProviderStatus;
+import dev.mariinkys.sociospeix.application.service.MultiEmailCheckResult;
 import dev.mariinkys.sociospeix.domain.model.Email;
 import dev.mariinkys.sociospeix.domain.model.EmailAttachment;
 import org.springframework.data.domain.Page;
@@ -25,4 +26,5 @@ public interface EmailUseCase {
     Email sendTransactional(String recipientEmail, String subject, String htmlBody);
     List<EmailProviderInfo> listAvailableProviders();
     void setActiveProvider(String providerName);
+    MultiEmailCheckResult checkMultiSend(List<Integer> interestIds);
 }

@@ -60,11 +60,7 @@ public class EmailService implements EmailUseCase {
     @Override
     @Transactional
     public Email sendToAll(String subject, String htmlBody, List<EmailAttachment> attachments) {
-        var recipients = memberRepository.findAllMembers().stream()
-                .map(dev.mariinkys.sociospeix.domain.model.Member::getEmail)
-                .filter(email -> !email.isBlank())
-                .distinct()
-                .toList();
+        var recipients = resolveRecipientEmails(null);
 
         if (recipients.isEmpty()) {
             throw new EmailSendException("No members with email addresses found");
@@ -81,11 +77,7 @@ public class EmailService implements EmailUseCase {
             throw new EmailSendException("At least one interest must be specified");
         }
 
-        var recipients = memberRepository.findAllByAnyInterestId(interestIds).stream()
-                .map(dev.mariinkys.sociospeix.domain.model.Member::getEmail)
-                .filter(email -> !email.isBlank())
-                .distinct()
-                .toList();
+        var recipients = resolveRecipientEmails(interestIds);
 
         if (recipients.isEmpty()) {
             throw new EmailSendException("No members with email addresses found for the given interests");
@@ -155,6 +147,27 @@ public class EmailService implements EmailUseCase {
         log.info("Active email provider switched to {}", providerName);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public MultiEmailCheckResult checkMultiSend(List<Integer> interestIds) {
+        var recipients = resolveRecipientEmails(interestIds);
+        var provider = activeProvider();
+
+        int limit = provider.getDailyLimit();
+        int sentToday = emailRepository.countRecipientsToday(provider.getProviderName());
+        int remaining = limit - sentToday;
+        int totalRecipients = recipients.size();
+
+        return new MultiEmailCheckResult(
+                provider.getProviderName(),
+                limit,
+                sentToday,
+                remaining,
+                totalRecipients,
+                totalRecipients > remaining
+        );
+    }
+
     private Email send(String subject, String htmlBody,
                        List<String> recipients, List<EmailAttachment> attachments) {
         return send(subject, htmlBody, recipients, attachments, EmailCategory.CAMPAIGN);
@@ -180,6 +193,22 @@ public class EmailService implements EmailUseCase {
         return emailRepository.save(
                 new Email(subject, htmlBody, provider.getProviderName(), recipients, category)
         );
+    }
+
+    private List<String> resolveRecipientEmails(List<Integer> interestIds) {
+        if (interestIds == null || interestIds.isEmpty()) {
+            return memberRepository.findAllMembers().stream()
+                    .map(dev.mariinkys.sociospeix.domain.model.Member::getEmail)
+                    .filter(email -> !email.isBlank())
+                    .distinct()
+                    .toList();
+        }
+
+        return memberRepository.findAllByAnyInterestId(interestIds).stream()
+                .map(dev.mariinkys.sociospeix.domain.model.Member::getEmail)
+                .filter(email -> !email.isBlank())
+                .distinct()
+                .toList();
     }
 
     private void checkDailyLimit(EmailPort provider, int requested) {

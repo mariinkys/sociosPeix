@@ -17,6 +17,7 @@ export default {
       composeEmail: 'Compose Email',
       signOut: 'Sign out',
       help: 'Help',
+      retry: 'Retry',
     },
 
     feedback: {
@@ -529,6 +530,13 @@ export default {
       messages: {
         sentDetail: 'Email sent successfully.',
         sendError: 'Failed to send email.',
+      },
+      capacityCheck: {
+        checking: 'Checking send capacity…',
+        checkFailed: "Couldn't check capacity. You can still try sending.",
+        ok: '{total} recipients — {remaining} sends remaining today',
+        exceeds: 'This would send to {total} recipients, but only {remaining} remain today',
+        providerDetail: '{provider} — {sent} sent today, {limit} daily limit',
       },
     },
 

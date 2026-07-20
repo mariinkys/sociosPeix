@@ -17,6 +17,7 @@ export default {
       composeEmail: 'Redactar correo',
       signOut: 'Cerrar sesión',
       help: 'Ayuda',
+      retry: 'Reintentar',
     },
 
     feedback: {
@@ -533,6 +534,13 @@ export default {
       messages: {
         sentDetail: 'Correo enviado correctamente.',
         sendError: 'No se pudo enviar el correo.',
+      },
+      capacityCheck: {
+        checking: 'Comprobando capacidad de envío…',
+        checkFailed: 'No se ha podido comprobar la capacidad. Aún puedes intentar enviarlo.',
+        ok: '{total} destinatarios — quedan {remaining} envíos hoy',
+        exceeds: 'TEsto se enviaría a {total} destinatarios, pero solo quedan {remaining} hoy',
+        providerDetail: '{provider} — {sent} enviados hoy, límite diario {limit}',
       },
     },
 
