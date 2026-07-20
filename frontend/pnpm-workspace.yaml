@@ -1,2 +1,3 @@
 minimumReleaseAgeExclude:
   - pinia@4.0.2
+  - eslint-plugin-vue@10.10.0
