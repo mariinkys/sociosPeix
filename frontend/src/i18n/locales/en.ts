@@ -133,6 +133,7 @@ export default {
       members: 'Members',
       interests: 'Interests',
       tools: 'Tools',
+      statistics: 'Statistics',
     },
   },
 
@@ -746,6 +747,20 @@ export default {
             "Permanently remove this interest. Members subscribed to it will lose that association. This action can't be undone.",
         },
       },
+    },
+  },
+
+  statistics: {
+    pageTitle: 'Statistics',
+    errors: {
+      load: "Couldn't load statistics",
+      export: "Couldn't export the file",
+    },
+    interestPopularity: {
+      title: 'Most Popular Interests',
+      description: 'Number of members who selected each interest',
+      datasetLabel: 'Members',
+      empty: 'No interest data yet',
     },
   },
 }

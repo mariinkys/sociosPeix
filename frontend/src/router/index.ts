@@ -86,6 +86,23 @@ const routes = [
     component: () => import('@/views/auth/ResetPasswordView.vue'),
     meta: { guestOnly: true },
   },
+  {
+    path: '/statistics',
+    component: () => import('@/views/statistics/IndexView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
+    children: [
+      {
+        path: '',
+        name: 'statistics',
+        redirect: { name: 'statistics-interests-popularity' },
+      },
+      {
+        path: 'interests-popularity',
+        name: 'statistics-interests-popularity',
+        component: () => import('@/views/statistics/InterestPopularityView.vue'),
+      },
+    ],
+  },
 ]
 
 const router = createRouter({

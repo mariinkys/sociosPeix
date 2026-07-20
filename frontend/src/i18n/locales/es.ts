@@ -133,6 +133,7 @@ export default {
       members: 'Miembros',
       interests: 'Intereses',
       tools: 'Herramientas',
+      statistics: 'Estadísticas',
     },
   },
 
@@ -755,6 +756,20 @@ export default {
             'Elimina este interés de forma permanente. Los socios suscritos a él perderán esa asociación. Esta acción no se puede deshacer.',
         },
       },
+    },
+  },
+
+  statistics: {
+    pageTitle: 'Estadísticas',
+    errors: {
+      load: 'No se han podido cargar las estadísticas',
+      export: 'No se ha podido exportar el archivo',
+    },
+    interestPopularity: {
+      title: 'Intereses más Populares',
+      description: 'Número de miembros que han seleccionado cada interés',
+      datasetLabel: 'Miembros',
+      empty: 'Todavía no hay datos de intereses',
     },
   },
 }

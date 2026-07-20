@@ -120,6 +120,20 @@ const isActive = (path: string) => route.path === path
           >
             {{ t('navigation.items.tools') }}
           </RouterLink>
+
+          <template v-if="auth.isAdmin">
+            <RouterLink
+              to="/statistics"
+              :class="[
+                'px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-150',
+                isActive('/statistics')
+                  ? 'bg-surface-100 dark:bg-surface-800 text-surface-900 dark:text-surface-0'
+                  : 'text-surface-500 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 hover:bg-surface-50 dark:hover:bg-surface-800',
+              ]"
+            >
+              {{ t('navigation.items.statistics') }}
+            </RouterLink>
+          </template>
         </nav>
 
         <div v-if="!auth.isAuthenticated">
@@ -253,6 +267,22 @@ const isActive = (path: string) => route.path === path
           <i class="pi pi-wrench mr-2 text-xs"></i>
           {{ t('navigation.items.tools') }}
         </RouterLink>
+
+        <template v-if="auth.isAdmin">
+          <RouterLink
+            to="/statistics"
+            :class="[
+              'flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150',
+              isActive('/statistics')
+                ? 'bg-surface-100 dark:bg-surface-800 text-surface-900 dark:text-surface-0'
+                : 'text-surface-600 dark:text-surface-400 hover:bg-surface-50 dark:hover:bg-surface-800',
+            ]"
+            @click="menuOpen = false"
+          >
+            <i class="pi pi-users mr-2 text-xs"></i>
+            {{ t('navigation.items.statistics') }}
+          </RouterLink>
+        </template>
 
         <div
           class="pt-2 mt-2 border-t border-surface-100 dark:border-surface-800 flex items-center justify-between"

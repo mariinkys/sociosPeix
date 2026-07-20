@@ -19,6 +19,7 @@
     "@primevue/forms": "^4.5.5",
     "@tailwindcss/vite": "^4.3.2",
     "axios": "^1.18.1",
+    "chart.js": "^4.5.1",
     "driver.js": "^1.7.0",
     "pinia": "^3.0.4",
     "primeicons": "^7.0.0",

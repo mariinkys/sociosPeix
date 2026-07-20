@@ -1,5 +1,6 @@
 package dev.mariinkys.sociospeix.infrastructure.persistence.repository;
 
+import dev.mariinkys.sociospeix.domain.model.statistics.InterestPopularity;
 import dev.mariinkys.sociospeix.infrastructure.persistence.entity.MemberJpaEntity;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -114,4 +115,13 @@ public interface MemberJpaRepository extends JpaRepository<MemberJpaEntity, UUID
         ORDER BY name
         """, nativeQuery = true)
     List<MemberJpaEntity> findByBirthday(@Param("day") int day, @Param("month") int month);
+
+    @Query("""
+    SELECT new dev.mariinkys.sociospeix.domain.model.statistics.InterestPopularity(i.name, COUNT(DISTINCT m))
+    FROM MemberJpaEntity m
+    JOIN m.interests i
+    GROUP BY i.name
+    ORDER BY COUNT(DISTINCT m) DESC
+    """)
+    List<InterestPopularity> countMembersPerInterest();
 }
