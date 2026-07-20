@@ -121,6 +121,7 @@ onBeforeUnmount(() => chart?.destroy())
             <Button
               icon="pi pi-file-excel"
               severity="secondary"
+              v-tooltip.top="t('common.actions.export')"
               text
               rounded
               size="small"
@@ -130,11 +131,12 @@ onBeforeUnmount(() => chart?.destroy())
             />
             <Button
               icon="pi pi-refresh"
+              v-tooltip.top="t('common.actions.refresh')"
               severity="secondary"
               text
               rounded
               size="small"
-              aria-label="Refresh"
+              :aria-label="t('common.actions.refresh')"
               :loading="loading"
               @click="fetchData"
             />
