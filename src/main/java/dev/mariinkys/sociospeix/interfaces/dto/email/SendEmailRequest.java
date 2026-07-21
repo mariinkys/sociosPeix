@@ -7,5 +7,7 @@ public record SendEmailRequest(
         String subject,
 
         @NotBlank(message = "Body is required")
-        String htmlBody
+        String htmlBody,
+
+        String previewHtmlBody
 ) {}

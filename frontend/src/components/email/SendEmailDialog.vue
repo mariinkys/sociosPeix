@@ -164,25 +164,37 @@ async function onSend() {
   sendLoading.value = true
   try {
     const sendableBody = richTextEditorRef.value?.getSendableHtml() ?? htmlBody.value
-    const finalHtml = wrapEmailBody(applyTemplate(sendableBody, template.value))
-    const inlineImages: InlineImage[] = richTextEditorRef.value?.getInlineImages() ?? []
+    const finalSendHtml = wrapEmailBody(applyTemplate(sendableBody, template.value))
+
+    const previewableBody = richTextEditorRef.value
+      ? await richTextEditorRef.value.getPreviewableHtml()
+      : htmlBody.value
+    const finalPreviewHtml = wrapEmailBody(applyTemplate(previewableBody, template.value))
+
+    const inlineImages = richTextEditorRef.value?.getInlineImages() ?? []
+
+    const payloadBase = {
+      subject: subject.value,
+      htmlBody: finalSendHtml,
+      previewHtmlBody: finalPreviewHtml,
+    }
 
     if (props.mode === 'interests') {
       await emailsService.sendToInterests(
-        { subject: subject.value, htmlBody: finalHtml, interestIds: interestIds.value },
+        { ...payloadBase, interestIds: interestIds.value },
         attachments.value.length ? attachments.value : undefined,
         inlineImages.length ? inlineImages : undefined,
       )
     } else if (props.mode === 'all') {
       await emailsService.sendToAll(
-        { subject: subject.value, htmlBody: finalHtml },
+        payloadBase,
         attachments.value.length ? attachments.value : undefined,
         inlineImages.length ? inlineImages : undefined,
       )
     } else {
       await emailsService.sendToMember(
         props.memberId!,
-        { subject: subject.value, htmlBody: finalHtml },
+        payloadBase,
         attachments.value.length ? attachments.value : undefined,
         inlineImages.length ? inlineImages : undefined,
       )

@@ -74,8 +74,10 @@ public class EmailController {
             @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments,
             @RequestPart(value = "inlineImages", required = false) List<MultipartFile> inlineImages) {
         var allAttachments = combineAttachments(toAttachments(attachments), toInlineAttachments(inlineImages));
+        String previewBody = request.previewHtmlBody() != null ? request.previewHtmlBody() : request.htmlBody();
+
         var email = emailUseCase.sendToMember(
-                memberId, request.subject(), request.htmlBody(), allAttachments
+                memberId, request.subject(), request.htmlBody(), previewBody, allAttachments
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(EmailResponse.from(email));
     }
@@ -87,8 +89,10 @@ public class EmailController {
             @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments,
             @RequestPart(value = "inlineImages", required = false) List<MultipartFile> inlineImages) {
         var allAttachments = combineAttachments(toAttachments(attachments), toInlineAttachments(inlineImages));
+        String previewBody = request.previewHtmlBody() != null ? request.previewHtmlBody() : request.htmlBody();
+
         var email = emailUseCase.sendToAll(
-                request.subject(), request.htmlBody(), allAttachments
+                request.subject(), request.htmlBody(), previewBody, allAttachments
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(EmailResponse.from(email));
     }
@@ -100,8 +104,10 @@ public class EmailController {
             @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments,
             @RequestPart(value = "inlineImages", required = false) List<MultipartFile> inlineImages) {
         var allAttachments = combineAttachments(toAttachments(attachments), toInlineAttachments(inlineImages));
+        String previewBody = request.previewHtmlBody() != null ? request.previewHtmlBody() : request.htmlBody();
+
         var email = emailUseCase.sendToInterests(
-                request.interestIds(), request.subject(), request.htmlBody(), allAttachments
+                request.interestIds(), request.subject(), request.htmlBody(), previewBody, allAttachments
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(EmailResponse.from(email));
     }

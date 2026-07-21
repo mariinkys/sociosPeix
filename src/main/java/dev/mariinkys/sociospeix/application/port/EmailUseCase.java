@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.UUID;
 
 public interface EmailUseCase {
-    Email sendToMember(UUID memberId, String subject, String htmlBody,
+    Email sendToMember(UUID memberId, String subject, String htmlBody, String previewBody,
                        List<EmailAttachment> attachments);
-    Email sendToAll(String subject, String htmlBody,
+    Email sendToAll(String subject, String htmlBody, String previewBody,
                     List<EmailAttachment> attachments);
-    Email sendToInterests(List<Integer> interestIds, String subject, String htmlBody,
+    Email sendToInterests(List<Integer> interestIds, String subject, String htmlBody, String previewBody,
                           List<EmailAttachment> attachments);
     Page<Email> getAllEmails(Pageable pageable);
     List<Email> getTodayEmails();

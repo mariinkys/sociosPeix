@@ -47,6 +47,15 @@ function pruneRemovedImages() {
   }
 }
 
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(file)
+  })
+}
+
 const editor = useEditor({
   content: modelValue.value,
   extensions: [
@@ -94,7 +103,30 @@ function getInlineImages(): { file: File; contentId: string }[] {
   }))
 }
 
-defineExpose({ getSendableHtml, getInlineImages })
+// for persisting/previewing: same HTML as getSendableHtml(), but with each
+// inline image's src rebuilt as a real data: URI instead of cid: - this is
+// what gets stored in the database, so it's viewable outside a real mail client
+async function getPreviewableHtml(): Promise<string> {
+  if (!editor.value) return modelValue.value
+  const doc = new DOMParser().parseFromString(editor.value.getHTML(), 'text/html')
+  const images = Array.from(doc.querySelectorAll('img[data-cid]'))
+
+  await Promise.all(
+    images.map(async (img) => {
+      const cid = img.getAttribute('data-cid')
+      if (!cid) return
+      const entry = inlineImages.value.get(cid)
+      if (!entry) return
+      const dataUrl = await fileToDataUrl(entry.file)
+      img.setAttribute('src', dataUrl)
+      img.removeAttribute('data-cid')
+    }),
+  )
+
+  return doc.body.innerHTML
+}
+
+defineExpose({ getSendableHtml, getInlineImages, getPreviewableHtml })
 
 const BLOCK_TYPE_OPTIONS = [
   { label: 'Paragraph', value: 'paragraph' },

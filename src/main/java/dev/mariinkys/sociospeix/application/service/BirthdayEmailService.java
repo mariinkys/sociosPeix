@@ -90,7 +90,7 @@ public class BirthdayEmailService {
         var attachments = List.of(template.logoAttachment());
 
         // sendToMember resolves whichever provider is currently active and enforces its daily limit
-        emailUseCase.sendToMember(member.getId(), SUBJECT, html, attachments);
+        emailUseCase.sendToMember(member.getId(), SUBJECT, html, html, attachments);
 
         log.info("Birthday email sent to member {} ({})", member.getId(), member.getEmail());
     }
