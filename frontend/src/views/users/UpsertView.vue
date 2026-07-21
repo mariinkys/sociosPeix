@@ -319,7 +319,7 @@ onMounted(async () => {
                 :invalid="$field?.invalid"
                 fluid
               />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+              <Message v-if="$field?.invalid" severity="error" variant="simple">
                 {{ $field.error?.message }}
               </Message>
             </FormField>
@@ -335,7 +335,7 @@ onMounted(async () => {
                 :invalid="$field?.invalid"
                 fluid
               />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+              <Message v-if="$field?.invalid" severity="error" variant="simple">
                 {{ $field.error?.message }}
               </Message>
             </FormField>
@@ -358,7 +358,7 @@ onMounted(async () => {
                 :invalid="$field?.invalid"
                 fluid
               />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+              <Message v-if="$field?.invalid" severity="error" variant="simple">
                 {{ $field.error?.message }}
               </Message>
             </FormField>
@@ -426,7 +426,7 @@ onMounted(async () => {
                 :invalid="$field?.invalid"
                 fluid
               />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+              <Message v-if="$field?.invalid" severity="error" variant="simple">
                 {{ $field.error?.message }}
               </Message>
             </FormField>
@@ -443,7 +443,7 @@ onMounted(async () => {
                 :invalid="$field?.invalid"
                 fluid
               />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+              <Message v-if="$field?.invalid" severity="error" variant="simple">
                 {{ $field.error?.message }}
               </Message>
             </FormField>
@@ -460,12 +460,12 @@ onMounted(async () => {
                 :invalid="$field?.invalid"
                 fluid
               />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+              <Message v-if="$field?.invalid" severity="error" variant="simple">
                 {{ $field.error?.message }}
               </Message>
             </FormField>
 
-            <Message v-if="passwordError" severity="error" size="small" variant="simple">
+            <Message v-if="passwordError" severity="error" variant="simple">
               {{ passwordError }}
             </Message>
 

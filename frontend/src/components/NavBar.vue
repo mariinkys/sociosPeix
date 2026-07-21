@@ -161,7 +161,6 @@ const isActive = (path: string) => route.path === path
             severity="secondary"
             text
             rounded
-            size="small"
             @click="logout"
           />
         </div>
@@ -176,7 +175,6 @@ const isActive = (path: string) => route.path === path
           severity="secondary"
           text
           rounded
-          size="small"
           @click="toggleTheme"
         />
 
@@ -189,7 +187,6 @@ const isActive = (path: string) => route.path === path
             severity="secondary"
             text
             rounded
-            size="small"
             :aria-label="t('common.theme.toggleMenu')"
             @click="menuOpen = !menuOpen"
           />
@@ -297,7 +294,6 @@ const isActive = (path: string) => route.path === path
             icon="pi pi-sign-out"
             severity="secondary"
             text
-            size="small"
             @click="logout"
           />
         </div>

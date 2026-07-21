@@ -212,7 +212,7 @@ onMounted(async () => {
               :invalid="$field?.invalid"
               fluid
             />
-            <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+            <Message v-if="$field?.invalid" severity="error" variant="simple">
               {{ $field.error?.message }}
             </Message>
           </FormField>
@@ -228,7 +228,7 @@ onMounted(async () => {
               rows="4"
               fluid
             />
-            <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+            <Message v-if="$field?.invalid" severity="error" variant="simple">
               {{ $field.error?.message }}
             </Message>
           </FormField>

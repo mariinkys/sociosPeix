@@ -65,7 +65,6 @@ onMounted(fetchTodayBirthdays)
             severity="secondary"
             text
             rounded
-            size="small"
             :aria-label="t('common.actions.refresh')"
             :loading="loading"
             @click="fetchTodayBirthdays"
@@ -80,7 +79,6 @@ onMounted(fetchTodayBirthdays)
           paginator
           paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
-          size="small"
           row-hover
           @row-click="onRowClick"
         >

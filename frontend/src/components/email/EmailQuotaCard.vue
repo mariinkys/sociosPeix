@@ -150,7 +150,6 @@ onMounted(async () => {
             severity="secondary"
             text
             rounded
-            size="small"
             :aria-label="t('email.quotaCard.refresh')"
             :loading="loading"
             @click="fetchStatus"
@@ -175,7 +174,6 @@ onMounted(async () => {
               optionValue="name"
               :loading="providersLoading || switching"
               :disabled="switching"
-              size="small"
               class="text-xs w-full"
               @update:modelValue="onProviderPicked"
             />

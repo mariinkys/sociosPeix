@@ -94,14 +94,12 @@ onMounted(fetchTodayEmails)
               data-tour="home-emails-today-transactional-button"
               onIcon="pi pi-eye"
               offIcon="pi pi-eye-slash"
-              size="small"
             />
             <Button
               icon="pi pi-refresh"
               severity="secondary"
               text
               rounded
-              size="small"
               aria-label="Refresh"
               :loading="loading"
               @click="fetchTodayEmails"
@@ -117,7 +115,6 @@ onMounted(fetchTodayEmails)
           paginator
           paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
-          size="small"
         >
           <Column field="subject" :header="t('common.fields.subject')" style="width: 40%">
             <template #body="{ data }: { data: EmailResponse }">
@@ -175,7 +172,6 @@ onMounted(fetchTodayEmails)
                   severity="secondary"
                   text
                   rounded
-                  size="small"
                   :aria-label="t('email.todayEmailsCard.viewEmail')"
                   @click="openPreview(data)"
                 />

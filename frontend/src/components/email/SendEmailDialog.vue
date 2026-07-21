@@ -265,7 +265,7 @@ async function onSend() {
           :invalid="!!interestError"
           @update:modelValue="interestError = ''"
         />
-        <Message v-if="interestError" severity="error" size="small" variant="simple">
+        <Message v-if="interestError" severity="error" variant="simple">
           {{ interestError }}
         </Message>
         <p class="text-xs text-surface-400">
@@ -285,7 +285,7 @@ async function onSend() {
           fluid
           @input="subjectError = ''"
         />
-        <Message v-if="subjectError" severity="error" size="small" variant="simple">
+        <Message v-if="subjectError" severity="error" variant="simple">
           {{ subjectError }}
         </Message>
       </div>
@@ -301,7 +301,7 @@ async function onSend() {
           :placeholder="t('email.sendEmailDialog.bodyPlaceholder')"
           @update:modelValue="bodyError = ''"
         />
-        <Message v-if="bodyError" severity="error" size="small" variant="simple">
+        <Message v-if="bodyError" severity="error" variant="simple">
           {{ bodyError }}
         </Message>
       </div>
@@ -316,7 +316,6 @@ async function onSend() {
             icon="pi pi-paperclip"
             severity="secondary"
             outlined
-            size="small"
             @click="fileInput?.click()"
           />
           <span class="text-xs" :class="attachmentError ? 'text-red-500' : 'text-surface-400'">
@@ -334,7 +333,7 @@ async function onSend() {
           </span>
           <input ref="fileInput" type="file" multiple class="hidden" @change="onFileChange" />
         </div>
-        <Message v-if="attachmentError" severity="error" size="small" variant="simple">
+        <Message v-if="attachmentError" severity="error" variant="simple">
           {{ attachmentError }}
         </Message>
         <div v-if="attachments.length > 0" class="flex flex-wrap gap-2 mt-1">
@@ -389,12 +388,7 @@ async function onSend() {
             <span class="text-sm text-amber-700 dark:text-amber-400">
               {{ t('email.sendEmailDialog.capacityCheck.checkFailed') }}
             </span>
-            <Button
-              :label="t('common.actions.retry')"
-              text
-              size="small"
-              @click="fetchCapacityCheck"
-            />
+            <Button :label="t('common.actions.retry')" text @click="fetchCapacityCheck" />
           </div>
         </template>
 

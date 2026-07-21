@@ -303,7 +303,6 @@ onMounted(async () => {
               severity="danger"
               text
               rounded
-              size="small"
               :aria-label="t('members.actions.delete')"
               @click="confirmDelete($event, data)"
             />
