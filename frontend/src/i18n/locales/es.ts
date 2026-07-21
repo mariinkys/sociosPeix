@@ -506,6 +506,8 @@ export default {
     },
 
     sendEmailDialog: {
+      bodyPlaceholder: 'Escribe tu correo…',
+
       titles: {
         preview: 'Vista Previa — {subject}',
         byInterest: 'Enviar Correo por Interés',

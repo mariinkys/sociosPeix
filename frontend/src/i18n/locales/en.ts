@@ -502,6 +502,8 @@ export default {
     },
 
     sendEmailDialog: {
+      bodyPlaceholder: 'Write your email…',
+
       titles: {
         preview: 'Preview — {subject}',
         byInterest: 'Send Email by Interest',

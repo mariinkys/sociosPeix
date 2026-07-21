@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Editor from 'primevue/editor'
+import RichTextEditor from '@/components/richTextEditor/RichTextEditor.vue'
 import Message from 'primevue/message'
 import { useToast } from 'primevue/usetoast'
 import { emailsService } from '@/services/emails.service'
@@ -210,7 +210,7 @@ async function onSend() {
     :draggable="false"
     @hide="reset"
   >
-    <div v-if="step === 'compose'" class="space-y-5 py-2">
+    <div v-show="step === 'compose'" class="space-y-5 py-2">
       <!-- unchanged compose step - template, interests, subject, body, attachments -->
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">{{
@@ -275,7 +275,11 @@ async function onSend() {
           {{ t('common.fields.body') }}
           <span class="text-red-500">*</span>
         </label>
-        <Editor v-model="htmlBody" editor-style="height: 260px" @text-change="bodyError = ''" />
+        <RichTextEditor
+          v-model="htmlBody"
+          :placeholder="t('email.sendEmailDialog.bodyPlaceholder')"
+          @update:modelValue="bodyError = ''"
+        />
         <Message v-if="bodyError" severity="error" size="small" variant="simple">
           {{ bodyError }}
         </Message>
@@ -333,7 +337,7 @@ async function onSend() {
       </div>
     </div>
 
-    <div v-else class="py-2 space-y-3">
+    <div v-show="step === 'preview'" class="py-2 space-y-3">
       <div class="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
         <i class="pi pi-info-circle"></i>
         <span>{{ t('email.descriptions.preview') }}</span>
