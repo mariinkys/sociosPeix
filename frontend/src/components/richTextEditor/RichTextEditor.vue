@@ -22,6 +22,31 @@ const props = withDefaults(
 
 const modelValue = defineModel<string>({ required: true })
 
+const inlineImages = ref<Map<string, { file: File; blobUrl: string }>>(new Map())
+
+function currentContentIdsInDoc(): Set<string> {
+  if (!editor.value) return new Set()
+  const doc = new DOMParser().parseFromString(editor.value.getHTML(), 'text/html')
+  const ids = new Set<string>()
+  doc.querySelectorAll('img[data-cid]').forEach((img) => {
+    const cid = img.getAttribute('data-cid')
+    if (cid) ids.add(cid)
+  })
+  return ids
+}
+
+// if the user deletes an inline image from the body, stop tracking its file
+// (so it isn't sent as an orphaned attachment) and free its blob: URL
+function pruneRemovedImages() {
+  const stillPresent = currentContentIdsInDoc()
+  for (const [contentId, entry] of inlineImages.value) {
+    if (!stillPresent.has(contentId)) {
+      URL.revokeObjectURL(entry.blobUrl)
+      inlineImages.value.delete(contentId)
+    }
+  }
+}
+
 const editor = useEditor({
   content: modelValue.value,
   extensions: [
@@ -36,13 +61,40 @@ const editor = useEditor({
   ],
   onUpdate: ({ editor: e }) => {
     modelValue.value = e.getHTML()
+    pruneRemovedImages()
   },
 })
 
 onBeforeUnmount(() => {
   editor.value?.destroy()
   document.removeEventListener('click', onDocumentClick)
+  for (const entry of inlineImages.value.values()) {
+    URL.revokeObjectURL(entry.blobUrl)
+  }
 })
+
+// --- exposed to the parent (SendEmailDialog) for building the actual send payload ---
+function getSendableHtml(): string {
+  if (!editor.value) return modelValue.value
+  const doc = new DOMParser().parseFromString(editor.value.getHTML(), 'text/html')
+  doc.querySelectorAll('img[data-cid]').forEach((img) => {
+    const cid = img.getAttribute('data-cid')
+    if (cid) {
+      img.setAttribute('src', `cid:${cid}`)
+      img.removeAttribute('data-cid')
+    }
+  })
+  return doc.body.innerHTML
+}
+
+function getInlineImages(): { file: File; contentId: string }[] {
+  return Array.from(inlineImages.value.entries()).map(([contentId, entry]) => ({
+    contentId,
+    file: entry.file,
+  }))
+}
+
+defineExpose({ getSendableHtml, getInlineImages })
 
 const BLOCK_TYPE_OPTIONS = [
   { label: 'Paragraph', value: 'paragraph' },
@@ -130,7 +182,7 @@ watch(showLinkPopover, (open) => {
   }
 })
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024
 const imageInput = ref<HTMLInputElement | null>(null)
 const imageError = ref('')
 
@@ -146,16 +198,17 @@ function onImageSelected(event: Event) {
   if (!file) return
 
   if (file.size > MAX_IMAGE_BYTES) {
-    imageError.value = 'Image is too large (max 5 MB)'
+    imageError.value = 'Image is too large (max 2 MB)'
     return
   }
 
-  const reader = new FileReader()
-  reader.onload = () => {
-    const dataUrl = reader.result as string
-    editor.value?.chain().focus().setImage({ src: dataUrl, alt: file.name }).run()
-  }
-  reader.readAsDataURL(file)
+  const extension = file.name.includes('.') ? file.name.slice(file.name.lastIndexOf('.')) : ''
+  const contentId = `img-${crypto.randomUUID()}${extension}`
+
+  const blobUrl = URL.createObjectURL(file)
+  inlineImages.value.set(contentId, { file, blobUrl })
+
+  editor.value?.chain().focus().setImage({ src: blobUrl, alt: file.name, contentId }).run()
 }
 </script>
 

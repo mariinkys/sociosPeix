@@ -7,7 +7,7 @@ import InputText from 'primevue/inputtext'
 import RichTextEditor from '@/components/richTextEditor/RichTextEditor.vue'
 import Message from 'primevue/message'
 import { useToast } from 'primevue/usetoast'
-import { emailsService } from '@/services/emails.service'
+import { emailsService, type InlineImage } from '@/services/emails.service'
 import { applyTemplate, wrapEmailBody, getTemplateOptions } from '@/utils/emailTemplates'
 import InterestsSelect from '@/components/interest/MultiSelect.vue'
 import type { EmailTemplate } from '@/utils/emailTemplates'
@@ -38,12 +38,13 @@ const interestError = ref('')
 const attachments = ref<File[]>([])
 const attachmentError = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
+const richTextEditorRef = ref<InstanceType<typeof RichTextEditor> | null>(null)
 
 const checkLoading = ref(false)
 const checkResult = ref<MultiEmailCheckResponse | null>(null)
 const checkFailed = ref(false)
 
-const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024
+const MAX_ATTACHMENT_BYTES = 2 * 1024 * 1024
 
 const totalAttachmentSize = computed(() => attachments.value.reduce((sum, f) => sum + f.size, 0))
 const templateOptions = computed(() => {
@@ -162,21 +163,28 @@ async function onSend() {
 
   sendLoading.value = true
   try {
+    const sendableBody = richTextEditorRef.value?.getSendableHtml() ?? htmlBody.value
+    const finalHtml = wrapEmailBody(applyTemplate(sendableBody, template.value))
+    const inlineImages: InlineImage[] = richTextEditorRef.value?.getInlineImages() ?? []
+
     if (props.mode === 'interests') {
       await emailsService.sendToInterests(
-        { subject: subject.value, htmlBody: renderedHtml.value, interestIds: interestIds.value },
+        { subject: subject.value, htmlBody: finalHtml, interestIds: interestIds.value },
         attachments.value.length ? attachments.value : undefined,
+        inlineImages.length ? inlineImages : undefined,
       )
     } else if (props.mode === 'all') {
       await emailsService.sendToAll(
-        { subject: subject.value, htmlBody: renderedHtml.value },
+        { subject: subject.value, htmlBody: finalHtml },
         attachments.value.length ? attachments.value : undefined,
+        inlineImages.length ? inlineImages : undefined,
       )
     } else {
       await emailsService.sendToMember(
         props.memberId!,
-        { subject: subject.value, htmlBody: renderedHtml.value },
+        { subject: subject.value, htmlBody: finalHtml },
         attachments.value.length ? attachments.value : undefined,
+        inlineImages.length ? inlineImages : undefined,
       )
     }
     toast.add({
@@ -276,6 +284,7 @@ async function onSend() {
           <span class="text-red-500">*</span>
         </label>
         <RichTextEditor
+          ref="richTextEditorRef"
           v-model="htmlBody"
           :placeholder="t('email.sendEmailDialog.bodyPlaceholder')"
           @update:modelValue="bodyError = ''"

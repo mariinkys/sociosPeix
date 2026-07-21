@@ -519,8 +519,8 @@ export default {
           'El correo se enviará a todos los miembros que tengan al menos uno de los intereses seleccionados.',
       },
       attachments: {
-        empty: 'No hay archivos seleccionados — máximo 5 MB en total',
-        summary: '{count} archivo(s) — {size} / 5 MB',
+        empty: 'No hay archivos seleccionados — máximo 2 MB en total',
+        summary: '{count} archivo(s) — {size} / 2 MB',
       },
       actions: {
         backToEdit: 'Volver a Editar',
@@ -532,7 +532,7 @@ export default {
         subjectRequired: 'El asunto es obligatorio',
         bodyRequired: 'El contenido es obligatorio',
         interestsRequired: '@:common.validation.interestsRequired',
-        attachmentLimitExceeded: 'El tamaño total supera el límite de 5 MB ({size} seleccionados)',
+        attachmentLimitExceeded: 'El tamaño total supera el límite de 2 MB ({size} seleccionados)',
       },
       messages: {
         sentDetail: 'Correo enviado correctamente.',
