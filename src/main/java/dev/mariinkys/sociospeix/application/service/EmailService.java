@@ -9,6 +9,7 @@ import dev.mariinkys.sociospeix.application.port.EmailUseCase;
 import dev.mariinkys.sociospeix.domain.model.Email;
 import dev.mariinkys.sociospeix.domain.model.EmailAttachment;
 import dev.mariinkys.sociospeix.domain.model.EmailCategory;
+import dev.mariinkys.sociospeix.domain.model.Member;
 import dev.mariinkys.sociospeix.domain.repository.EmailRepository;
 import dev.mariinkys.sociospeix.domain.repository.EmailSettingsRepository;
 import dev.mariinkys.sociospeix.domain.repository.MemberRepository;
@@ -45,7 +46,7 @@ public class EmailService implements EmailUseCase {
 
     @Override
     @Transactional
-    public Email sendToMember(UUID memberId, String subject, String htmlBody,
+    public Email sendToMember(UUID memberId, String subject, String htmlBody, String previewBody,
                               List<EmailAttachment> attachments) {
         var member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotFoundException(memberId));
@@ -54,24 +55,25 @@ public class EmailService implements EmailUseCase {
             throw new EmailSendException("Member has no email address");
         }
 
-        return send(subject, htmlBody, List.of(member.getEmail()), attachments);
+        return send(subject, htmlBody, previewBody, List.of(member.getEmail()), attachments, EmailCategory.CAMPAIGN);
     }
 
     @Override
     @Transactional
-    public Email sendToAll(String subject, String htmlBody, List<EmailAttachment> attachments) {
+    public Email sendToAll(String subject, String htmlBody, String previewBody,
+                           List<EmailAttachment> attachments) {
         var recipients = resolveRecipientEmails(null);
 
         if (recipients.isEmpty()) {
             throw new EmailSendException("No members with email addresses found");
         }
 
-        return send(subject, htmlBody, recipients, attachments);
+        return send(subject, htmlBody, previewBody, recipients, attachments, EmailCategory.CAMPAIGN);
     }
 
     @Override
     @Transactional
-    public Email sendToInterests(List<Integer> interestIds, String subject, String htmlBody,
+    public Email sendToInterests(List<Integer> interestIds, String subject, String htmlBody, String previewBody,
                                  List<EmailAttachment> attachments) {
         if (interestIds == null || interestIds.isEmpty()) {
             throw new EmailSendException("At least one interest must be specified");
@@ -83,7 +85,7 @@ public class EmailService implements EmailUseCase {
             throw new EmailSendException("No members with email addresses found for the given interests");
         }
 
-        return send(subject, htmlBody, recipients, attachments);
+        return send(subject, htmlBody, previewBody, recipients, attachments, EmailCategory.CAMPAIGN);
     }
 
     @Override
@@ -126,7 +128,8 @@ public class EmailService implements EmailUseCase {
         if (recipientEmail == null || recipientEmail.isBlank()) {
             throw new EmailSendException("Recipient email is required");
         }
-        return send(subject, htmlBody, List.of(recipientEmail), List.of(), EmailCategory.TRANSACTIONAL);
+        // no cid: images in transactional mail, so the sent and stored bodies are identical
+        return send(subject, htmlBody, htmlBody, List.of(recipientEmail), List.of(), EmailCategory.TRANSACTIONAL);
     }
 
     @Override
@@ -168,16 +171,26 @@ public class EmailService implements EmailUseCase {
         );
     }
 
-    private Email send(String subject, String htmlBody,
-                       List<String> recipients, List<EmailAttachment> attachments) {
-        return send(subject, htmlBody, recipients, attachments, EmailCategory.CAMPAIGN);
+    private List<String> resolveRecipientEmails(List<Integer> interestIds) {
+        if (interestIds == null || interestIds.isEmpty()) {
+            return memberRepository.findAllMembers().stream()
+                    .map(Member::getEmail)
+                    .filter(email -> !email.isBlank())
+                    .distinct()
+                    .toList();
+        }
+
+        return memberRepository.findAllByAnyInterestId(interestIds).stream()
+                .map(Member::getEmail)
+                .filter(email -> !email.isBlank())
+                .distinct()
+                .toList();
     }
 
-    private Email send(String subject, String htmlBody, List<String> recipients,
+    private Email send(String subject, String htmlBody, String previewBody, List<String> recipients,
                        List<EmailAttachment> attachments, EmailCategory category) {
 
         var provider = activeProvider();
-
         checkDailyLimit(provider, recipients.size());
 
         try {
@@ -191,24 +204,8 @@ public class EmailService implements EmailUseCase {
         }
 
         return emailRepository.save(
-                new Email(subject, htmlBody, provider.getProviderName(), recipients, category)
+                new Email(subject, previewBody, provider.getProviderName(), recipients, category)
         );
-    }
-
-    private List<String> resolveRecipientEmails(List<Integer> interestIds) {
-        if (interestIds == null || interestIds.isEmpty()) {
-            return memberRepository.findAllMembers().stream()
-                    .map(dev.mariinkys.sociospeix.domain.model.Member::getEmail)
-                    .filter(email -> !email.isBlank())
-                    .distinct()
-                    .toList();
-        }
-
-        return memberRepository.findAllByAnyInterestId(interestIds).stream()
-                .map(dev.mariinkys.sociospeix.domain.model.Member::getEmail)
-                .filter(email -> !email.isBlank())
-                .distinct()
-                .toList();
     }
 
     private void checkDailyLimit(EmailPort provider, int requested) {

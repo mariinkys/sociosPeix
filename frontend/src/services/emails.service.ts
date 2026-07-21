@@ -9,10 +9,22 @@ import type {
   SendEmailToInterestsPayload,
 } from '@/types/email.types'
 
-function buildFormData(payload: object, attachments?: File[]): FormData {
+export interface InlineImage {
+  file: File
+  contentId: string
+}
+
+// the multipart part's filename IS the contentId - the backend needs no extra
+// metadata channel to know which uploaded file corresponds to which cid:
+function buildFormData(
+  payload: object,
+  attachments?: File[],
+  inlineImages?: InlineImage[],
+): FormData {
   const form = new FormData()
   form.append('data', new Blob([JSON.stringify(payload)], { type: 'application/json' }))
   attachments?.forEach((file) => form.append('attachments', file))
+  inlineImages?.forEach((img) => form.append('inlineImages', img.file, img.contentId))
   return form
 }
 
@@ -46,18 +58,23 @@ class EmailsService {
     memberId: string,
     payload: SendEmailPayload,
     attachments?: File[],
+    inlineImages?: InlineImage[],
   ): Promise<EmailResponse> {
     const { data } = await api.post<EmailResponse>(
       `/api/emails/send/member/${memberId}`,
-      buildFormData(payload, attachments),
+      buildFormData(payload, attachments, inlineImages),
     )
     return data
   }
 
-  async sendToAll(payload: SendEmailPayload, attachments?: File[]): Promise<EmailResponse> {
+  async sendToAll(
+    payload: SendEmailPayload,
+    attachments?: File[],
+    inlineImages?: InlineImage[],
+  ): Promise<EmailResponse> {
     const { data } = await api.post<EmailResponse>(
       '/api/emails/send/all',
-      buildFormData(payload, attachments),
+      buildFormData(payload, attachments, inlineImages),
     )
     return data
   }
@@ -65,10 +82,11 @@ class EmailsService {
   async sendToInterests(
     payload: SendEmailToInterestsPayload,
     attachments?: File[],
+    inlineImages?: InlineImage[],
   ): Promise<EmailResponse> {
     const { data } = await api.post<EmailResponse>(
       '/api/emails/send/interests',
-      buildFormData(payload, attachments),
+      buildFormData(payload, attachments, inlineImages),
     )
     return data
   }

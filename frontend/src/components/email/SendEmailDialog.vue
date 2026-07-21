@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Editor from 'primevue/editor'
+import RichTextEditor from '@/components/richTextEditor/RichTextEditor.vue'
 import Message from 'primevue/message'
 import { useToast } from 'primevue/usetoast'
 import { emailsService } from '@/services/emails.service'
@@ -38,12 +38,13 @@ const interestError = ref('')
 const attachments = ref<File[]>([])
 const attachmentError = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
+const richTextEditorRef = ref<InstanceType<typeof RichTextEditor> | null>(null)
 
 const checkLoading = ref(false)
 const checkResult = ref<MultiEmailCheckResponse | null>(null)
 const checkFailed = ref(false)
 
-const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024
+const MAX_ATTACHMENT_BYTES = 2 * 1024 * 1024
 
 const totalAttachmentSize = computed(() => attachments.value.reduce((sum, f) => sum + f.size, 0))
 const templateOptions = computed(() => {
@@ -162,21 +163,40 @@ async function onSend() {
 
   sendLoading.value = true
   try {
+    const sendableBody = richTextEditorRef.value?.getSendableHtml() ?? htmlBody.value
+    const finalSendHtml = wrapEmailBody(applyTemplate(sendableBody, template.value))
+
+    const previewableBody = richTextEditorRef.value
+      ? await richTextEditorRef.value.getPreviewableHtml()
+      : htmlBody.value
+    const finalPreviewHtml = wrapEmailBody(applyTemplate(previewableBody, template.value))
+
+    const inlineImages = richTextEditorRef.value?.getInlineImages() ?? []
+
+    const payloadBase = {
+      subject: subject.value,
+      htmlBody: finalSendHtml,
+      previewHtmlBody: finalPreviewHtml,
+    }
+
     if (props.mode === 'interests') {
       await emailsService.sendToInterests(
-        { subject: subject.value, htmlBody: renderedHtml.value, interestIds: interestIds.value },
+        { ...payloadBase, interestIds: interestIds.value },
         attachments.value.length ? attachments.value : undefined,
+        inlineImages.length ? inlineImages : undefined,
       )
     } else if (props.mode === 'all') {
       await emailsService.sendToAll(
-        { subject: subject.value, htmlBody: renderedHtml.value },
+        payloadBase,
         attachments.value.length ? attachments.value : undefined,
+        inlineImages.length ? inlineImages : undefined,
       )
     } else {
       await emailsService.sendToMember(
         props.memberId!,
-        { subject: subject.value, htmlBody: renderedHtml.value },
+        payloadBase,
         attachments.value.length ? attachments.value : undefined,
+        inlineImages.length ? inlineImages : undefined,
       )
     }
     toast.add({
@@ -210,7 +230,7 @@ async function onSend() {
     :draggable="false"
     @hide="reset"
   >
-    <div v-if="step === 'compose'" class="space-y-5 py-2">
+    <div v-show="step === 'compose'" class="space-y-5 py-2">
       <!-- unchanged compose step - template, interests, subject, body, attachments -->
       <div class="flex flex-col gap-1.5">
         <label class="text-sm font-medium text-surface-700 dark:text-surface-300">{{
@@ -275,7 +295,12 @@ async function onSend() {
           {{ t('common.fields.body') }}
           <span class="text-red-500">*</span>
         </label>
-        <Editor v-model="htmlBody" editor-style="height: 260px" @text-change="bodyError = ''" />
+        <RichTextEditor
+          ref="richTextEditorRef"
+          v-model="htmlBody"
+          :placeholder="t('email.sendEmailDialog.bodyPlaceholder')"
+          @update:modelValue="bodyError = ''"
+        />
         <Message v-if="bodyError" severity="error" size="small" variant="simple">
           {{ bodyError }}
         </Message>
@@ -333,7 +358,7 @@ async function onSend() {
       </div>
     </div>
 
-    <div v-else class="py-2 space-y-3">
+    <div v-show="step === 'preview'" class="py-2 space-y-3">
       <div class="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400">
         <i class="pi pi-info-circle"></i>
         <span>{{ t('email.descriptions.preview') }}</span>

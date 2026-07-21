@@ -21,6 +21,7 @@ public interface EmailJpaRepository extends JpaRepository<EmailJpaEntity, UUID> 
     @Query("""
         SELECT e FROM EmailJpaEntity e
         WHERE e.createdAt >= :startOfDay
+        ORDER BY e.createdAt DESC
     """)
     List<EmailJpaEntity> findToday(@Param("startOfDay") LocalDateTime startOfDay);
 

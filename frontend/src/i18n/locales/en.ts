@@ -502,6 +502,8 @@ export default {
     },
 
     sendEmailDialog: {
+      bodyPlaceholder: 'Write your email…',
+
       titles: {
         preview: 'Preview — {subject}',
         byInterest: 'Send Email by Interest',
@@ -513,8 +515,8 @@ export default {
           'The email will be sent to all members that have at least one of the selected interests.',
       },
       attachments: {
-        empty: 'No files selected — max 5 MB total',
-        summary: '{count} file(s) — {size} / 5 MB',
+        empty: 'No files selected — max 2 MB total',
+        summary: '{count} file(s) — {size} / 2 MB',
       },
       actions: {
         backToEdit: 'Back to edit',
@@ -526,7 +528,7 @@ export default {
         subjectRequired: 'Subject is required',
         bodyRequired: 'Body is required',
         interestsRequired: '@:common.validation.interestsRequired',
-        attachmentLimitExceeded: 'Total size exceeds the 5 MB limit ({size} selected)',
+        attachmentLimitExceeded: 'Total size exceeds the 2 MB limit ({size} selected)',
       },
       messages: {
         sentDetail: 'Email sent successfully.',

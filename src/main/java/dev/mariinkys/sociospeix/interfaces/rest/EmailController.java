@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/emails")
@@ -70,10 +71,13 @@ public class EmailController {
     public ResponseEntity<EmailResponse> sendToMember(
             @PathVariable UUID memberId,
             @RequestPart("data") @Valid SendEmailRequest request,
-            @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments) {
+            @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments,
+            @RequestPart(value = "inlineImages", required = false) List<MultipartFile> inlineImages) {
+        var allAttachments = combineAttachments(toAttachments(attachments), toInlineAttachments(inlineImages));
+        String previewBody = request.previewHtmlBody() != null ? request.previewHtmlBody() : request.htmlBody();
 
         var email = emailUseCase.sendToMember(
-                memberId, request.subject(), request.htmlBody(), toAttachments(attachments)
+                memberId, request.subject(), request.htmlBody(), previewBody, allAttachments
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(EmailResponse.from(email));
     }
@@ -82,10 +86,13 @@ public class EmailController {
     @PostMapping(value = "/send/all", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EmailResponse> sendToAll(
             @RequestPart("data") @Valid SendEmailRequest request,
-            @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments) {
+            @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments,
+            @RequestPart(value = "inlineImages", required = false) List<MultipartFile> inlineImages) {
+        var allAttachments = combineAttachments(toAttachments(attachments), toInlineAttachments(inlineImages));
+        String previewBody = request.previewHtmlBody() != null ? request.previewHtmlBody() : request.htmlBody();
 
         var email = emailUseCase.sendToAll(
-                request.subject(), request.htmlBody(), toAttachments(attachments)
+                request.subject(), request.htmlBody(), previewBody, allAttachments
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(EmailResponse.from(email));
     }
@@ -94,10 +101,13 @@ public class EmailController {
     @PostMapping(value = "/send/interests", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EmailResponse> sendToInterests(
             @RequestPart("data") @Valid SendEmailToInterestsRequest request,
-            @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments) {
+            @RequestPart(value = "attachments", required = false) List<MultipartFile> attachments,
+            @RequestPart(value = "inlineImages", required = false) List<MultipartFile> inlineImages) {
+        var allAttachments = combineAttachments(toAttachments(attachments), toInlineAttachments(inlineImages));
+        String previewBody = request.previewHtmlBody() != null ? request.previewHtmlBody() : request.htmlBody();
 
         var email = emailUseCase.sendToInterests(
-                request.interestIds(), request.subject(), request.htmlBody(), toAttachments(attachments)
+                request.interestIds(), request.subject(), request.htmlBody(), previewBody, allAttachments
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(EmailResponse.from(email));
     }
@@ -152,5 +162,35 @@ public class EmailController {
                     }
                 })
                 .toList();
+    }
+
+    // Converts Spring MultipartFile → domain EmailAttachment, with contentId set so the
+    // image renders inline (cid:) instead of as a regular attachment. The frontend
+    // deliberately sets each file's multipart filename to the content-ID it referenced
+    // as cid: in the HTML body, so filename and contentId end up identical here.
+    private List<EmailAttachment> toInlineAttachments(List<MultipartFile> inlineImages) {
+        if (inlineImages == null) return List.of();
+        return inlineImages.stream()
+                .map(file -> {
+                    try {
+                        String contentId = file.getOriginalFilename();
+                        return new EmailAttachment(
+                                contentId,
+                                file.getContentType(),
+                                file.getBytes(),
+                                contentId
+                        );
+                    } catch (IOException e) {
+                        throw new IllegalArgumentException(
+                                "Failed to read inline image: " + file.getOriginalFilename()
+                        );
+                    }
+                })
+                .toList();
+    }
+
+    private List<EmailAttachment> combineAttachments(List<EmailAttachment> attachments,
+                                                     List<EmailAttachment> inlineAttachments) {
+        return Stream.concat(attachments.stream(), inlineAttachments.stream()).toList();
     }
 }

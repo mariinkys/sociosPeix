@@ -12,5 +12,7 @@ public record SendEmailToInterestsRequest(
         String htmlBody,
 
         @NotEmpty(message = "At least one interest must be specified")
-        List<Integer> interestIds
+        List<Integer> interestIds,
+
+        String previewHtmlBody
 ) {}

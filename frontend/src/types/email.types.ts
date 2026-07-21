@@ -21,11 +21,13 @@ export interface EmailProviderStatusResponse {
 export interface SendEmailPayload {
   subject: string
   htmlBody: string
+  previewHtmlBody?: string
 }
 
 export interface SendEmailToInterestsPayload {
   subject: string
   htmlBody: string
+  previewHtmlBody?: string
   interestIds: number[]
 }
 
