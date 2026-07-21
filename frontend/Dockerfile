@@ -2,6 +2,9 @@
 FROM docker.io/library/node:24-alpine AS build
 WORKDIR /app
 
+ARG VITE_PRIMEUI_LICENSE_KEY
+ENV VITE_PRIMEUI_LICENSE_KEY=$VITE_PRIMEUI_LICENSE_KEY
+
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 COPY package.json pnpm-lock.yaml ./

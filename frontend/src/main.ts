@@ -24,6 +24,7 @@ app.use(PrimeVue, {
       darkModeSelector: '.my-app-dark',
     },
   },
+  license: import.meta.env.VITE_PRIMEUI_LICENSE_KEY,
 })
 app.use(ConfirmationService)
 app.directive('tooltip', Tooltip)
