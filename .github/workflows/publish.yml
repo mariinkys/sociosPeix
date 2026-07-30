@@ -101,4 +101,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_PRIMEUI_LICENSE_KEY=${{ secrets.PRIMEUI_LICENSE_KEY }}
           no-cache: true

@@ -102,7 +102,7 @@ async function onSubmit({ valid }: FormSubmitEvent) {
                 :invalid="$field?.invalid"
                 fluid
               />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+              <Message v-if="$field?.invalid" severity="error" variant="simple">
                 {{ $field.error?.message }}
               </Message>
             </FormField>
@@ -127,7 +127,7 @@ async function onSubmit({ valid }: FormSubmitEvent) {
                 toggleMask
                 fluid
               />
-              <Message v-if="$field?.invalid" severity="error" size="small" variant="simple">
+              <Message v-if="$field?.invalid" severity="error" variant="simple">
                 {{ $field.error?.message }}
               </Message>
             </FormField>

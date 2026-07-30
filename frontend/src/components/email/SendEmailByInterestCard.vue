@@ -34,7 +34,6 @@ const dialogVisible = ref(false)
         <Button
           :label="t('common.actions.composeEmail')"
           icon="pi pi-send"
-          size="small"
           fluid
           @click="dialogVisible = true"
         />

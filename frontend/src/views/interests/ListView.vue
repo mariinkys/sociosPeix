@@ -157,7 +157,6 @@ onMounted(fetchInterests)
               severity="danger"
               text
               rounded
-              size="small"
               :aria-label="t('interests.actions.delete')"
               @click="confirmDelete($event, data)"
             />

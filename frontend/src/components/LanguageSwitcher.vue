@@ -27,7 +27,6 @@ onMounted(() => {
       severity="secondary"
       text
       rounded
-      size="small"
       @click="setLanguage(locale === 'es' ? 'en' : 'es')"
     />
   </div>

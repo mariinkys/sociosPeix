@@ -124,7 +124,6 @@ onBeforeUnmount(() => chart?.destroy())
               v-tooltip.top="t('common.actions.export')"
               text
               rounded
-              size="small"
               :aria-label="t('common.actions.export')"
               :loading="exporting"
               @click="onExport"
@@ -135,7 +134,6 @@ onBeforeUnmount(() => chart?.destroy())
               severity="secondary"
               text
               rounded
-              size="small"
               :aria-label="t('common.actions.refresh')"
               :loading="loading"
               @click="fetchData"

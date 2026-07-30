@@ -101,7 +101,6 @@ onMounted(fetchEmails)
               severity="secondary"
               text
               rounded
-              size="small"
               :aria-label="t('email.memberEmailsCard.refresh')"
               :loading="loading"
               @click="fetchEmails"
@@ -109,7 +108,6 @@ onMounted(fetchEmails)
             <Button
               :label="t('email.memberEmailsCard.sendEmail')"
               icon="pi pi-send"
-              size="small"
               @click="sendDialogVisible = true"
             />
           </div>
@@ -123,7 +121,6 @@ onMounted(fetchEmails)
           :rowsPerPageOptions="[5, 10, 25]"
           lazy
           paginator
-          size="small"
           paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
           @page="onPage"
@@ -163,7 +160,6 @@ onMounted(fetchEmails)
                   severity="secondary"
                   text
                   rounded
-                  size="small"
                   :aria-label="t('email.memberEmailsCard.viewEmail')"
                   @click="openPreview(data)"
                 />

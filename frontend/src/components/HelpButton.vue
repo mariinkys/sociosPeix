@@ -30,7 +30,6 @@ async function runTour() {
     severity="secondary"
     text
     rounded
-    size="small"
     @click="runTour"
   />
 </template>
