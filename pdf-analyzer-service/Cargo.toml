@@ -4,3 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+pdf-analyzer = { path = "./pdf-analyzer" }
+
+axum = { version = "0.8.9", features = ["multipart"] }
+tower-http = { version = "0.7", features = ["cors"] }
+tokio = { version = "1.53.1", features = ["rt-multi-thread", "macros"] }
+serde_json = "1.0.151"
+anyhow = "1.0.104"
+tempfile = "3.27.0"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
