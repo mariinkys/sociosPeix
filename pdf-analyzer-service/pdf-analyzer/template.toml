@@ -1,0 +1,71 @@
+# Form template — Hotel Casa Peix "Ficha de Registro"
+# Derived from probe output on 2026-08-02.
+
+render_dpi = 300
+
+[ocr]
+det_model  = "pp-ocrv5_mobile_det.onnx"
+rec_model  = "latin_pp-ocrv5_mobile_rec.onnx"
+char_dict  = "ppocrv5_latin_dict.txt"
+
+det_box_threshold   = 0.4
+det_score_threshold = 0.3
+det_unclip_ratio    = 1.8
+rec_score_threshold = 0.0
+
+image_batch_size  = 8
+region_batch_size = 16
+
+[[fields]]
+name      = "NOMBRE"
+rect      = { x = 0.089, y = 0.228, w = 0.400, h = 0.042 }
+pad       = 0.01
+transform = "upper"
+
+[[fields]]
+name      = "APELLIDO"
+rect      = { x = 0.510, y = 0.228, w = 0.400, h = 0.042 }
+pad       = 0.01
+transform = "upper"
+
+
+[[fields]]
+name      = "SEGUNDO_APELLIDO"
+rect      = { x = 0.089, y = 0.295, w = 0.400, h = 0.040 }
+pad       = 0.01
+transform = "upper"
+
+[[fields]]
+name      = "FECHA_NACIMIENTO"
+rect      = { x = 0.510, y = 0.295, w = 0.400, h = 0.040 }
+pad       = 0.01
+transform = "date"
+
+[[fields]]
+name      = "GENERO"
+rect      = { x = 0.089, y = 0.362, w = 0.400, h = 0.040 }
+pad       = 0.01
+transform = "upper"
+
+[[fields]]
+name      = "TELEFONO"
+rect      = { x = 0.510, y = 0.362, w = 0.400, h = 0.040 }
+pad       = 0.01
+transform = "digits"
+
+[[fields]]
+name      = "CORREO_ELECTRONICO"
+rect      = { x = 0.089, y = 0.428, w = 0.400, h = 0.040 }
+pad       = 0.01
+
+[[fields]]
+name      = "PAIS"
+rect      = { x = 0.510, y = 0.428, w = 0.400, h = 0.040 }
+pad       = 0.01
+transform = "upper"
+
+[[fields]]
+name      = "FECHA_FIRMA"
+rect      = { x = 0.630, y = 0.580, w = 0.280, h = 0.100 }
+pad       = 0.01
+transform = "upper"
