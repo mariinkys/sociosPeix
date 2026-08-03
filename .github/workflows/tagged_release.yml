@@ -11,6 +11,7 @@ on:
           - all
           - backend
           - frontend
+          - ocr
       tag_name:
         description: 'Tag name for the release (e.g. v1.2.0)'
         required: true
@@ -111,14 +112,53 @@ jobs:
             vite_primeui_license_key=${{ secrets.PRIMEUI_LICENSE_KEY }}
           no-cache: true
 
+  publish-ocr:
+    if: ${{ inputs.service == 'all' || inputs.service == 'ocr' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-ocr
+          tags: |
+            type=raw,value=${{ inputs.tag_name }}
+
+      - name: Build and push ocr
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./pdf-analyzer-service/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          no-cache: true
+
   create-release:
-    needs: [publish-backend, publish-frontend]
-    # Run if BOTH jobs ran, OR if only one ran (i.e., 'all' or a single service)
+    needs: [ publish-backend, publish-frontend, publish-ocr ]
     if: |
       always() &&
       (needs.publish-backend.result == 'success' || needs.publish-backend.result == 'skipped') &&
       (needs.publish-frontend.result == 'success' || needs.publish-frontend.result == 'skipped') &&
-      (needs.publish-backend.result == 'success' || needs.publish-frontend.result == 'success')
+      (needs.publish-ocr.result == 'success' || needs.publish-ocr.result == 'skipped') &&
+      (needs.publish-backend.result == 'success' || needs.publish-frontend.result == 'success' || needs.publish-ocr.result == 'success')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -135,8 +175,9 @@ jobs:
           draft: true
           body: |
             ## Docker Images
-
+            
             The following GHCR images were published with this release:
-
+            
             ${{ (inputs.service == 'all' || inputs.service == 'backend') && format('- `ghcr.io/{0}-backend:{1}`', github.repository, inputs.tag_name) || '' }}
             ${{ (inputs.service == 'all' || inputs.service == 'frontend') && format('- `ghcr.io/{0}-frontend:{1}`', github.repository, inputs.tag_name) || '' }}
+            ${{ (inputs.service == 'all' || inputs.service == 'ocr') && format('- `ghcr.io/{0}-ocr:{1}`', github.repository, inputs.tag_name) || '' }}
