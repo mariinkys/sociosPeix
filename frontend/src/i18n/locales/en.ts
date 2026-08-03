@@ -27,6 +27,7 @@ export default {
       deleted: 'Deleted',
       sent: 'Sent',
       success: 'Success',
+      warn: 'Warning',
     },
 
     fields: {
@@ -82,6 +83,7 @@ export default {
       searchCountry: 'Search country...',
       filterByInterest: 'Filter by interest...',
       selectInterests: 'Select interests...',
+      dateFormat: 'Date Format',
     },
 
     validation: {
@@ -291,6 +293,7 @@ export default {
       create: 'Create Member',
       createNew: 'New Member',
       delete: 'Delete member',
+      scanForm: 'Scan Form',
     },
 
     sections: {
@@ -770,4 +773,37 @@ export default {
       empty: 'No interest data yet',
     },
   },
+
+  formOcr: {
+  dialog: {
+    title: 'Scan Registration Form',
+    reviewTitle: 'Review Member {current} of {total}',
+    reviewDescription: 'Check and correct the extracted data before creating the member.',
+    description: 'Upload a PDF registration form to automatically extract the client data.',
+    fields: {
+      file: 'PDF File',
+    },
+    upload: {
+      prompt: 'Click to select a PDF file',
+      hint: 'Only PDF files are accepted',
+    },
+    validation: {
+      fileRequired: 'Please select a PDF file',
+      pdfOnly: 'Only PDF files are accepted',
+    },
+    actions: {
+      analyze: 'Analyze',
+      skip: 'Skip',
+      createAndNext: 'Create & Next',
+      createAndFinish: 'Create & Finish',
+    },
+    messages: {
+      success: 'Form analyzed successfully',
+      error: 'Failed to analyze the form. Please try again.',
+      noPages: 'The server returned no pages.',
+      memberCreated: '{name} created successfully.',
+      createError: 'Failed to create the member. Please try again.',
+    },
+  },
+},
 }

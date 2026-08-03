@@ -8,6 +8,7 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import MultiSelect from 'primevue/multiselect'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
+import FormOcrDialog from '@/components/formOcr/FormOcrDialog.vue'
 import InputText from 'primevue/inputtext'
 import type {
   DataTableSortEvent,
@@ -29,6 +30,7 @@ const members = ref<MemberResponse[]>([])
 const loading = ref(false)
 const exportLoading = ref(false)
 const totalElements = ref(0)
+const ocrDialogVisible = ref(false)
 
 const search = ref('')
 const selectedInterests = ref<InterestResponse[]>([])
@@ -166,6 +168,7 @@ onMounted(async () => {
 <template>
   <div class="p-6 space-y-4">
     <ConfirmDialog />
+    <FormOcrDialog v-model:visible="ocrDialogVisible" @refresh="fetchMembers" />
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
@@ -212,6 +215,15 @@ onMounted(async () => {
           :loading="exportLoading"
           @click="onExport"
         />
+
+        <Button
+          :label="t('members.actions.scanForm')"
+          icon="pi pi-qrcode"
+          severity="secondary"
+          class="shrink-0"
+          @click="ocrDialogVisible = true"
+        />
+
         <Button
           :label="t('members.actions.createNew')"
           data-tour="members-add"

@@ -42,6 +42,8 @@ async fn extract(
     State(state): State<Arc<AppState>>,
     mut multipart: Multipart,
 ) -> Result<Json<serde_json::Value>, AppError> {
+    tracing::info!("Extract has been requested");
+
     let mut pdf_bytes: Option<Vec<u8>> = None;
     while let Some(field) = multipart.next_field().await? {
         if field.name() == Some("file") {
@@ -87,7 +89,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .init();
 
-    let bind = std::env::var("BIND").unwrap_or_else(|_| "0.0.0.0:8080".into());
+    let bind = std::env::var("BIND").unwrap_or_else(|_| "0.0.0.0:8081".into());
 
     tracing::info!("loading template from {TEMPLATE_PATH}");
     let template = FormTemplate::load(Path::new(TEMPLATE_PATH))?;

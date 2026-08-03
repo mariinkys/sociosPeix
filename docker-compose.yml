@@ -25,6 +25,7 @@ services:
       MAILTRAP_API_KEY: ${MAILTRAP_API_KEY}
       EMAIL_FROM: ${EMAIL_FROM}
       CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
+      OCR_SERVICE_URL: ${OCR_SERVICE_URL}
       COOKIE_SECURE: "false"
       TRUST_PROXY: "false"
     depends_on:
