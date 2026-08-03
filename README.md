@@ -22,6 +22,16 @@ Check out my [other projects](https://github.com/mariinkys)
 
 You can also help do this and more projects, [Buy me a Coffee](https://www.buymeacoffee.com/mariinkys)
 
+## Development Notes
+
+<div align="center">
+
+In order to execute the backend and for it to work correctly when using IntelliJ we have to modify the Run/Debug Configurations like this:
+
+<img src="./other/help/BuildProperties.png" width="600" />
+
+</div>
+
 ## Copyright and Licensing
 
 Copyright 2026 © Alex Marín

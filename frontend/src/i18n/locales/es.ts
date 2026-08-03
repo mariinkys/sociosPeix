@@ -27,6 +27,7 @@ export default {
       deleted: 'Eliminado',
       sent: 'Enviado',
       success: 'Éxito',
+      warn: 'Cuidado',
     },
 
     fields: {
@@ -82,6 +83,7 @@ export default {
       searchCountry: 'Buscar país...',
       filterByInterest: 'Filtrar por interés...',
       selectInterests: 'Selecciona intereses...',
+      dateFormat: 'Formato de la Fecha',
     },
 
     validation: {
@@ -294,6 +296,8 @@ export default {
       create: 'Crear Miembro',
       createNew: 'Nuevo Miembro',
       delete: 'Eliminar Miembro',
+      scanForm: 'Escanear Formulario',
+      downloadBlankForm: 'Descargar Formulario en Blanco',
     },
 
     sections: {
@@ -637,6 +641,10 @@ export default {
         title: 'Buscar socios',
         description: 'Filtra la lista por nombre, correo o teléfono mientras escribes.',
       },
+      scanForm: {
+        title: 'Escanear Formulario',
+        description: 'Sube un PDF de registro de miembros para que el programa lo escanee automáticamente. También puedes descargar el PDF vacío para imprimir...',
+      },
       interestFilter: {
         title: 'Filtrar por interés',
         description: 'Muestra solo los socios suscritos a uno o varios grupos de interés.',
@@ -779,4 +787,37 @@ export default {
       empty: 'Todavía no hay datos de intereses',
     },
   },
+
+  formOcr: {
+  dialog: {
+    title: 'Escanear Ficha de Registro',
+    reviewTitle: 'Revisar socio {current} de {total}',
+    reviewDescription: 'Revisa y corrige los datos extraídos antes de crear el socio.',
+    description: 'Sube una ficha de registro en PDF para extraer automáticamente los datos del cliente.',
+    fields: {
+      file: 'Archivo PDF',
+    },
+    upload: {
+      prompt: 'Haz clic para seleccionar un archivo PDF',
+      hint: 'Solo se aceptan archivos PDF',
+    },
+    validation: {
+      fileRequired: 'Por favor selecciona un archivo PDF',
+      pdfOnly: 'Solo se aceptan archivos PDF',
+    },
+    actions: {
+      analyze: 'Analizar',
+      skip: 'Omitir',
+      createAndNext: 'Crear y siguiente',
+      createAndFinish: 'Crear y finalizar',
+    },
+    messages: {
+      success: 'Ficha analizada correctamente',
+      error: 'No se pudo analizar la ficha. Por favor, inténtalo de nuevo.',
+      noPages: 'El servidor no devolvió ninguna página.',
+      memberCreated: '{name} creado correctamente.',
+      createError: 'No se pudo crear el socio. Por favor, inténtalo de nuevo.',
+    },
+  },
+},
 }

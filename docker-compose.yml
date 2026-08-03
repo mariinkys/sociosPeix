@@ -13,6 +13,15 @@ services:
       timeout: 5s
       retries: 5
 
+  ocr:
+    image: ghcr.io/${GITHUB_REPOSITORY}-ocr:latest
+    environment:
+      BIND: 0.0.0.0:${OCR_PORT:-8081}
+      RUST_LOG: warn,pdf_analyzer_service=info
+    volumes:
+      - ocr_models:/root/.oar
+    restart: unless-stopped
+
   backend:
     image: ghcr.io/${GITHUB_REPOSITORY}-backend:latest
     environment:
@@ -25,11 +34,14 @@ services:
       MAILTRAP_API_KEY: ${MAILTRAP_API_KEY}
       EMAIL_FROM: ${EMAIL_FROM}
       CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
+      OCR_SERVICE_URL: ${OCR_SERVICE_URL}
       COOKIE_SECURE: "false"
       TRUST_PROXY: "false"
     depends_on:
       db:
         condition: service_healthy
+      ocr:
+        condition: service_started
     restart: unless-stopped
 
   frontend:
@@ -42,3 +54,4 @@ services:
 
 volumes:
   postgres_data:
+  ocr_models:

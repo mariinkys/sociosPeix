@@ -3,6 +3,14 @@ import type { ComposerTranslation } from 'vue-i18n'
 
 export function homeTour(t: ComposerTranslation): DriveStep[] {
   return [
+     {
+      element: '[data-tour="members-scanForm"]',
+      popover: {
+        title: t('tours.members.scanForm.title'),
+        description: t('tours.members.scanForm.description'),
+        side: 'bottom',
+      },
+    },
     {
       element: '[data-tour="home-birthdays"]',
       popover: {

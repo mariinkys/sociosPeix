@@ -5,7 +5,11 @@ import Select from 'primevue/select'
 import type { GenderResponse } from '@/types/gender.types'
 import { gendersService } from '@/services/genders.service'
 
-const props = defineProps<{ modelValue: number | null; invalid?: boolean }>()
+const props = defineProps<{
+  modelValue: number | null
+  invalid?: boolean
+  initialName?: string | null
+}>()
 const emit = defineEmits<{ 'update:modelValue': [value: number | null] }>()
 
 const { t } = useI18n({ useScope: 'global' })
@@ -14,6 +18,14 @@ const all = ref<GenderResponse[]>([])
 
 onMounted(async () => {
   all.value = await gendersService.getAll()
+
+  if (props.initialName && props.modelValue == null) {
+    const normalized = props.initialName.trim().toLowerCase()
+    const match = all.value.find((c) => c.name.trim().toLowerCase() === normalized)
+    if (match) {
+      emit('update:modelValue', match.id)
+    }
+  }
 })
 
 watch(

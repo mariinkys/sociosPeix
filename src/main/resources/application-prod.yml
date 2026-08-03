@@ -9,6 +9,8 @@ app:
     trust-proxy: ${TRUST_PROXY:false} # only set true when behind a trusted proxy
     filter:
       order: 10
+  ocr:
+    service-url: ${OCR_SERVICE_URL:http://localhost:8081}
 
 spring:
   datasource:

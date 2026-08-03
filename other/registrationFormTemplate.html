@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Registro - Casa Peix</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 15mm 20mm 15mm 20mm;
+            background-color: #ffffff;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #111111;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-size: 10pt;
+            width: 100%;
+        }
+
+        .page-container {
+            width: 100%;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border-bottom: 2.5px solid #c8102e;
+            padding-bottom: 12px;
+        }
+
+        .header-table td {
+            vertical-align: middle;
+        }
+
+        .logo-cell {
+            width: 50%;
+            text-align: left;
+        }
+
+        .title-cell {
+            width: 50%;
+            text-align: right;
+        }
+
+        .doc-title {
+            font-size: 15pt;
+            font-weight: 800;
+            color: #111111;
+            margin: 0 0 3px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .doc-subtitle {
+            font-size: 8.5pt;
+            color: #555555;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .instruction-banner {
+            background-color: #f8f9fa;
+            border-left: 3px solid #c8102e;
+            padding: 8px 12px;
+            font-size: 8.5pt;
+            color: #444444;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .form-grid {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0px 14px;
+            margin-bottom: 10px;
+            table-layout: fixed;
+        }
+
+        .form-grid td {
+            vertical-align: top;
+        }
+
+        .col-left {
+            padding-right: 12px;
+        }
+
+        .col-right {
+            padding-left: 12px;
+        }
+
+        .col-full {
+            padding: 0;
+        }
+
+        .field-label {
+            font-size: 9.5pt;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+            display: block;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .required {
+            color: #c8102e;
+            font-weight: bold;
+        }
+
+        .sub-label {
+            font-size: 7.5pt;
+            font-weight: normal;
+            color: #666666;
+            text-transform: none;
+        }
+
+        .input-box {
+            width: 100%;
+            height: 40px;
+            border: 1.5px solid #222222;
+            border-radius: 3px;
+            background-color: #ffffff;
+        }
+
+        .consent-container {
+            margin-top: 15px;
+            margin-bottom: 20px;
+            border: 1.5px solid #d0d0d0;
+            border-radius: 4px;
+            padding: 12px 14px;
+            background-color: #fafafa;
+            width: 100%;
+        }
+
+        .checkbox-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .checkbox-cell {
+            width: 28px;
+            vertical-align: top;
+            padding-top: 2px;
+        }
+
+        .checkbox-box {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #111111;
+            border-radius: 3px;
+            background-color: #ffffff;
+        }
+
+        .checkbox-label {
+            font-size: 9pt;
+            color: #222222;
+            line-height: 1.4;
+            vertical-align: top;
+            padding-left: 6px;
+        }
+
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 25px;
+            table-layout: fixed;
+        }
+
+        .signature-table td {
+            vertical-align: top;
+        }
+
+        .sig-box {
+            width: 100%;
+            height: 105px;
+            border: 1.5px solid #222222;
+            border-radius: 3px;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        .sig-hint {
+            position: absolute;
+            bottom: 6px;
+            left: 10px;
+            font-size: 7.5pt;
+            color: #888888;
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 7.5pt;
+            color: #555555;
+            text-align: justify;
+            line-height: 1.35;
+            border-top: 1px solid #d0d0d0;
+            padding-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <table class="header-table">
+            <tr>
+                <td class="logo-cell">
+                    <div style="padding: 10px;">
+                        <img height="60" src="../frontend/src/assets/logo.png">
+                    </div>
+                </td>
+                <td class="title-cell">
+                    <div class="doc-title">FICHA DE REGISTRO</div>
+                    <div class="doc-subtitle">DATOS DE CLIENTE</div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="instruction-banner">
+            <strong>Instrucciones para lectura automatizada:</strong> Escriba en mayúsculas dentro de los recuadros delimitados. Los campos indicados con asterisco (<span class="required">*</span>) son obligatorios.
+        </div>
+
+        <table class="form-grid">
+            <tr>
+                <td class="col-left" style="width: 50%;">
+                    <span class="field-label">NOMBRE <span class="required">*</span></span>
+                    <div class="input-box"></div>
+                </td>
+                <td class="col-right" style="width: 50%;">
+                    <span class="field-label">APELLIDO <span class="required">*</span></span>
+                    <div class="input-box"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-left">
+                    <span class="field-label">SEGUNDO APELLIDO</span>
+                    <div class="input-box"></div>
+                </td>
+                <td class="col-right">
+                    <span class="field-label">FECHA DE NACIMIENTO <span class="sub-label">(DD/MM/AAAA)</span></span>
+                    <div class="input-box"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-left">
+                    <span class="field-label">GÉNERO</span>
+                    <div class="input-box"></div>
+                </td>
+                <td class="col-right">
+                    <span class="field-label">TELÉFONO</span>
+                    <div class="input-box"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-left">
+                    <span class="field-label">CORREO ELECTRÓNICO <span class="required">*</span></span>
+                    <div class="input-box"></div>
+                </td>
+                <td class="col-right">
+                    <span class="field-label">PAÍS</span>
+                    <div class="input-box"></div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="consent-container">
+            <table class="checkbox-table">
+                <tr>
+                    <td class="checkbox-cell">
+                        <div class="checkbox-box"></div>
+                    </td>
+                    <td class="checkbox-label">
+                        <strong>Acepto recibir comunicaciones comerciales, ofertas especiales y novedades de Casa Peix</strong> a través de correo electrónico.
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table class="signature-table">
+            <tr>
+                <td class="col-left" style="width: 65%;">
+                    <span class="field-label">FIRMA DEL CLIENTE <span class="required">*</span></span>
+                    <div class="sig-box">
+                        <span class="sig-hint">Firme claramente dentro del recuadro</span>
+                    </div>
+                </td>
+                <td class="col-right" style="width: 35%;">
+                    <span class="field-label">FECHA DE FIRMA <span class="sub-label">(DD/MM/AAAA)</span></span>
+                    <div class="sig-box">
+                        <!--<span class="sig-hint">Fecha actual</span>-->
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="footer">
+            <strong>Información sobre Protección de Datos:</strong> Los datos recabados en este documento serán tratados por el hotel Casa Peix con la finalidad de gestionar la relación con el cliente. En caso de haber prestado su consentimiento expreso, sus datos serán utilizados para el envío de comunicaciones publicitarias y promocionales. Se informa que puede darse de baja o ejercitar en cualquier momento sus derechos de acceso, rectificación, supresión u oposición contactando directamente con la recepción del hotel o enviando una solicitud a nuestro correo electrónico.
+        </div>
+    </div>
+
+</body>
+</html>
