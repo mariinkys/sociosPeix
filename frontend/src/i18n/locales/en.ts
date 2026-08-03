@@ -294,6 +294,7 @@ export default {
       createNew: 'New Member',
       delete: 'Delete member',
       scanForm: 'Scan Form',
+      downloadBlankForm: 'Download Blank Form',
     },
 
     sections: {
@@ -634,6 +635,10 @@ export default {
       search: {
         title: 'Search members',
         description: 'Filter the list by name, email, or phone as you type.',
+      },
+      scanForm: {
+        title: 'Scan Form',
+        description: 'OCR a member entry form PDF to easily add more members to the app. Here you can also download the blank PDF to print...',
       },
       interestFilter: {
         title: 'Filter by interest',

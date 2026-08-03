@@ -297,6 +297,7 @@ export default {
       createNew: 'Nuevo Miembro',
       delete: 'Eliminar Miembro',
       scanForm: 'Escanear Formulario',
+      downloadBlankForm: 'Descargar Formulario en Blanco',
     },
 
     sections: {
@@ -639,6 +640,10 @@ export default {
       search: {
         title: 'Buscar socios',
         description: 'Filtra la lista por nombre, correo o teléfono mientras escribes.',
+      },
+      scanForm: {
+        title: 'Escanear Formulario',
+        description: 'Sube un PDF de registro de miembros para que el programa lo escanee automáticamente. También puedes descargar el PDF vacío para imprimir...',
       },
       interestFilter: {
         title: 'Filtrar por interés',

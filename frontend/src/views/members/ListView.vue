@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import ConfirmDialog from 'primevue/confirmdialog'
 import MultiSelect from 'primevue/multiselect'
+import SplitButton from 'primevue/splitbutton'
+import type { MenuItem } from 'primevue/menuitem'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 import FormOcrDialog from '@/components/formOcr/FormOcrDialog.vue'
@@ -159,6 +161,30 @@ async function onExport() {
   }
 }
 
+function downloadBlankForm() {
+  const link = document.createElement('a')
+  link.href = '/registrationForm.pdf'
+  link.download = 'registrationForm.pdf'
+  link.click()
+}
+
+const scanFormMenuItems = computed<MenuItem[]>(() => [
+  {
+    label: t('members.actions.scanForm'),
+    icon: 'pi pi-qrcode',
+    command: () => {
+      ocrDialogVisible.value = true
+    },
+  },
+  {
+    label: t('members.actions.downloadBlankForm'),
+    icon: 'pi pi-download',
+    command: () => {
+      downloadBlankForm()
+    },
+  },
+])
+
 onMounted(async () => {
   allInterests.value = await interestsService.getAll()
   fetchMembers()
@@ -216,11 +242,13 @@ onMounted(async () => {
           @click="onExport"
         />
 
-        <Button
+        <SplitButton
           :label="t('members.actions.scanForm')"
           icon="pi pi-qrcode"
+          data-tour="members-scanForm"
           severity="secondary"
           class="shrink-0"
+          :model="scanFormMenuItems"
           @click="ocrDialogVisible = true"
         />
 

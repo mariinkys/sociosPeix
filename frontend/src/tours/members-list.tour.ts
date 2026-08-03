@@ -12,6 +12,14 @@ export function membersListTour(t: ComposerTranslation): DriveStep[] {
       },
     },
     {
+      element: '[data-tour="members-scanForm"]',
+      popover: {
+        title: t('tours.members.scanForm.title'),
+        description: t('tours.members.scanForm.description'),
+        side: 'bottom',
+      },
+    },
+    {
       element: '[data-tour="members-interest-filter"]',
       popover: {
         title: t('tours.members.interestFilter.title'),
