@@ -59,7 +59,7 @@ function pageToForm(page: FormOcrPage) {
     secondSurname: capitalizeFirstLetter(page.fields.SEGUNDO_APELLIDO.text),
     birthdate: page.fields.FECHA_NACIMIENTO.text,
     phone: page.fields.TELEFONO.text,
-    email: page.fields.CORREO_ELECTRONICO.text,
+    email: page.fields.CORREO_ELECTRONICO.text.toLowerCase(),
     genderId: null,
     countryId: null,
   }
