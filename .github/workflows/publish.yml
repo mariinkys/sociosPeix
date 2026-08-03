@@ -134,7 +134,7 @@ jobs:
       - name: Build and push ocr
         uses: docker/build-push-action@v7
         with:
-          context: .
+          context: ./pdf-analyzer-service
           file: ./pdf-analyzer-service/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
