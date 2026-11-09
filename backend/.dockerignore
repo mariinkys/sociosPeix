@@ -1,0 +1,4 @@
+target/
+**/*.log
+.env
+pdf-analyzer/calibration/

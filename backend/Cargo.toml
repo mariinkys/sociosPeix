@@ -1,0 +1,74 @@
+[workspace]
+members = [".", "pdf-analyzer"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+license = "GPL-3.0-only"
+repository = "https://github.com/mariinkys/sociosPeix"
+rust-version = "1.94"
+
+[workspace.dependencies]
+anyhow = "1.0.104"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", default-features = false, features = ["env-filter", "fmt", "ansi", "json"] }
+
+[package]
+name = "sociospeix"
+version = "0.3.0"
+description = "Backend for Socios Peix, a member management app for Hotel Casa Peix"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[features]
+default = ["ocr"]
+# Registration-form OCR (pulls in ONNX Runtime). Disable for a much smaller,
+# faster-to-build binary: `cargo build --no-default-features`.
+ocr = ["dep:pdf-analyzer"]
+
+[dependencies]
+pdf-analyzer = { path = "pdf-analyzer", optional = true }
+
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+async-trait = "0.1.92"
+axum = { version = "0.8.9", default-features = false, features = ["http1", "json", "multipart", "query", "tokio", "tower-log", "tracing"] }
+axum-extra = { version = "0.12.6", default-features = false, features = ["cookie"] }
+base64 = "0.23.1"
+bcrypt = "0.19.3"
+bytes = "1.12.1"
+chrono = { version = "0.4.45", default-features = false, features = ["clock", "serde", "std"] }
+chrono-tz = "0.10.4"
+dotenvy = "0.15.7"
+form_urlencoded = "1.2"
+jsonwebtoken = { version = "11.1.0", default-features = false, features = ["rust_crypto"] }
+rand = "0.10.3"
+reqwest = { version = "0.13.5", default-features = false, features = ["json", "rustls", "http2"] }
+rust_xlsxwriter = { version = "0.102.0", default-features = false }
+sha2 = "0.11.1"
+sqlx = { version = "0.9.0", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "macros", "migrate", "uuid", "chrono"] }
+subtle = "2.6"
+thiserror = "2.0.21"
+time = { version = "0.3.55", default-features = false }
+tokio = { version = "1.54.1", features = ["macros", "rt-multi-thread", "signal", "sync", "time"] }
+tower = { version = "0.5.3", default-features = false }
+tower-http = { version = "0.7.1", features = ["cors", "limit", "set-header", "trace", "request-id", "util"] }
+uuid = { version = "1.29.2", features = ["serde", "v4"] }
+
+[dev-dependencies]
+tokio = { version = "1.54.1", features = ["macros", "rt-multi-thread", "test-util"] }
+
+[profile.release]
+codegen-units = 1
+lto = "fat"
+opt-level = 3
+panic = "abort"
+strip = true

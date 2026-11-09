@@ -1,0 +1,35 @@
+[package]
+name = "pdf-analyzer"
+version = "0.2.0"
+description = "Reads handwritten fields from fixed-layout PDF forms into JSON"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[features]
+default = []
+# Developer CLI (probe / calibrate / extract). Not needed by the backend.
+cli = ["dep:clap", "dep:imageproc", "dep:tracing-subscriber"]
+cuda = ["oar-ocr/cuda"]
+coreml = ["oar-ocr/coreml"]
+directml = ["oar-ocr/directml"]
+
+[[bin]]
+name = "pdf-analyzer"
+required-features = ["cli"]
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json = { workspace = true, features = ["preserve_order"] }
+tracing.workspace = true
+
+hayro = "0.9.0"
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+oar-ocr = { version = "0.10.2", features = ["auto-download"] }
+toml = "1.2.1"
+
+clap = { version = "4.6.7", features = ["derive"], optional = true }
+imageproc = { version = "0.27.0", default-features = false, optional = true }
+tracing-subscriber = { workspace = true, optional = true }
