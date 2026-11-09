@@ -155,6 +155,7 @@ async function onCreateMember() {
     phone: form.value.phone || null,
     genderId: form.value.genderId,
     countryId: form.value.countryId,
+    emailsDisabled: false,
     notes: null,
     interestIds: [],
   }
