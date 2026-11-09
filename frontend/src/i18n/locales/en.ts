@@ -364,6 +364,7 @@ export default {
         label: '@:common.fields.interests',
         help: 'Select one or more interests for this member',
       },
+      emailsDisabled: 'Emails Disabled',
     },
 
     todayBirthdayCard: {

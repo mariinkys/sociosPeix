@@ -10,6 +10,7 @@ import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import ToggleSwitch from 'primevue/toggleswitch';
 import ConfirmDialog from 'primevue/confirmdialog'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
@@ -40,6 +41,7 @@ const model = ref<MemberCreatePayload>({
   birthdate: null,
   phone: null,
   notes: null,
+  emailsDisabled: false,
   genderId: null,
   countryId: null,
   interestIds: [],
@@ -58,6 +60,7 @@ async function fetchMember() {
       birthdate: member.birthdate,
       phone: member.phone,
       notes: member.notes,
+      emailsDisabled: member.emailsDisabled,
       genderId: member.genderId,
       countryId: member.countryId,
       interestIds: member.interests.map((i) => i.id),
@@ -196,28 +199,14 @@ onMounted(async () => {
       <i class="pi pi-spinner pi-spin text-2xl text-surface-400"></i>
     </div>
 
-    <Form
-      v-else
-      v-slot="$form"
-      :initialValues="model"
-      :resolver
-      :validateOnBlur="true"
-      :validateOnValueUpdate="true"
-      class="space-y-6"
-      @submit="onSubmit"
-    >
+    <Form v-else v-slot="$form" :initialValues="model" :resolver :validateOnBlur="true" :validateOnValueUpdate="true"
+      class="space-y-6" @submit="onSubmit">
       <ConfirmDialog />
 
       <div class="flex items-center justify-between gap-3 flex-wrap">
         <div class="flex items-center gap-3">
-          <Button
-            icon="pi pi-arrow-left"
-            severity="secondary"
-            text
-            rounded
-            @click="router.push('/members')"
-            :aria-label="t('common.actions.back')"
-          />
+          <Button icon="pi pi-arrow-left" severity="secondary" text rounded @click="router.push('/members')"
+            :aria-label="t('common.actions.back')" />
           <div>
             <h1 class="text-xl font-semibold text-surface-900 dark:text-surface-0">
               {{ isEdit ? t('members.titles.edit') : t('members.titles.create') }}
@@ -229,31 +218,13 @@ onMounted(async () => {
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
-          <Button
-            :label="t('common.actions.cancel')"
-            severity="secondary"
-            outlined
-            @click="router.push('/members')"
-          />
-          <Button
-            type="submit"
-            data-tour="member-save"
+          <Button :label="t('common.actions.cancel')" severity="secondary" outlined @click="router.push('/members')" />
+          <Button type="submit" data-tour="member-save"
             :label="isEdit ? t('common.actions.saveChanges') : t('members.actions.create')"
-            :icon="isEdit ? 'pi pi-check' : 'pi pi-user-plus'"
-            iconPos="right"
-            :loading="loading"
-            :disabled="!$form.valid"
-          />
-          <Button
-            v-if="isEdit"
-            data-tour="member-delete"
-            icon="pi pi-trash"
-            severity="danger"
-            outlined
-            :loading="deleteLoading"
-            :aria-label="t('members.actions.delete')"
-            @click="confirmDelete"
-          />
+            :icon="isEdit ? 'pi pi-check' : 'pi pi-user-plus'" iconPos="right" :loading="loading"
+            :disabled="!$form.valid" />
+          <Button v-if="isEdit" data-tour="member-delete" icon="pi pi-trash" severity="danger" outlined
+            :loading="deleteLoading" :aria-label="t('members.actions.delete')" @click="confirmDelete" />
         </div>
       </div>
 
@@ -264,9 +235,7 @@ onMounted(async () => {
           <template #content>
             <div class="p-2 space-y-6">
               <div class="space-y-4" data-tour="member-personal-details">
-                <h2
-                  class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
-                >
+                <h2 class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide">
                   {{ t('members.sections.personalDetails') }}
                 </h2>
 
@@ -275,12 +244,8 @@ onMounted(async () => {
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                       {{ t('members.fields.name.label') }} <span class="text-red-500">*</span>
                     </label>
-                    <InputText
-                      v-model="model.name"
-                      :placeholder="t('members.fields.name.placeholder')"
-                      :invalid="$field?.invalid"
-                      fluid
-                    />
+                    <InputText v-model="model.name" :placeholder="t('members.fields.name.placeholder')"
+                      :invalid="$field?.invalid" fluid />
                     <Message v-if="$field?.invalid" severity="error" variant="simple">
                       {{ $field.error?.message }}
                     </Message>
@@ -290,12 +255,8 @@ onMounted(async () => {
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                       {{ t('members.fields.surname.label') }} <span class="text-red-500">*</span>
                     </label>
-                    <InputText
-                      v-model="model.surname"
-                      :placeholder="t('members.fields.surname.placeholder')"
-                      :invalid="$field?.invalid"
-                      fluid
-                    />
+                    <InputText v-model="model.surname" :placeholder="t('members.fields.surname.placeholder')"
+                      :invalid="$field?.invalid" fluid />
                     <Message v-if="$field?.invalid" severity="error" variant="simple">
                       {{ $field.error?.message }}
                     </Message>
@@ -306,12 +267,8 @@ onMounted(async () => {
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                     {{ t('members.fields.secondSurname.label') }}
                   </label>
-                  <InputText
-                    v-model="model.secondSurname"
-                    :placeholder="t('members.fields.secondSurname.placeholder')"
-                    :invalid="$field?.invalid"
-                    fluid
-                  />
+                  <InputText v-model="model.secondSurname" :placeholder="t('members.fields.secondSurname.placeholder')"
+                    :invalid="$field?.invalid" fluid />
                   <Message v-if="$field?.invalid" severity="error" variant="simple">
                     {{ $field.error?.message }}
                   </Message>
@@ -322,12 +279,7 @@ onMounted(async () => {
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                       {{ t('members.fields.birthdate.label') }}
                     </label>
-                    <InputText
-                      v-model="model.birthdate"
-                      type="date"
-                      :invalid="$field?.invalid"
-                      fluid
-                    />
+                    <InputText v-model="model.birthdate" type="date" :invalid="$field?.invalid" fluid />
                     <Message v-if="$field?.invalid" severity="error" variant="simple">
                       {{ $field.error?.message }}
                     </Message>
@@ -348,11 +300,18 @@ onMounted(async () => {
               <div class="border-t border-surface-100 dark:border-surface-800" />
 
               <div class="space-y-4" data-tour="member-contact">
-                <h2
-                  class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
-                >
-                  {{ t('members.sections.contact') }}
-                </h2>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <h2 class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide">
+                    {{ t('members.sections.contact') }}
+                  </h2>
+
+                  <div class="flex w-full sm:w-auto justify-start items-center gap-2">
+                    <ToggleSwitch v-model="model.emailsDisabled" inputId="emails_disabled" />
+                    <label for="emails_disabled">
+                      {{ t('members.fields.emailsDisabled') }}
+                    </label>
+                  </div>
+                </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField v-slot="$field" name="email" class="flex flex-col gap-1.5">
@@ -360,20 +319,11 @@ onMounted(async () => {
                       <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                         {{ t('members.fields.email.label') }} <span class="text-red-500">*</span>
                       </label>
-                      <i
-                        v-if="isEdit"
-                        v-tooltip.top="t('members.fields.email.editWarning')"
-                        class="pi pi-exclamation-triangle text-amber-500 text-xs cursor-default"
-                      ></i>
+                      <i v-if="isEdit" v-tooltip.top="t('members.fields.email.editWarning')"
+                        class="pi pi-exclamation-triangle text-amber-500 text-xs cursor-default"></i>
                     </div>
-                    <InputText
-                      v-model="model.email"
-                      type="email"
-                      :placeholder="t('members.fields.email.placeholder')"
-                      autocomplete="email"
-                      :invalid="$field?.invalid"
-                      fluid
-                    />
+                    <InputText v-model="model.email" type="email" :placeholder="t('members.fields.email.placeholder')"
+                      autocomplete="email" :invalid="$field?.invalid" fluid />
                     <Message v-if="$field?.invalid" severity="error" variant="simple">
                       {{ $field.error?.message }}
                     </Message>
@@ -383,13 +333,8 @@ onMounted(async () => {
                     <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                       {{ t('members.fields.phone.label') }}
                     </label>
-                    <InputText
-                      v-model="model.phone"
-                      type="tel"
-                      :placeholder="t('members.fields.phone.placeholder')"
-                      :invalid="$field?.invalid"
-                      fluid
-                    />
+                    <InputText v-model="model.phone" type="tel" :placeholder="t('members.fields.phone.placeholder')"
+                      :invalid="$field?.invalid" fluid />
                     <Message v-if="$field?.invalid" severity="error" variant="simple">
                       {{ $field.error?.message }}
                     </Message>
@@ -410,9 +355,7 @@ onMounted(async () => {
               <div class="border-t border-surface-100 dark:border-surface-800" />
 
               <div class="space-y-4">
-                <h2
-                  class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
-                >
+                <h2 class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide">
                   {{ t('members.sections.notes') }}
                 </h2>
 
@@ -420,13 +363,8 @@ onMounted(async () => {
                   <label class="text-sm font-medium text-surface-700 dark:text-surface-300">
                     {{ t('members.fields.notes.label') }}
                   </label>
-                  <Textarea
-                    v-model="model.notes"
-                    :placeholder="t('members.fields.notes.placeholder')"
-                    :invalid="$field?.invalid"
-                    rows="4"
-                    fluid
-                  />
+                  <Textarea v-model="model.notes" :placeholder="t('members.fields.notes.placeholder')"
+                    :invalid="$field?.invalid" rows="4" fluid />
                   <Message v-if="$field?.invalid" severity="error" variant="simple">
                     {{ $field.error?.message }}
                   </Message>
@@ -438,15 +376,10 @@ onMounted(async () => {
 
         <!-- Right Side -->
         <div class="lg:col-span-1 space-y-6">
-          <Card
-            class="border border-surface-200 dark:border-surface-700 shadow-sm"
-            data-tour="member-interests"
-          >
+          <Card class="border border-surface-200 dark:border-surface-700 shadow-sm" data-tour="member-interests">
             <template #content>
               <div class="p-2 space-y-4">
-                <h2
-                  class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide"
-                >
+                <h2 class="text-sm font-semibold text-surface-700 dark:text-surface-300 uppercase tracking-wide">
                   {{ t('members.sections.interests') }}
                 </h2>
                 <div class="flex flex-col gap-1.5">
@@ -462,11 +395,7 @@ onMounted(async () => {
             </template>
           </Card>
 
-          <MemberEmailsCard
-            v-if="isEdit && memberId"
-            :memberId="memberId"
-            data-tour="member-emails-history"
-          />
+          <MemberEmailsCard v-if="isEdit && memberId" :memberId="memberId" data-tour="member-emails-history" />
         </div>
       </div>
     </Form>
