@@ -2,7 +2,8 @@
 FROM docker.io/library/node:24-alpine AS build
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Uses the pnpm version pinned in package.json ("packageManager")
+RUN corepack enable
 
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
