@@ -1,0 +1,119 @@
+name: sociospeix
+services:
+  db:
+    cpu_shares: 90
+    command: []
+    container_name: sociospeix-db
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          devices: []
+    environment:
+      - POSTGRES_DB=sociosPeix
+      - POSTGRES_USER=ChangeThisDbUser
+      - POSTGRES_PASSWORD=ChangeThisDbPassword
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sociospeix -d sociosPeix"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    image: docker.io/library/postgres:18-alpine
+    labels:
+      icon: https://raw.githubusercontent.com/mariinkys/sociosPeix/refs/heads/main/frontend/public/android-chrome-512x512.png
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /media/ZimaOS-HD/AppData/SociosPeix/postgres
+        target: /var/lib/postgresql
+    ports: []
+    devices: []
+    cap_add: []
+    networks:
+      - sociospeix
+    privileged: false
+  backend:
+    cpu_shares: 90
+    command: []
+    container_name: sociospeix-backend
+    depends_on:
+      db:
+        condition: service_healthy
+        required: true
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          devices: []
+    environment:
+      - DB_HOST=db
+      - DB_NAME=sociosPeix
+      - DB_USERNAME=ChangeThisDbUser
+      - DB_PASSWORD=ChangeThisDbPassword
+      - JWT_SECRET=EnterYourOwnRandomSecretOfAtLeast32Chars
+      - COOKIE_SECURE=false
+      - CORS_ALLOWED_ORIGIN=http://SERVERIP:8090
+      - TRUST_PROXY=true
+      - APP_TIMEZONE=Europe/Madrid
+      - EMAIL_FROM=Hotel Casa Peix <noreply@example.com>
+      - RESEND_API_KEY=
+      - MAILTRAP_API_KEY=
+    image: ghcr.io/mariinkys/sociospeix-backend:latest
+    labels:
+      icon: https://raw.githubusercontent.com/mariinkys/sociosPeix/refs/heads/main/frontend/public/android-chrome-512x512.png
+    restart: unless-stopped
+    volumes: []
+    ports: []
+    devices: []
+    cap_add: []
+    networks:
+      - sociospeix
+    privileged: false
+  frontend:
+    cpu_shares: 90
+    command: []
+    container_name: sociospeix-frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+        required: true
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          devices: []
+    image: ghcr.io/mariinkys/sociospeix-frontend:latest
+    labels:
+      icon: https://raw.githubusercontent.com/mariinkys/sociosPeix/refs/heads/main/frontend/public/android-chrome-512x512.png
+    ports:
+      - target: 80
+        published: "8090"
+        protocol: tcp
+    restart: unless-stopped
+    volumes: []
+    devices: []
+    cap_add: []
+    environment: []
+    networks:
+      - sociospeix
+    privileged: false
+networks:
+  sociospeix:
+    name: sociospeix
+x-casaos:
+  author: self
+  category: self
+  hostname: ""
+  icon: https://raw.githubusercontent.com/mariinkys/sociosPeix/refs/heads/main/frontend/public/android-chrome-512x512.png
+  index: /
+  is_uncontrolled: false
+  main: frontend
+  port_map: "8090"
+  scheme: http
+  store_app_id: sociospeix
+  title:
+    custom: Socios Peix
+    en_us: Socios Peix
