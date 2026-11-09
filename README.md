@@ -9,28 +9,47 @@
 
 </div>
 
-## App Overview
+## Project layout
 
-<div align="center">
-    <img alt="Application Diagram" src="./other/AppDiagram.excalidraw.svg" width=500/>
-</div>
-Note: I've made the diagram using Excalidraw.
+| Folder | What |
+|---|---|
+| [`backend/`](./backend) | Rust (axum) API. See its [README](./backend/README.md) for the architecture and configuration. |
+| [`frontend/`](./frontend) | Vue 3 single-page app, served by nginx which also proxies `/api` to the backend. |
+
+
+## Deployment
+
+The app runs as three containers: PostgreSQL, the backend and the frontend.
+Images are built and pushed to GHCR by the **Publish Docker images** workflow
+(run it manually from the Actions tab; give it a release tag such as `v0.3.0`
+to also draft a GitHub release).
+
+On the server:
+
+```bash
+cp .env.example .env      # fill in DB credentials, JWT_SECRET, email keys...
+docker compose pull
+docker compose up -d
+```
+
+The app is then served on `HTTP_PORT` (default 8080). Put your HTTPS reverse
+proxy in front of it and set `COOKIE_SECURE=true`.
+
+## Development
+
+```bash
+# backend (needs a local PostgreSQL; see backend/.env.example)
+cd backend && cargo run
+
+# frontend
+cd frontend && pnpm install && pnpm dev
+```
 
 ## About me
 
 Check out my [other projects](https://github.com/mariinkys)
 
 You can also help do this and more projects, [Buy me a Coffee](https://www.buymeacoffee.com/mariinkys)
-
-## Development Notes
-
-<div align="center">
-
-In order to execute the backend and for it to work correctly when using IntelliJ we have to modify the Run/Debug Configurations like this:
-
-<img src="./other/help/BuildProperties.png" width="600" />
-
-</div>
 
 ## Copyright and Licensing
 

@@ -1,142 +1,94 @@
-name: Publish Docker Images
+name: Publish Docker images
 
 on:
   workflow_dispatch:
     inputs:
       service:
-        description: 'Which image to Build and Push'
+        description: Which image(s) to build and push
         required: true
         type: choice
-        options:
-          - all
-          - backend
-          - frontend
-          - ocr
+        default: all
+        options: [all, backend, frontend]
+      release_tag:
+        description: "Optional release tag (e.g. v0.3.0). Empty = publish :latest and :sha-<commit>"
+        required: false
+        type: string
+      release_name:
+        description: Display name for the draft GitHub release (only with a release tag)
+        required: false
+        type: string
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
-  publish-backend:
-    if: ${{ inputs.service == 'all' || inputs.service == 'backend' }}
+  images:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [backend, frontend]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - name: Skip unselected image
+        id: gate
+        run: echo "run=${{ inputs.service == 'all' || inputs.service == matrix.service }}" >> "$GITHUB_OUTPUT"
 
-      - name: Set up JDK 26
-        uses: actions/setup-java@v5
-        with:
-          java-version: '26'
-          distribution: 'temurin'
-          cache: maven
+      - uses: actions/checkout@v6
+        if: steps.gate.outputs.run == 'true'
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+      - uses: docker/setup-buildx-action@v4
+        if: steps.gate.outputs.run == 'true'
 
-      - name: Log in to GHCR
-        uses: docker/login-action@v4
+      - uses: docker/login-action@v4
+        if: steps.gate.outputs.run == 'true'
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata
-        id: meta
+      - id: meta
+        if: steps.gate.outputs.run == 'true'
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}-backend
+          images: ${{ env.REGISTRY }}/${{ github.repository }}-${{ matrix.service }}
           tags: |
-            type=sha,prefix=sha-
-            type=raw,value=latest
+            type=raw,value=${{ inputs.release_tag }},enable=${{ inputs.release_tag != '' }}
+            type=sha,prefix=sha-,enable=${{ inputs.release_tag == '' }}
+            type=raw,value=latest,enable=${{ inputs.release_tag == '' }}
 
-      - name: Build and push backend
-        uses: docker/build-push-action@v7
+      - uses: docker/build-push-action@v7
+        if: steps.gate.outputs.run == 'true'
         with:
-          context: .
-          file: ./Dockerfile  # backend Dockerfile is at root
+          context: ./${{ matrix.service }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          no-cache: true
-
-  publish-frontend:
-    if: ${{ inputs.service == 'all' || inputs.service == 'frontend' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v4
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}-frontend
-          tags: |
-            type=sha,prefix=sha-
-            type=raw,value=latest
-
-      - name: Build and push frontend
-        uses: docker/build-push-action@v7
-        with:
-          context: ./frontend  # context is frontend/ so Dockerfile paths are relative to it
-          file: ./frontend/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          # Layer cache in GitHub Actions: unchanged layers aren't rebuilt.
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
           secrets: |
             vite_primeui_license_key=${{ secrets.PRIMEUI_LICENSE_KEY }}
-          no-cache: true
 
-  publish-ocr:
-    if: ${{ inputs.service == 'all' || inputs.service == 'ocr' }}
+  release:
+    needs: images
+    if: inputs.release_tag != ''
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-      - name: Log in to GHCR
-        uses: docker/login-action@v4
+      - uses: actions/checkout@v6
+      - uses: softprops/action-gh-release@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}-ocr
-          tags: |
-            type=sha,prefix=sha-
-            type=raw,value=latest
-      - name: Build and push ocr
-        uses: docker/build-push-action@v7
-        with:
-          context: ./pdf-analyzer-service
-          file: ./pdf-analyzer-service/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          no-cache: true
+          tag_name: ${{ inputs.release_tag }}
+          name: ${{ inputs.release_name || inputs.release_tag }}
+          draft: true
+          body: |
+            ## Docker images
+
+            ${{ (inputs.service == 'all' || inputs.service == 'backend') && format('- `ghcr.io/{0}-backend:{1}`', github.repository, inputs.release_tag) || '' }}
+            ${{ (inputs.service == 'all' || inputs.service == 'frontend') && format('- `ghcr.io/{0}-frontend:{1}`', github.repository, inputs.release_tag) || '' }}
+
+            Deploy with `IMAGE_TAG=${{ inputs.release_tag }}` in your `.env`.
