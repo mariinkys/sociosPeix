@@ -56,6 +56,7 @@ const needsCapacityCheck = computed(() => props.mode !== 'member')
 const sendDisabled = computed(() => {
   if (!needsCapacityCheck.value) return false
   if (checkLoading.value) return true
+  if (checkResult.value?.totalRecipients == 0) return true
   return checkResult.value?.exceedsLimit ?? false
 })
 
