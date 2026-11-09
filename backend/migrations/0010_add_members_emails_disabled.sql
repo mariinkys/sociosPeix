@@ -1,0 +1,2 @@
+ALTER TABLE members
+    ADD COLUMN emails_disabled BOOLEAN NOT NULL DEFAULT FALSE;

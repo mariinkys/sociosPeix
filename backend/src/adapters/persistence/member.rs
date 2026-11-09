@@ -26,6 +26,7 @@ struct MemberDb {
     birthdate: Option<NaiveDate>,
     phone: String,
     notes: String,
+    emails_disabled: bool,
     gender_id: Option<i32>,
     country_id: Option<i32>,
     created_at: NaiveDateTime,
@@ -43,6 +44,7 @@ impl MemberDb {
             birthdate: self.birthdate,
             phone: self.phone,
             notes: self.notes,
+            emails_disabled: self.emails_disabled,
             gender_id: self.gender_id,
             country_id: self.country_id,
             interests,
@@ -65,10 +67,11 @@ struct MemberExportDb {
     country: Option<String>,
     interests: Vec<String>,
     notes: String,
+    emails_disabled: bool,
 }
 
 const COLUMNS: &str = "m.id, m.name, m.surname, m.second_surname, m.email, m.birthdate, m.phone, \
-                       m.notes, m.gender_id, m.country_id, m.created_at, m.updated_at";
+                       m.notes, m.gender_id, m.country_id, m.emails_disabled, m.created_at, m.updated_at";
 
 /// Shared WHERE clause. Binds: $1 search, $2 ILIKE pattern, $3 interest ids.
 /// A member must have *all* the requested interests to match.
@@ -214,7 +217,7 @@ impl MemberPersistence for PostgresPersistence {
     async fn export_members(&self, filter: &MemberFilter) -> AppResult<Vec<MemberExportRow>> {
         let sql = format!(
             "SELECT m.id, m.name, m.surname, m.second_surname, m.email, m.birthdate, m.phone,
-                    g.name AS gender, c.name AS country, m.notes,
+                    g.name AS gender, c.name AS country, m.notes, m.emails_disabled,
                     COALESCE((SELECT array_agg(i.name ORDER BY i.id)
                               FROM member_interests mi JOIN interests i ON i.id = mi.interest_id
                               WHERE mi.member_id = m.id), '{{}}') AS interests
@@ -245,6 +248,7 @@ impl MemberPersistence for PostgresPersistence {
                 country: r.country,
                 interests: r.interests,
                 notes: r.notes,
+                emails_disabled: r.emails_disabled,
             })
             .collect())
     }
@@ -269,8 +273,8 @@ impl MemberPersistence for PostgresPersistence {
         let mut tx = self.pool.begin().await?;
         let id: Uuid = sqlx::query_scalar(
             "INSERT INTO members (name, surname, second_surname, email, birthdate, phone, notes,
-                                  gender_id, country_id, created_at, updated_at)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,
+                                  emails_disabled, gender_id, country_id, created_at, updated_at)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
                      (now() AT TIME ZONE 'UTC'), (now() AT TIME ZONE 'UTC'))
              RETURNING id",
         )
@@ -281,6 +285,7 @@ impl MemberPersistence for PostgresPersistence {
         .bind(d.birthdate)
         .bind(&d.phone)
         .bind(&d.notes)
+        .bind(d.emails_disabled)
         .bind(d.gender_id)
         .bind(d.country_id)
         .fetch_one(&mut *tx)
@@ -295,6 +300,7 @@ impl MemberPersistence for PostgresPersistence {
         let updated = sqlx::query(
             "UPDATE members SET name = $2, surname = $3, second_surname = $4, email = $5,
                     birthdate = $6, phone = $7, notes = $8, gender_id = $9, country_id = $10,
+                    emails_disabled = $11,
                     updated_at = (now() AT TIME ZONE 'UTC')
              WHERE id = $1",
         )
@@ -308,6 +314,7 @@ impl MemberPersistence for PostgresPersistence {
         .bind(&d.notes)
         .bind(d.gender_id)
         .bind(d.country_id)
+        .bind(d.emails_disabled)
         .execute(&mut *tx)
         .await?
         .rows_affected();
@@ -344,7 +351,7 @@ impl MemberPersistence for PostgresPersistence {
         let rows =
             match any_of_interests {
                 None => sqlx::query_scalar(
-                    "SELECT DISTINCT email FROM members WHERE btrim(email) <> '' ORDER BY email",
+                    "SELECT DISTINCT email FROM members WHERE btrim(email) <> '' AND NOT m.emails_disabled ORDER BY email",
                 )
                 .fetch_all(&self.pool)
                 .await?,
@@ -354,6 +361,7 @@ impl MemberPersistence for PostgresPersistence {
                      WHERE btrim(m.email) <> ''
                        AND EXISTS (SELECT 1 FROM member_interests mi
                                    WHERE mi.member_id = m.id AND mi.interest_id = ANY($1))
+                       AND NOT m.emails_disabled
                      ORDER BY m.email",
                     )
                     .bind(ids)

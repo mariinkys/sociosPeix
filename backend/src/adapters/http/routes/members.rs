@@ -46,6 +46,7 @@ struct MemberResponse {
     birthdate: Option<NaiveDate>,
     phone: String,
     notes: String,
+    emails_disabled: bool,
     gender_id: Option<i32>,
     country_id: Option<i32>,
     #[serde(serialize_with = "serialize_utc")]
@@ -65,6 +66,7 @@ impl From<Member> for MemberResponse {
             birthdate: m.birthdate,
             phone: m.phone,
             notes: m.notes,
+            emails_disabled: m.emails_disabled,
             gender_id: m.gender_id,
             country_id: m.country_id,
             created_at: m.created_at,
@@ -161,6 +163,7 @@ struct MemberRequest {
     birthdate: Option<String>,
     phone: Option<String>,
     notes: Option<String>,
+    emails_disabled: Option<bool>,
     gender_id: Option<i32>,
     country_id: Option<i32>,
     interest_ids: Option<Vec<i32>>,
@@ -225,6 +228,7 @@ impl From<MemberRequest> for MemberData {
             phone: text(r.phone),
             // Notes are free text; keep the user's formatting.
             notes: r.notes.unwrap_or_default(),
+            emails_disabled: r.emails_disabled.unwrap_or(false),
             gender_id: r.gender_id,
             country_id: r.country_id,
             interest_ids,
