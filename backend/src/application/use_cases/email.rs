@@ -118,7 +118,7 @@ impl EmailUseCases {
         let recipients = self.members.recipient_emails(None).await?;
         if recipients.is_empty() {
             return Err(AppError::EmailSend(
-                "No members with email addresses found".into(),
+                "No members with enabled emails and email addresses found".into(),
             ));
         }
         self.send(recipients, content, EmailCategory::Campaign)

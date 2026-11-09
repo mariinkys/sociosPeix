@@ -15,6 +15,7 @@ export interface MemberResponse {
   birthdate: string
   phone: string
   notes: string
+  emailsDisabled: boolean,
   genderId: number
   countryId: number
 
@@ -31,6 +32,7 @@ export interface MemberCreatePayload {
   birthdate: string | null
   phone: string | null
   notes: string | null
+  emailsDisabled: boolean,
   genderId: number | null
   countryId: number | null
 
@@ -45,6 +47,7 @@ export interface MemberUpdatePayload {
   birthdate: string | null
   phone: string | null
   notes: string | null
+  emailsDisabled: boolean,
   genderId: number | null
   countryId: number | null
 

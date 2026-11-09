@@ -35,7 +35,7 @@ pub trait MemberPersistence: Send + Sync {
     /// The member's email address, if the member exists.
     async fn member_email(&self, id: Uuid) -> AppResult<Option<String>>;
     /// Distinct, non-blank email addresses of all members, or only of the
-    /// members having *any* of the given interests.
+    /// members having *any* of the given interests. It excludes opted-out member s via the emails_disabled flag.
     async fn recipient_emails(&self, any_of_interests: Option<&[i32]>) -> AppResult<Vec<String>>;
 }
 

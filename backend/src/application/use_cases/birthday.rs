@@ -57,6 +57,7 @@ impl BirthdayUseCases {
                     .emails
                     .was_sent_today(&member.email, BIRTHDAY_SUBJECT)
                     .await?
+                || member.emails_disabled
             {
                 debug!(member_id = %member.id, "skipping birthday email");
                 run.skipped += 1;
@@ -120,30 +121,30 @@ fn birthday_html(name: &str) -> String {
     let name = escape_html(name);
     format!(
         r#"<!DOCTYPE html>
-<html>
-<body style="font-family: Arial, sans-serif; background-color: #fff7e6; color: #333;">
-  <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px;
-              padding: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center;">
-    <img src="cid:logo" alt="Hotel Casa Peix (Logo)" style="max-width: 200px; margin-bottom: 20px;"/>
-    <h1 style="color: #d35400;">¡Feliz Cumpleaños, {name}!</h1>
-    <p style="font-size: 16px; line-height: 1.6;">
-      Esperamos que este día esté lleno de alegría, momentos especiales y felicidad.
-    </p>
-    <p style="font-size: 16px; line-height: 1.6;">
-      Como muestra de nuestro cariño, queremos recordarle que siempre será
-      bienvenido(a) en nuestro hotel.
-    </p>
-    <p style="font-size: 14px; color: #5b5b5b; margin-top: 30px;">
-      Con nuestros mejores deseos,<br/>El equipo del Hotel Casa Peix.
-    </p>
-    <p style="font-size: 12px; color: #777; text-align: center;">
-      (Puede darse de baja en cualquier momento escribiendo un correo a
-      infohotelcasapeix@gmail.com)
-    </p>
-  </div>
-</body>
-</html>
-"#
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color: #fff7e6; color: #333;">
+            <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px;
+                        padding: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center;">
+            <img src="cid:logo" alt="Hotel Casa Peix (Logo)" style="max-width: 200px; margin-bottom: 20px;"/>
+            <h1 style="color: #d35400;">¡Feliz Cumpleaños, {name}!</h1>
+            <p style="font-size: 16px; line-height: 1.6;">
+                Esperamos que este día esté lleno de alegría, momentos especiales y felicidad.
+            </p>
+            <p style="font-size: 16px; line-height: 1.6;">
+                Como muestra de nuestro cariño, queremos recordarle que siempre será
+                bienvenido(a) en nuestro hotel.
+            </p>
+            <p style="font-size: 14px; color: #5b5b5b; margin-top: 30px;">
+                Con nuestros mejores deseos,<br/>El equipo del Hotel Casa Peix.
+            </p>
+            <p style="font-size: 12px; color: #777; text-align: center;">
+                (Puede darse de baja en cualquier momento escribiendo un correo a
+                infohotelcasapeix@gmail.com)
+            </p>
+            </div>
+        </body>
+        </html>
+        "#
     )
 }
 
