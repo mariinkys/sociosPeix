@@ -101,6 +101,11 @@ const routes = [
         name: 'statistics-interests-popularity',
         component: () => import('@/views/statistics/InterestPopularityView.vue'),
       },
+      {
+        path: 'email-preference',
+        name: 'statistics-email-preference',
+        component: () => import('@/views/statistics/EmailPreferenceView.vue'),
+      },
     ],
   },
 ]

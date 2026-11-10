@@ -16,6 +16,7 @@ pub fn router() -> Router<AppState> {
             "/interests/popularity/export",
             get(export_interest_popularity),
         )
+        .route("/members/email-preference", get(email_preference_stats))
 }
 
 #[derive(Serialize)]
@@ -55,4 +56,24 @@ async fn export_interest_popularity(
         ],
         file,
     ))
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct EmailPreferenceStatsResponse {
+    enabled: i64,
+    disabled: i64,
+    total: i64,
+}
+
+async fn email_preference_stats(
+    _admin: AdminUser,
+    State(stats): State<Arc<StatisticsUseCases>>,
+) -> AppResult<Json<EmailPreferenceStatsResponse>> {
+    let row = stats.email_preference_stats().await?;
+    Ok(Json(EmailPreferenceStatsResponse {
+        enabled: row.enabled,
+        disabled: row.disabled,
+        total: row.total(),
+    }))
 }

@@ -17,6 +17,11 @@ const navItems: StatNavItem[] = [
     labelKey: 'statistics.interestPopularity.title',
     icon: 'pi pi-chart-bar',
   },
+  {
+    path: '/statistics/email-preference',
+    labelKey: 'statistics.emailPreferences.title',
+    icon: 'pi pi-chart-pie',
+  },
 ]
 
 function isActive(path: string): boolean {
@@ -32,19 +37,12 @@ function isActive(path: string): boolean {
 
     <div class="flex flex-col md:flex-row gap-6 md:min-h-[calc(100vh-9rem)]">
       <nav
-        class="flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-x-visible md:w-56 shrink-0 border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-700 pb-2 md:pb-0 md:pr-4"
-      >
-        <RouterLink
-          v-for="item in navItems"
-          :key="item.path"
-          :to="item.path"
-          class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm whitespace-nowrap transition-colors"
-          :class="
-            isActive(item.path)
+        class="flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-x-visible md:w-56 shrink-0 border-b md:border-b-0 md:border-r border-surface-200 dark:border-surface-700 pb-2 md:pb-0 md:pr-4">
+        <RouterLink v-for="item in navItems" :key="item.path" :to="item.path"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm whitespace-nowrap transition-colors" :class="isActive(item.path)
               ? 'bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300 font-medium'
               : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800'
-          "
-        >
+            ">
           <i :class="item.icon"></i>
           {{ t(item.labelKey) }}
         </RouterLink>
